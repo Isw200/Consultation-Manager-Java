@@ -1,6 +1,8 @@
 package GUI;
 
 import GUI.GUILibs.RoundedBorder;
+import GUI.Main_Frames.DashBoardPanel;
+import GUI.Main_Frames.DoctorsPanel;
 
 import javax.swing.*;
 import java.awt.*;

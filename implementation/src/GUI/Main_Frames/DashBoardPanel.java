@@ -1,6 +1,7 @@
-package GUI;
+package GUI.Main_Frames;
 
 import GUI.GUILibs.StatusColumnCellRenderer;
+import GUI.MainFrame;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;

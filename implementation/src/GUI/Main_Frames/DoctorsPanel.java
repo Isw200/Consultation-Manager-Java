@@ -1,4 +1,4 @@
-package GUI;
+package GUI.Main_Frames;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
@@ -305,7 +305,6 @@ public class DoctorsPanel extends JPanel implements ActionListener {
         if (e.getSource() == addDoctor){
             System.out.println("Add doctor");
             AddDoctor addDoctor = new AddDoctor();
-            addDoctor.setVisible(true);
         }
         if (e.getSource() == deleteDoctor){
             System.out.println("delete doctor");
