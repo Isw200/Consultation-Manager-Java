@@ -1,8 +1,9 @@
-package Classes;
+package Models;
 
-import Classes.Person;
+import GUI.MainFrame;
 import Interfaces.SkinConsultationManager;
 
+import javax.swing.*;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -12,10 +13,27 @@ import java.util.Scanner;
 
 public class WestminsterSkinConsultationManager implements SkinConsultationManager {
 
-    ArrayList<Person> doctorArrayList = new ArrayList<>();
-    ArrayList<Person> patientArrayList = new ArrayList<>();
+
+    public static ArrayList<Person> doctorArrayList = new ArrayList<>();
+    private ArrayList<Person> patientArrayList = new ArrayList<>();
+    private ArrayList<Sessions> sessionsArrayList = new ArrayList<>();
     File doctorFile = new File("doctorList.txt");
     File patientFile = new File("patientList.txt");
+
+    public WestminsterSkinConsultationManager() {
+    }
+
+    public static ArrayList<Person> getDoctorArrayList() {
+        return doctorArrayList;
+    }
+
+    public ArrayList<Person> getPatientArrayList() {
+        return patientArrayList;
+    }
+
+    public ArrayList<Sessions> getSessionsArrayList() {
+        return sessionsArrayList;
+    }
 
     /**
      * Get All details of a Doctor
@@ -345,5 +363,14 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
                 }
             }
         }
+    }
+
+    // Run GUI
+    public void runGUI(){
+        MainFrame mainFrame = new MainFrame();
+        mainFrame.setTitle("Hospital Management System");
+        mainFrame.setSize(1300, 800);
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setVisible(true);
     }
 }

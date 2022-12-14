@@ -1,5 +1,9 @@
 package GUI.Main_Frames;
 
+import Models.Doctor;
+import Models.Person;
+import Models.WestminsterSkinConsultationManager;
+
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -10,6 +14,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.ArrayList;
 
 import static GUI.MainFrame.addSpace;
 import static GUI.MainFrame.scaleImage;
@@ -158,7 +163,7 @@ public class DoctorsPanel extends JPanel implements ActionListener {
 
         ImageIcon finalButtonIcon = buttonIcon;
 
-        refreshButton = new JButton("A"){
+        refreshButton = new JButton(){
             protected void paintComponent(Graphics g) {
                 if (g instanceof Graphics2D g2d) {
                     Paint p =
@@ -172,7 +177,7 @@ public class DoctorsPanel extends JPanel implements ActionListener {
                 g.drawImage(finalButtonIcon.getImage(), 0, 0, null);
             }
         };
-
+        refreshButton.addActionListener(this);
         refreshButton.setPreferredSize(new Dimension(50, 50));
         panel1BottomEast.add(refreshButton);
 
@@ -185,43 +190,58 @@ public class DoctorsPanel extends JPanel implements ActionListener {
         tablePanel.setPreferredSize(new Dimension(1000, 600));
 
         // Table
-        String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Email", "Speciality", "Actions"};
-        String[][] doctorData = {
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
-                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"}
-        };
+        String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Actions"};
+//        String[][] doctorData = {
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0001","John", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"},
+//                {"D0002","Jane", "Doe", "+9470234882","doc1002@hotmail.com","Heart","Action"}
+//        };
+        WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
+
+        ArrayList<Person> doctors = manager.getDoctorArrayList();
+        String[][] doctorData = new String[doctors.size()][6];
+
+        for (int i = 0; i < doctors.size(); i++) {
+            Doctor doctor = (Doctor) manager.getDoctorArrayList().get(i);
+            doctorData[i][0] = doctor.getMedicalLicenceNumber();
+            doctorData[i][1] = doctor.getName();
+            doctorData[i][2] = doctor.getSurName();
+            doctorData[i][3] = doctor.getMobileNumber();
+            doctorData[i][4] = doctor.getSpecialisation();
+            doctorData[i][5] = "Action";
+        }
+
         doctorsTable = new JTable();
         doctorsTable.setRowHeight(40);
         doctorsTable.setModel(new DefaultTableModel(doctorData, doctorsTableColumns));
@@ -311,6 +331,27 @@ public class DoctorsPanel extends JPanel implements ActionListener {
         }
         if (e.getSource() == editDoctor){
             System.out.println("edit doctor");
+        }
+        if (e.getSource() == refreshButton){
+            String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Actions"};
+
+            ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
+            String[][] doctorData = new String[doctors.size()][6];
+
+            System.out.println(doctors.size());
+
+            for (int i = 0; i < doctors.size(); i++) {
+                System.out.println("loading");
+                Doctor doctor = (Doctor) doctors.get(i);
+                doctorData[i][0] = doctor.getMedicalLicenceNumber();
+                doctorData[i][1] = doctor.getName();
+                doctorData[i][2] = doctor.getSurName();
+                doctorData[i][3] = doctor.getMobileNumber();
+                doctorData[i][4] = doctor.getSpecialisation();
+                doctorData[i][5] = "Action";
+            }
+            System.out.println("Refresh data");
+            doctorsTable.setModel(new DefaultTableModel(doctorData, doctorsTableColumns));
         }
     }
 }

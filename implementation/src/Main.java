@@ -1,4 +1,4 @@
-import Classes.WestminsterSkinConsultationManager;
+import Models.WestminsterSkinConsultationManager;
 
 import java.util.Scanner;
 
@@ -26,6 +26,8 @@ public class Main {
                     (PS) -> Save to File
                     (PR) -> Read file
                     (PL) -> Load data from Files
+                    
+                    (G)  -> Open GUI
                     _____________________________
                     Answer: """);
             String answer = input.nextLine();
@@ -83,6 +85,11 @@ public class Main {
                 westminsterSkinConsultationManager.readPatientFile();
             } else if (answer.equalsIgnoreCase("PL")) {
                 westminsterSkinConsultationManager.loadPatientsFromFile();
+            }
+
+            // GUI
+            else if (answer.equalsIgnoreCase("G")) {
+                westminsterSkinConsultationManager.runGUI();
             }
         }
     }

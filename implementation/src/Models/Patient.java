@@ -1,8 +1,9 @@
-package Classes;
+package Models;
 
 import java.util.Date;
 
 public class Patient extends Person{
+    private static int numberOfConsultations;
     static int numberOfPatients;
     private String patientId;
 
@@ -19,6 +20,7 @@ public class Patient extends Person{
     public void setPatientId(String patientId) {
         this.patientId = patientId;
     }
+
 
     @Override
     public String print() {

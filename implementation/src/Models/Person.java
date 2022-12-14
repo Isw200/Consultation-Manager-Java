@@ -1,4 +1,4 @@
-package Classes;
+package Models;
 import Interfaces.Printable;
 import java.time.LocalDateTime;
 import java.util.Date;

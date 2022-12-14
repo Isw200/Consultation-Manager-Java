@@ -129,7 +129,6 @@ public class AddDoctor extends JFrame{
         cancelDescription.setFont(new Font("Arial", Font.PLAIN, 16));
         cancelDescription.setForeground(new Color(164, 92, 255));
 
-
         cancel = new JButton("Cancel");
         cancel.setFont(new Font("Arial", Font.BOLD, 16));
         cancel.setOpaque(false);
@@ -137,9 +136,6 @@ public class AddDoctor extends JFrame{
         cancel.setForeground(new Color(164, 92, 255));
         addAndCancelButtons.add(cancelDescription);
         addAndCancelButtons.add(cancel);
-
-
-
 
         // Add panels to border panels
         mainBorderLayouts[0].add(panels[0], BorderLayout.WEST);
@@ -160,6 +156,5 @@ public class AddDoctor extends JFrame{
         mainPanel.add(addAndCancelButtons);
         mainPanel.add(addSpace(520,50));
         mainFrame.add(mainPanel);
-
     }
 }

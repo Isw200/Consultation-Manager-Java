@@ -165,12 +165,12 @@ public class MainFrame extends JFrame implements ActionListener {
 
         dashBoardPanel = new DashBoardPanel();
         //uncomment the line below to add default dashboard**********
-//        changeRightPanel(dashBoardPanel);
-//        rightPanel.add(dashBoardPanel, BorderLayout.CENTER);
+        changeRightPanel(dashBoardPanel);
+        rightPanel.add(dashBoardPanel, BorderLayout.CENTER);
 
-        doctorsPanel = new DoctorsPanel();
-        changeRightPanel(doctorsPanel);
-        rightPanel.add(doctorsPanel, BorderLayout.CENTER);
+//        doctorsPanel = new DoctorsPanel();
+//        changeRightPanel(doctorsPanel);
+//        rightPanel.add(doctorsPanel, BorderLayout.CENTER);
 
         doctorsPanel = new DoctorsPanel();
 
@@ -187,12 +187,10 @@ public class MainFrame extends JFrame implements ActionListener {
             changeRightPanel(dashBoardPanel);
         }
         else if (e.getSource() == doctorButton) {
-            System.out.println("Doctor");
             changeClickedButtonStyle(doctorButton);
             changeRightPanel(doctorsPanel);
         }
         else if (e.getSource() == patientButton) {
-            System.out.println("Patient");
             changeClickedButtonStyle(patientButton);
         }
         else if (e.getSource() == appointmentButton) {
