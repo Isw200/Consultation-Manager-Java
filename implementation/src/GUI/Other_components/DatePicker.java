@@ -147,7 +147,6 @@ public class DatePicker {
         Calendar cal = Calendar.getInstance();
 
         cal.set(year, month, Integer.parseInt(day));
-        System.out.println(sdf.format(cal.getTime()));
         return sdf.format(cal.getTime());
     }
 }

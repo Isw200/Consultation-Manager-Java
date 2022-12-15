@@ -54,7 +54,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     @Override
     public void addANewDoctor(String name, String surName, String stringDateOfBirth, String mobileNumber, String medicalLicenceNumber, String specialisation) {
         Date dateOfBirth = strToDate(stringDateOfBirth);
-        Person doctor = new Doctor(name, surName, dateOfBirth,mobileNumber,medicalLicenceNumber,specialisation);
+        Person doctor = new Doctor(name, surName, dateOfBirth,mobileNumber,medicalLicenceNumber,specialisation, "Available");
         doctorArrayList.add(doctor);
     }
 
@@ -247,7 +247,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      * @Catch: ParseException if the date of birth is not in correct format.
      * correct format Example 15-MAR-2000
      */
-    public Date strToDate(String strDate){
+    public static Date strToDate(String strDate){
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
         Date dateDate = null;
         try {

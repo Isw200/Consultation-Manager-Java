@@ -1,26 +1,32 @@
-package GUI.Main_Frames;
+package GUI.Main_Frames.SubFrames;
 
 import GUI.Other_components.DatePicker;
+import Models.Doctor;
+import Models.WestminsterSkinConsultationManager;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 
 import static GUI.MainFrame.addSpace;
 import static GUI.MainFrame.scaleImage;
 
-public class AddDoctor extends JFrame{
+public class AddDoctor extends JDialog implements ActionListener {
+    final JFrame mainFrame;
     JPanel mainPanel;
     JPanel[] panels = new JPanel[6];
     JPanel[] mainBorderLayouts = new JPanel[3];
     JLabel[] labels = new JLabel[6];
     JTextField fNameField, lNameField, mobileNumField, medicalLicenceNumField;
+    JComboBox specialisationDropDown;
+    final JTextField dateOfBirthField = new JTextField();
     JTextField[] textFields = new JTextField[4];
     JButton addDoctor, cancel;
     public AddDoctor() {
         // Main Frame
-        final JFrame mainFrame = new JFrame();
+        mainFrame = new JFrame();
         mainFrame.setVisible(true);
         mainFrame.setSize(520, 450);
         mainPanel = new JPanel(new FlowLayout());
@@ -82,10 +88,9 @@ public class AddDoctor extends JFrame{
         panels[4].add(textFields[3]);
 
         // Date picker
-        final JTextField text = new JTextField();
-        text.setPreferredSize(new Dimension(190, 35));
-        text.setFont(new Font("Arial", Font.PLAIN, 16));
-        text.setFocusable(false);
+        dateOfBirthField.setPreferredSize(new Dimension(190, 35));
+        dateOfBirthField.setFont(new Font("Arial", Font.PLAIN, 16));
+        dateOfBirthField.setFocusable(false);
         ImageIcon icon = new ImageIcon("src/GUI/Assets/calendar.png");
         icon = scaleImage(icon, 20, 20);
 
@@ -94,20 +99,20 @@ public class AddDoctor extends JFrame{
         JPanel selectDatePanel = new JPanel(new BorderLayout());
         selectDatePanel.setOpaque(true);
         selectDatePanel.setSize(new Dimension(220, 30));
-        selectDatePanel.add(text, BorderLayout.CENTER);
+        selectDatePanel.add(dateOfBirthField, BorderLayout.CENTER);
         selectDatePanel.add(dateSelectButton, BorderLayout.EAST);
         panels[2].add(selectDatePanel);
 
         dateSelectButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
-                text.setText(new DatePicker(mainFrame).setPickedDate());
+                dateOfBirthField.setText(new DatePicker(mainFrame).setPickedDate());
             }
         });
 
         // Add specialisation drop down menu
         String[] specialisations = {"General Practitioner", "Cardiologist", "Dentist", "Dermatologist", "Endocrinologist", "Gastroenterologist", "Geriatrician", "Gynecologist", "Neurologist", "Oncologist", "Ophthalmologist", "Orthopedist", "Pediatrician", "Psychiatrist", "Rheumatologist", "Surgeon"};
 
-        JComboBox specialisationDropDown = new JComboBox(specialisations);
+        specialisationDropDown = new JComboBox(specialisations);
         specialisationDropDown.setPreferredSize(new Dimension(220, 30));
         specialisationDropDown.setFont(new Font("Arial", Font.PLAIN, 16));
         specialisationDropDown.setBorder(null);
@@ -122,8 +127,10 @@ public class AddDoctor extends JFrame{
         addDoctor.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
         addDoctor.setBackground(new Color(0, 0, 0, 0));
         addDoctor.setForeground(new Color(164, 92, 255));
+        addDoctor.addActionListener(this);
         addDoctorBtnContainer.add(addDoctor);
 
+        // Cancel button
         JPanel addAndCancelButtons = new JPanel(new FlowLayout());
         JLabel cancelDescription = new JLabel("No need add? ");
         cancelDescription.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -134,6 +141,7 @@ public class AddDoctor extends JFrame{
         cancel.setOpaque(false);
         cancel.setBorder(null);
         cancel.setForeground(new Color(164, 92, 255));
+        cancel.addActionListener(this);
         addAndCancelButtons.add(cancelDescription);
         addAndCancelButtons.add(cancel);
 
@@ -156,5 +164,35 @@ public class AddDoctor extends JFrame{
         mainPanel.add(addAndCancelButtons);
         mainPanel.add(addSpace(520,50));
         mainFrame.add(mainPanel);
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == addDoctor) {
+            // Check if all fields are filled
+            if (fNameField.getText().equals("") || lNameField.getText().equals("") || dateOfBirthField.getText().equals("") || mobileNumField.getText().equals("") || medicalLicenceNumField.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                // Check if mobile number is valid
+                if (mobileNumField.getText().length() != 10) {
+                    JOptionPane.showMessageDialog(null, "Please enter a valid mobile number", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    // Check if medical licence number is valid
+                    if (medicalLicenceNumField.getText().length() != 8) {
+                        JOptionPane.showMessageDialog(null, "Please enter a valid medical licence number: EX- DOC12345", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        // Add doctor to array list
+                        Date dateOfBirth = WestminsterSkinConsultationManager.strToDate(dateOfBirthField.getText());
+                        Doctor doctor = new Doctor(fNameField.getText(), lNameField.getText(), dateOfBirth, mobileNumField.getText(), medicalLicenceNumField.getText(), specialisationDropDown.getSelectedItem().toString(), "Available");
+                        WestminsterSkinConsultationManager.doctorArrayList.add(doctor);
+                        JOptionPane.showMessageDialog(null, "Doctor added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        mainFrame.dispose();
+                    }
+                }
+            }
+        }
+        if (e.getSource() == cancel) {
+            mainFrame.dispose();
+        }
     }
 }

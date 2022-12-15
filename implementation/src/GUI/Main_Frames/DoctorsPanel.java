@@ -1,5 +1,7 @@
 package GUI.Main_Frames;
 
+import GUI.GUILibs.StatusColumnCellRenderer;
+import GUI.Main_Frames.SubFrames.AddDoctor;
 import Models.Doctor;
 import Models.Person;
 import Models.WestminsterSkinConsultationManager;
@@ -131,7 +133,6 @@ public class DoctorsPanel extends JPanel implements ActionListener {
             purpleButtons[i].setPreferredSize(new Dimension(150, 50));
             purpleButtons[i].setForeground(new Color(164, 92, 255));
             purpleButtons[i].setFont(new Font("Arial", Font.PLAIN, 14));
-//            purpleButtons[i].setBorder(new RoundedBorder(20));
             purpleButtons[i].setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
             purpleButtons[i].addActionListener(this);
         }
@@ -229,17 +230,21 @@ public class DoctorsPanel extends JPanel implements ActionListener {
 //        };
         WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
 
-        ArrayList<Person> doctors = manager.getDoctorArrayList();
+        ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
         String[][] doctorData = new String[doctors.size()][6];
 
         for (int i = 0; i < doctors.size(); i++) {
-            Doctor doctor = (Doctor) manager.getDoctorArrayList().get(i);
+            Doctor doctor = (Doctor) WestminsterSkinConsultationManager.getDoctorArrayList().get(i);
             doctorData[i][0] = doctor.getMedicalLicenceNumber();
             doctorData[i][1] = doctor.getName();
             doctorData[i][2] = doctor.getSurName();
             doctorData[i][3] = doctor.getMobileNumber();
             doctorData[i][4] = doctor.getSpecialisation();
-            doctorData[i][5] = "Action";
+            doctorData[i][5] = doctor.getAvailability();
+        }
+
+        for (int i = 0; i < doctorsTable.getColumnCount(); i++) {
+            doctorsTable.getColumnModel().getColumn(i).setCellRenderer(new StatusColumnCellRenderer());
         }
 
         doctorsTable = new JTable();
@@ -323,7 +328,6 @@ public class DoctorsPanel extends JPanel implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addDoctor){
-            System.out.println("Add doctor");
             AddDoctor addDoctor = new AddDoctor();
         }
         if (e.getSource() == deleteDoctor){
@@ -338,20 +342,19 @@ public class DoctorsPanel extends JPanel implements ActionListener {
             ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
             String[][] doctorData = new String[doctors.size()][6];
 
-            System.out.println(doctors.size());
-
             for (int i = 0; i < doctors.size(); i++) {
-                System.out.println("loading");
                 Doctor doctor = (Doctor) doctors.get(i);
                 doctorData[i][0] = doctor.getMedicalLicenceNumber();
                 doctorData[i][1] = doctor.getName();
                 doctorData[i][2] = doctor.getSurName();
                 doctorData[i][3] = doctor.getMobileNumber();
                 doctorData[i][4] = doctor.getSpecialisation();
-                doctorData[i][5] = "Action";
+                doctorData[i][5] = doctor.getAvailability();
             }
-            System.out.println("Refresh data");
             doctorsTable.setModel(new DefaultTableModel(doctorData, doctorsTableColumns));
+            for (int i = 0; i < doctorsTable.getColumnCount(); i++) {
+                doctorsTable.getColumnModel().getColumn(i).setCellRenderer(new StatusColumnCellRenderer());
+            }
         }
     }
 }

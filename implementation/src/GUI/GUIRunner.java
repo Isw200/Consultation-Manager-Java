@@ -1,5 +1,7 @@
 package GUI;
 
+import GUI.Main_Frames.SubFrames.FindDoctor;
+
 import javax.swing.*;
 
 public class GUIRunner {
@@ -10,4 +12,8 @@ public class GUIRunner {
 //        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        mainFrame.setVisible(true);
 //    }
+
+    public static void main(String[] args) {
+        FindDoctor findDoctor = new FindDoctor();
+    }
 }

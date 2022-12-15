@@ -6,11 +6,13 @@ public class Doctor extends Person{
     static int numberOfDoctors;
     private String medicalLicenceNumber;
     private String specialisation;
+    private String availability;
 
-    public Doctor(String name, String surName, Date dateOfBirth, String mobileNumber, String medicalLicenceNumber, String specialisation) {
+    public Doctor(String name, String surName, Date dateOfBirth, String mobileNumber, String medicalLicenceNumber, String specialisation, String availability) {
         super(name, surName, dateOfBirth, mobileNumber);
         this.medicalLicenceNumber = medicalLicenceNumber;
         this.specialisation = specialisation;
+        this.availability = availability;
         numberOfDoctors ++;
     }
 
@@ -20,6 +22,14 @@ public class Doctor extends Person{
 
     public void setMedicalLicenceNumber(String medicalLicenceNumber) {
         this.medicalLicenceNumber = medicalLicenceNumber;
+    }
+
+    public String getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(String availability) {
+        this.availability = availability;
     }
 
     public String getSpecialisation() {
