@@ -346,7 +346,6 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         return dataItems;
     }
 
-
     /**
      * Sort a given ArrayList using a bubble sort algorithm
      * @param arrayList ArrayList to sort.
@@ -354,7 +353,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     public void sort(ArrayList<Person> arrayList){
         Person temp;
         for (int i = 0; i < arrayList.size(); i++){
-            for (int j = 1; j < (arrayList.size()-1); j++){
+            for (int j = 1; j < (arrayList.size()); j++){
                 int comparisonReturn = (arrayList.get(j-1).getSurName()).compareTo(arrayList.get(j).getSurName());
                 if (comparisonReturn > 0){
                     temp = arrayList.get(j-1);

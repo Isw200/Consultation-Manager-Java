@@ -55,7 +55,7 @@ public class Person implements Printable {
             case 12 -> "December";
             default -> "";
         };
-        return birthDay + "/" + birthMonthString + "/" + birthYear;
+        return birthDay + "-" + birthMonthString + "-" + birthYear;
     }
 
     public void setDateOfBirth(Date dateOfBirth) {

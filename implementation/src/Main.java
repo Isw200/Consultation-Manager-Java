@@ -19,6 +19,7 @@ public class Main {
                     (DS) -> Save to File
                     (DR) -> Read file
                     (DL) -> Load data from Files
+                    (DSO)-> Sort Doctors
                     
                     (PA) -> Add a new Patient
                     (PD) -> Delete a Patient
@@ -27,7 +28,8 @@ public class Main {
                     (PR) -> Read file
                     (PL) -> Load data from Files
                     
-                    (G)  -> Open GUI
+                    (GL)  -> Open GUI with all the data
+                    (GN)  -> Open GUI with no data
                     _____________________________
                     Answer: """);
             String answer = input.nextLine();
@@ -59,6 +61,8 @@ public class Main {
                 westminsterSkinConsultationManager.readDoctorFile();
             } else if (answer.equalsIgnoreCase("DL")) {
                 westminsterSkinConsultationManager.loadDoctorsFromFile();
+            } else if (answer.equalsIgnoreCase("DSO")) {
+                westminsterSkinConsultationManager.sort(WestminsterSkinConsultationManager.getDoctorArrayList());
             }
             // Patient
             else if (answer.equalsIgnoreCase("PA")) {
@@ -88,9 +92,12 @@ public class Main {
             }
 
             // GUI
-            else if (answer.equalsIgnoreCase("G")) {
+            else if (answer.equalsIgnoreCase("GL")) {
                 westminsterSkinConsultationManager.loadDoctorsFromFile();
                 westminsterSkinConsultationManager.saveDoctorsToFile();
+                westminsterSkinConsultationManager.runGUI();
+            }
+            else if (answer.equalsIgnoreCase("GN")) {
                 westminsterSkinConsultationManager.runGUI();
             }
         }

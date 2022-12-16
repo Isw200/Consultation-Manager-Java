@@ -1,5 +1,6 @@
 package GUI.Main_Frames.SubFrames;
 
+import GUI.MainFrame;
 import Models.Doctor;
 import Models.Person;
 import Models.WestminsterSkinConsultationManager;
@@ -12,15 +13,11 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 public class FindDoctor extends JFrame implements ActionListener, MouseListener, DocumentListener {
     String fName, lName, medicalLicenceNum;
-    Boolean isFNameFound, isLNameFound, isMedicalLicenceNumFound;
     JFrame mainFrame;
     JLabel fNameLabel, lNameLabel, medicalLicenceNumLabel;
     JTextField fNameField, lNameField, medicalLicenceNumField;
@@ -28,6 +25,7 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
     JButton findDoctor;
     JTable doctorTable;
     JScrollPane scrollPane;
+    JButton edit, delete;
     public FindDoctor() {
         fName = "";
         lName = "";
@@ -38,6 +36,7 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
         mainFrame.setSize(800, 500);
         mainFrame.setLayout(new FlowLayout());
         mainFrame.setResizable(false);
+        mainFrame.setLocationRelativeTo(MainFrame.getFrames()[0]);
 
 
         // Top Panel
@@ -96,7 +95,7 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
         bottomPanel = new JPanel(new FlowLayout());
         bottomPanel.setPreferredSize(new Dimension(800, 400));
 
-        String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Actions"};
+        String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Availability"};
         ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
         String[][] doctorData = new String[doctors.size()][6];
         for (int i = 0; i < doctors.size(); i++) {
@@ -124,6 +123,9 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
         header.setFont(new Font("Arial", Font.PLAIN, 14));
         header.setPreferredSize(new Dimension(750, 30));
 
+        /**
+         * This is to get values from selected row from the table
+         */
         doctorTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -133,7 +135,86 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
                     int columnIndex = 0;
                     int modelRow = doctorTable.convertRowIndexToModel(viewRow);
                     Object doctorId = doctorTable.getModel().getValueAt(modelRow, columnIndex);
-                    System.out.println(doctorId);
+                    JDialog dialog = new JDialog(mainFrame, "Doctor Details", true);
+                    dialog.setSize(400, 100);
+                    dialog.setLayout(new FlowLayout());
+                    dialog.setResizable(false);
+                    dialog.setLocationRelativeTo(FindDoctor.getFrames()[0]);
+
+                    // Edit and Delete Buttons
+                    edit = new JButton("Edit");
+                    edit.setPreferredSize(new Dimension(150, 50));
+                    edit.setForeground(new Color(0, 122, 31));
+                    edit.setOpaque(true);
+                    edit.setFont(new Font("Arial", Font.PLAIN, 16));
+                    edit.setBorder(BorderFactory.createLineBorder(new Color(0, 122, 31), 2));
+                    edit.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseEntered(MouseEvent e) {
+                            edit.setForeground(Color.WHITE);
+                            edit.setBackground(new Color(0, 122, 31));
+                            edit.setOpaque(true);
+                        }
+                        @Override
+                        public void mouseExited(MouseEvent e) {
+                            edit.setForeground(new Color(0, 122, 31));
+                            edit.setBackground(Color.WHITE);
+                            edit.setOpaque(true);
+                        }
+                    });
+                    edit.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            dialog.dispose();
+                            EditDoctor editDoctor = new EditDoctor(doctorId.toString());
+                        }
+                    });
+
+                    delete = new JButton("Delete");
+                    delete.setPreferredSize(new Dimension(150, 50));
+                    delete.setForeground(Color.RED);
+                    delete.setOpaque(true);
+                    delete.setFont(new Font("Arial", Font.PLAIN, 16));
+                    delete.setBorder(BorderFactory.createLineBorder(new Color(255, 0, 0), 2));
+                    delete.addMouseListener(new MouseAdapter() {
+                        @Override
+                        public void mouseEntered(MouseEvent e) {
+                            delete.setForeground(Color.WHITE);
+                            delete.setBackground(Color.RED);
+                            delete.setOpaque(true);
+                        }
+                        @Override
+                        public void mouseExited(MouseEvent e) {
+                            delete.setForeground(Color.RED);
+                            delete.setBackground(Color.WHITE);
+                            delete.setOpaque(true);
+                        }
+                    });
+                    delete.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            Person doctor = null;
+                            for (int i = 0; i < WestminsterSkinConsultationManager.doctorArrayList.size(); i++) {
+                                Doctor doc = (Doctor) WestminsterSkinConsultationManager.doctorArrayList.get(i);
+                                if (doc.getMedicalLicenceNumber().equals(doctorId)) {
+                                    doctor = WestminsterSkinConsultationManager.doctorArrayList.get(i);
+                                }
+                            }
+                            int dialogButton = JOptionPane.YES_NO_OPTION;
+                            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete Doctor "+ doctor.getName()+" "+doctor.getSurName()+ " ?", "Warning", dialogButton);
+
+                            if (dialogResult == JOptionPane.YES_OPTION) {
+                                WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
+                                manager.deleteADoctor(doctorId.toString());
+                                dialog.dispose();
+                                mainFrame.dispose();
+                                new FindDoctor();
+                            }
+                        }
+                    });
+                    dialog.add(edit);
+                    dialog.add(delete);
+                    dialog.setVisible(true);
                 }
             }
         });
@@ -261,7 +342,7 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
             filteredDoctorsTableData[i][4] = doc.getSpecialisation();
             filteredDoctorsTableData[i][5] = doc.getAvailability();
         }
-        String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Actions"};
+        String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Availability"};
         doctorTable.setModel(new DefaultTableModel(filteredDoctorsTableData, doctorsTableColumns));
     }
 

@@ -1,9 +1,9 @@
 package GUI.Main_Frames.SubFrames;
 
 import GUI.MainFrame;
-import GUI.Main_Frames.DoctorsPanel;
 import GUI.Other_components.DatePicker;
 import Models.Doctor;
+import Models.Person;
 import Models.WestminsterSkinConsultationManager;
 
 import javax.swing.*;
@@ -17,22 +17,33 @@ import java.util.Date;
 import static GUI.MainFrame.addSpace;
 import static GUI.MainFrame.scaleImage;
 
-public class AddDoctor extends JDialog implements ActionListener {
+public class EditDoctor extends JDialog implements ActionListener {
+    String doctorId;
+    Person doctor;
     final JFrame mainFrame;
     JPanel mainPanel;
     JPanel[] panels = new JPanel[6];
     JPanel[] mainBorderLayouts = new JPanel[3];
     JLabel[] labels = new JLabel[6];
     JTextField fNameField, lNameField, mobileNumField, medicalLicenceNumField;
-    JComboBox specialisationDropDown;
+    JComboBox specialisationDropDown, availabilityDropDown;
     final JTextField dateOfBirthField = new JTextField();
     JTextField[] textFields = new JTextField[4];
-    JButton addDoctor, cancel;
-    public AddDoctor() {
+    JButton editDoctor, cancel;
+    public EditDoctor(String doctorId) {
+        this.doctorId = doctorId;
+        for (int i = 0; i < WestminsterSkinConsultationManager.doctorArrayList.size(); i++) {
+            Doctor doc = (Doctor) WestminsterSkinConsultationManager.doctorArrayList.get(i);
+            if (doc.getMedicalLicenceNumber().equals(doctorId)) {
+                doctor = WestminsterSkinConsultationManager.doctorArrayList.get(i);
+            }
+        }
+        Doctor doc = (Doctor) doctor;
+
         // Main Frame
         mainFrame = new JFrame();
         mainFrame.setVisible(true);
-        mainFrame.setSize(520, 400);
+        mainFrame.setSize(520, 450);
         mainFrame.setLocationRelativeTo(MainFrame.getFrames()[0]);
         mainPanel = new JPanel(new FlowLayout());
 
@@ -66,9 +77,13 @@ public class AddDoctor extends JDialog implements ActionListener {
 
         // Initialise text fields
         fNameField = new JTextField();
+        fNameField.setText(doctor.getName());
         lNameField = new JTextField();
+        lNameField.setText(doctor.getSurName());
         mobileNumField = new JTextField();
+        mobileNumField.setText(doctor.getMobileNumber());
         medicalLicenceNumField = new JTextField();
+        medicalLicenceNumField.setText(doc.getMedicalLicenceNumber());
 
         textFields[0] = fNameField;
         textFields[1] = lNameField;
@@ -96,6 +111,8 @@ public class AddDoctor extends JDialog implements ActionListener {
         dateOfBirthField.setPreferredSize(new Dimension(190, 35));
         dateOfBirthField.setFont(new Font("Arial", Font.PLAIN, 16));
         dateOfBirthField.setFocusable(false);
+        dateOfBirthField.setText(doctor.getStringDateOfBirth());
+
         ImageIcon icon = new ImageIcon("src/GUI/Assets/calendar.png");
         icon = scaleImage(icon, 20, 20);
 
@@ -121,37 +138,58 @@ public class AddDoctor extends JDialog implements ActionListener {
         specialisationDropDown.setPreferredSize(new Dimension(220, 30));
         specialisationDropDown.setFont(new Font("Arial", Font.PLAIN, 16));
         specialisationDropDown.setBorder(null);
+        specialisationDropDown.setSelectedItem(doc.getSpecialisation());
         panels[5].add(specialisationDropDown);
+
+        // Add availability drop down menu
+        JPanel availabilityPanel = new JPanel(new FlowLayout());
+        availabilityPanel.setPreferredSize(new Dimension(220, 55));
+        JLabel availabilityLabel = new JLabel("Availability");
+        availabilityLabel.setPreferredSize(new Dimension(200, 20));
+        availabilityLabel.setOpaque(false);
+        availabilityLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+
+
+        String[] availabilities = {"Available", "Unavailable"};
+        availabilityDropDown = new JComboBox(availabilities);
+        availabilityDropDown.setPreferredSize(new Dimension(220, 30));
+        availabilityDropDown.setFont(new Font("Arial", Font.PLAIN, 16));
+        availabilityDropDown.setBorder(null);
+        availabilityDropDown.setSelectedItem(doc.getAvailability());
+
+        availabilityPanel.add(availabilityLabel);
+        availabilityPanel.add(availabilityDropDown);
+
 
         // Add buttons
         JPanel addDoctorBtnContainer = new JPanel();
         addDoctorBtnContainer.setPreferredSize(new Dimension(500,50));
-        addDoctor = new JButton("Add Doctor");
-        addDoctor.setPreferredSize(new Dimension(220, 40));
-        addDoctor.setFont(new Font("Arial", Font.PLAIN, 16));
-        addDoctor.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
-        addDoctor.setBackground(new Color(0, 0, 0, 0));
-        addDoctor.setForeground(new Color(164, 92, 255));
-        addDoctor.addActionListener(this);
-        addDoctor.addMouseListener(new MouseAdapter() {
+        editDoctor = new JButton("Update");
+        editDoctor.setPreferredSize(new Dimension(220, 40));
+        editDoctor.setFont(new Font("Arial", Font.PLAIN, 16));
+        editDoctor.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
+        editDoctor.setBackground(new Color(0, 0, 0, 0));
+        editDoctor.setForeground(new Color(164, 92, 255));
+        editDoctor.addActionListener(this);
+        editDoctor.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                addDoctor.setOpaque(true);
-                addDoctor.setBackground(new Color(164, 92, 255));
-                addDoctor.setForeground(new Color(255, 255, 255));
+                editDoctor.setOpaque(true);
+                editDoctor.setBackground(new Color(164, 92, 255));
+                editDoctor.setForeground(new Color(255, 255, 255));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                addDoctor.setOpaque(false);
-                addDoctor.setForeground(new Color(164, 92, 255));
+                editDoctor.setOpaque(false);
+                editDoctor.setForeground(new Color(164, 92, 255));
             }
         });
-        addDoctorBtnContainer.add(addDoctor);
+        addDoctorBtnContainer.add(editDoctor);
 
         // Cancel button
         JPanel addAndCancelButtons = new JPanel(new FlowLayout());
-        JLabel cancelDescription = new JLabel("No need add? ");
+        JLabel cancelDescription = new JLabel("No need Edit? ");
         cancelDescription.setFont(new Font("Arial", Font.PLAIN, 16));
         cancelDescription.setForeground(new Color(164, 92, 255));
 
@@ -189,6 +227,7 @@ public class AddDoctor extends JDialog implements ActionListener {
         mainPanel.add(mainBorderLayouts[0]);
         mainPanel.add(mainBorderLayouts[1]);
         mainPanel.add(mainBorderLayouts[2]);
+        mainPanel.add(availabilityPanel);
         mainPanel.add(addSpace(520,30));
         mainPanel.add(addDoctorBtnContainer);
         mainPanel.add(addAndCancelButtons);
@@ -198,25 +237,43 @@ public class AddDoctor extends JDialog implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == addDoctor) {
-            // Check if all fields are filled
-            if (fNameField.getText().equals("") || lNameField.getText().equals("") || dateOfBirthField.getText().equals("") || mobileNumField.getText().equals("") || medicalLicenceNumField.getText().equals("")) {
-                JOptionPane.showMessageDialog(null, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
+        if (e.getSource() == editDoctor){
+            if (textFields[0].getText().equals("") || textFields[1].getText().equals("") || textFields[2].getText().equals("") || textFields[3].getText().equals("") || dateOfBirthField.getText().equals("")){
+                JOptionPane.showMessageDialog(null, "Please fill in all the fields", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                // Check if mobile number is valid
-                if (mobileNumField.getText().length() != 10) {
-                    JOptionPane.showMessageDialog(null, "Please enter a valid mobile number", "Error", JOptionPane.ERROR_MESSAGE);
+                // Check if all fields are filled
+                if (fNameField.getText().equals("") || lNameField.getText().equals("") || dateOfBirthField.getText().equals("") || mobileNumField.getText().equals("") || medicalLicenceNumField.getText().equals("")) {
+                    JOptionPane.showMessageDialog(null, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    // Check if medical licence number is valid
-                    if (medicalLicenceNumField.getText().length() != 8) {
-                        JOptionPane.showMessageDialog(null, "Please enter a valid medical licence number: EX- DOC12345", "Error", JOptionPane.ERROR_MESSAGE);
+                    // Check if mobile number is valid
+                    if (mobileNumField.getText().length() != 10) {
+                        JOptionPane.showMessageDialog(null, "Please enter a valid mobile number", "Error", JOptionPane.ERROR_MESSAGE);
                     } else {
-                        // Add doctor to array list
-                        Date dateOfBirth = WestminsterSkinConsultationManager.strToDate(dateOfBirthField.getText());
-                        Doctor doctor = new Doctor(fNameField.getText(), lNameField.getText(), dateOfBirth, mobileNumField.getText(), medicalLicenceNumField.getText(), specialisationDropDown.getSelectedItem().toString(), "Available");
-                        WestminsterSkinConsultationManager.doctorArrayList.add(doctor);
-                        JOptionPane.showMessageDialog(null, "Doctor added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        mainFrame.dispose();
+                        // Check if medical licence number is valid
+                        if (medicalLicenceNumField.getText().length() != 8) {
+                            JOptionPane.showMessageDialog(null, "Please enter a valid medical licence number: EX- DOC12345", "Error", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            // Change doctor details
+                            String firstName = textFields[0].getText();
+                            String lastName = textFields[1].getText();
+                            String dateOfBirth = dateOfBirthField.getText();
+                            String mobileNumber = textFields[2].getText();
+                            String medicalLicenceNumber = textFields[3].getText();
+                            String specialisation = (String) specialisationDropDown.getSelectedItem();
+                            String availability = (String) availabilityDropDown.getSelectedItem();
+
+                            doctor.setName(firstName);
+                            doctor.setSurName(lastName);
+                            doctor.setDateOfBirth(WestminsterSkinConsultationManager.strToDate(dateOfBirth));
+                            doctor.setMobileNumber(mobileNumber);
+                            Doctor doc = (Doctor) doctor;
+                            doc.setMedicalLicenceNumber(medicalLicenceNumber);
+                            doc.setSpecialisation(specialisation);
+                            doc.setAvailability(availability);
+
+                            JOptionPane.showMessageDialog(null, "Doctor Edited Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            mainFrame.dispose();
+                        }
                     }
                 }
             }

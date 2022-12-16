@@ -16,7 +16,7 @@ public class StatusColumnCellRenderer extends DefaultTableCellRenderer {
             if (status.equals("Available")) {
                 cell.setBackground(new Color(0, 255, 0,50));
                 cell.setForeground(Color.BLACK);
-            } else if (status.equals("Full") || status.equals("Not Available")) {
+            } else if (status.equals("Full") || status.equals("Unavailable")) {
                 cell.setBackground(new Color(255, 0, 0,50));
                 cell.setForeground(Color.BLACK);
             } else {

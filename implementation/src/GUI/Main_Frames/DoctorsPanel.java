@@ -1,5 +1,7 @@
 package GUI.Main_Frames;
 
+import GUI.GUILibs.SavingDone;
+import GUI.GUILibs.SortingDone;
 import GUI.GUILibs.StatusColumnCellRenderer;
 import GUI.Main_Frames.SubFrames.AddDoctor;
 import GUI.Main_Frames.SubFrames.FindDoctor;
@@ -41,7 +43,7 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
     public DoctorsPanel() {
         numberOfDoctors = 0;
         setSize(1300, 800);
-        setLayout(new BorderLayout());
+        setLayout(new FlowLayout());
 
         // Main Panel 1
         mainPanel1 = new JPanel();
@@ -52,17 +54,17 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
         // Main Panel 3
         mainPanel2 = new JPanel();
         mainPanel2.setOpaque(true);
-        mainPanel2.setPreferredSize(new Dimension(1300, 600));
+        mainPanel2.setPreferredSize(new Dimension(1300, 480));
 
         // Main Panel 3
         mainPanel3 = new JPanel(new BorderLayout());
         mainPanel3.setOpaque(false);
-        mainPanel3.setPreferredSize(new Dimension(1300, 80));
+        mainPanel3.setPreferredSize(new Dimension(1000, 80));
 
         // Adding Main Panels to Main Panel
-        add(mainPanel1, BorderLayout.NORTH);
-        add(mainPanel2, BorderLayout.CENTER);
-        add(mainPanel3, BorderLayout.SOUTH);
+        add(mainPanel1);
+        add(mainPanel2);
+        add(mainPanel3);
 
 
         // Panel 1 Components
@@ -124,6 +126,8 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
         deleteEditDoctor = new JButton("Delete / Edit");
         deleteEditDoctor.addMouseListener(this);
         importData = new JButton("Import Data");
+        importData.addActionListener(this);
+        importData.addMouseListener(this);
 
         purpleButtons[0] = addDoctor;
         purpleButtons[1] = deleteEditDoctor;
@@ -135,15 +139,15 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
             purpleButtons[i].setFont(new Font("Arial", Font.PLAIN, 14));
             purpleButtons[i].setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
             purpleButtons[i].addActionListener(this);
+            purpleButtons[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
         }
 
         panel1Bottom = new JPanel(new BorderLayout());
         panel1Bottom.setOpaque(false);
-        panel1Bottom.setPreferredSize(new Dimension(1000, 100));
+        panel1Bottom.setPreferredSize(new Dimension(1000, 60));
         // Panel 1 Bottom West
         panel1BottomWest = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panel1BottomWest.setOpaque(false);
-        panel1BottomWest.setPreferredSize(new Dimension(700, 600));
         panel1BottomWest.add(addDoctor);
         panel1BottomWest.add(deleteEditDoctor);
 
@@ -187,11 +191,11 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
 
         // Main Panel 2 Components
         tablePanel = new JPanel(new BorderLayout());
-        tablePanel.setOpaque(false);
-        tablePanel.setPreferredSize(new Dimension(1000, 600));
+        tablePanel.setOpaque(true);
+        tablePanel.setPreferredSize(new Dimension(1000, 480));
 
         // Table
-        String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Actions"};
+        String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Availability"};
         WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
 
         ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
@@ -224,9 +228,11 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
         ((DefaultTableCellRenderer)header.getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 
         doctorsTableScroll = new JScrollPane(doctorsTable);
+        doctorsTableScroll.setPreferredSize(new Dimension(1000, 480));
+        doctorsTableScroll.setOpaque(true);
 
-        tablePanel.setOpaque(false);
-        tablePanel.setPreferredSize(new Dimension(1000, 400));
+        tablePanel.setOpaque(true);
+        tablePanel.setPreferredSize(new Dimension(1000, 480));
 
         for (int i = 0; i < doctorsTable.getColumnCount(); i++) {
             doctorsTable.getColumnModel().getColumn(i).setCellRenderer(new StatusColumnCellRenderer());
@@ -251,7 +257,11 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
 
         // Panel 3 East Components
         saveDataButton = new JButton("Save Data");
+        saveDataButton.addMouseListener(this);
+        saveDataButton.addActionListener(this);
         sortDataButton = new JButton("Sort Data");
+        sortDataButton.addMouseListener(this);
+        sortDataButton.addActionListener(this);
 
         panel3Buttons[0] = saveDataButton;
         panel3Buttons[1] = sortDataButton;
@@ -293,37 +303,42 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
         mainPanel3.add(panel3East, BorderLayout.EAST);
     }
 
+    /**
+     * All MAIN Events are handled here
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addDoctor){
             AddDoctor addDoctor = new AddDoctor();
         }
         if (e.getSource() == deleteEditDoctor){
-            System.out.println("delete doctor");
             FindDoctor findDoctor = new FindDoctor();
         }
         if (e.getSource() == refreshButton){
-            String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Actions"};
             tableReRender();
-//            System.out.println("number of doctors: "+numberOfDoctors);
-//            for (int i = 0; i < doctors.size(); i++) {
-//                Doctor doctor = (Doctor) doctors.get(i);
-//                newDoctorData[i][0] = doctor.getMedicalLicenceNumber();
-//                newDoctorData[i][1] = doctor.getName();
-//                newDoctorData[i][2] = doctor.getSurName();
-//                newDoctorData[i][3] = doctor.getMobileNumber();
-//                newDoctorData[i][4] = doctor.getSpecialisation();
-//                newDoctorData[i][5] = doctor.getAvailability();
-//            }
-//            doctorsTable.removeAll();
-//            doctorsTable.setModel(new DefaultTableModel(newDoctorData, doctorsTableColumns));
-//
-//            for (int i = 0; i < doctorsTable.getColumnCount(); i++) {
-//                doctorsTable.getColumnModel().getColumn(i).setCellRenderer(new StatusColumnCellRenderer());
-//            }
+        }
+        if (e.getSource() == importData){
+            WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
+            manager.loadDoctorsFromFile();
+        }
+        if (e.getSource() == saveDataButton){
+            System.out.println("save data");
+            WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
+            manager.saveDoctorsToFile();
+            SavingDone savingDone = new SavingDone();
+        }
+        if (e.getSource() == sortDataButton){
+            System.out.println("sort data");
+            WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
+            manager.sort(WestminsterSkinConsultationManager.getDoctorArrayList());
+            tableReRender();
+            SortingDone sortingDone = new SortingDone();
         }
     }
 
+    /**
+     * All MOUSE Events are handled here
+     */
     @Override
     public void mouseClicked(MouseEvent e) {
 
@@ -351,8 +366,37 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
             deleteEditDoctor.setOpaque(true);
             deleteEditDoctor.setForeground(Color.WHITE);
         }
+        if (e.getSource() == importData){
+            importData.setBackground(new Color(164, 92, 255));
+            importData.setOpaque(true);
+            importData.setForeground(Color.WHITE);
+        }
         if (e.getSource() == refreshButton){
             refreshButton.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
+        }
+        if (e.getSource() == saveDataButton){
+            saveDataButton.setBackground(new Color(164, 92, 255));
+            saveDataButton.setOpaque(true);
+            saveDataButton.setForeground(Color.WHITE);
+            try {
+                ImageIcon saveBtnIcon = new ImageIcon("src/GUI/Assets/saveWhite.png");
+                saveBtnIcon = scaleImage(saveBtnIcon, 20, 20);
+                saveDataButton.setIcon(saveBtnIcon);
+            } catch (Exception ee) {
+                System.out.println("Error: " + ee);
+            }
+        }
+        if (e.getSource() == sortDataButton){
+            sortDataButton.setBackground(new Color(164, 92, 255));
+            sortDataButton.setOpaque(true);
+            sortDataButton.setForeground(Color.WHITE);
+            try {
+                ImageIcon sortBtnIcon = new ImageIcon("src/GUI/Assets/sortWhite.png");
+                sortBtnIcon = scaleImage(sortBtnIcon, 20, 20);
+                sortDataButton.setIcon(sortBtnIcon);
+            } catch (Exception ee) {
+                System.out.println("Error: " + ee);
+            }
         }
     }
 
@@ -368,13 +412,48 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
             deleteEditDoctor.setForeground(new Color(164, 92, 255));
             deleteEditDoctor.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
         }
+        if (e.getSource() == importData){
+            importData.setOpaque(false);
+            importData.setForeground(new Color(164, 92, 255));
+            importData.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
+        }
         if (e.getSource() == refreshButton){
             refreshButton.setBorder(null);
         }
+        if (e.getSource() == saveDataButton){
+            saveDataButton.setOpaque(true);
+            saveDataButton.setBackground(new Color(215, 215, 215));
+            saveDataButton.setForeground(new Color(107, 107, 107));
+            try {
+                ImageIcon saveBtnIcon = new ImageIcon("src/GUI/Assets/save.png");
+                saveBtnIcon = scaleImage(saveBtnIcon, 20, 20);
+                saveDataButton.setIcon(saveBtnIcon);
+            } catch (Exception ee) {
+                System.out.println("Error: " + ee);
+            }
+        }
+        if (e.getSource() == sortDataButton){
+            sortDataButton.setOpaque(true);
+            sortDataButton.setBackground(new Color(215, 215, 215));
+            sortDataButton.setForeground(new Color(107, 107, 107));
+            try {
+                ImageIcon sortBtnIcon = new ImageIcon("src/GUI/Assets/sort.png");
+                sortBtnIcon = scaleImage(sortBtnIcon, 20, 20);
+                sortDataButton.setIcon(sortBtnIcon);
+            } catch (Exception ee) {
+                System.out.println("Error: " + ee);
+            }
+        }
     }
 
+    /**
+     * This method is used to re-render the table.
+     * Re-rendering the table is necessary when the data is changed.
+     * This method is called when the refresh button is clicked.
+     * The re-rendering is done by changing the Default Table Model.
+     */
     public void tableReRender(){
-        String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Actions"};
+        String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Availability"};
 
         ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
         String[][] newDoctorData = new String[doctors.size()][6];

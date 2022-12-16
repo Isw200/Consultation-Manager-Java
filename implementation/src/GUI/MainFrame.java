@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MainFrame extends JFrame implements ActionListener {
-    Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     JPanel leftPanel, rightPanel;
     DashBoardPanel dashBoardPanel;
     DoctorsPanel doctorsPanel;
@@ -268,4 +267,5 @@ public class MainFrame extends JFrame implements ActionListener {
         rightPanel.revalidate();
         rightPanel.repaint();
     }
+
 }
