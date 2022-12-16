@@ -89,6 +89,8 @@ public class Main {
 
             // GUI
             else if (answer.equalsIgnoreCase("G")) {
+                westminsterSkinConsultationManager.loadDoctorsFromFile();
+                westminsterSkinConsultationManager.saveDoctorsToFile();
                 westminsterSkinConsultationManager.runGUI();
             }
         }

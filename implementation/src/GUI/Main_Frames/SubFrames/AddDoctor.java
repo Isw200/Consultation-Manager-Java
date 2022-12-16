@@ -1,5 +1,6 @@
 package GUI.Main_Frames.SubFrames;
 
+import GUI.Main_Frames.DoctorsPanel;
 import GUI.Other_components.DatePicker;
 import Models.Doctor;
 import Models.WestminsterSkinConsultationManager;

@@ -13,7 +13,7 @@ public class GUIRunner {
 //        mainFrame.setVisible(true);
 //    }
 
-    public static void main(String[] args) {
-        FindDoctor findDoctor = new FindDoctor();
-    }
+//    public static void main(String[] args) {
+//        FindDoctor findDoctor = new FindDoctor();
+//    }
 }
