@@ -1,6 +1,7 @@
 package GUI.Main_Frames.SubFrames;
 
 import GUI.MainFrame;
+import GUI.Main_Frames.DoctorsPanel;
 import GUI.Other_components.DatePicker;
 import Models.Doctor;
 import Models.Person;
@@ -161,9 +162,9 @@ public class EditDoctor extends JDialog implements ActionListener {
         availabilityPanel.add(availabilityDropDown);
 
 
-        // Add buttons
-        JPanel addDoctorBtnContainer = new JPanel();
-        addDoctorBtnContainer.setPreferredSize(new Dimension(500,50));
+        // Update buttons
+        JPanel updateDoctorBtnContainer = new JPanel();
+        updateDoctorBtnContainer.setPreferredSize(new Dimension(500,50));
         editDoctor = new JButton("Update");
         editDoctor.setPreferredSize(new Dimension(220, 40));
         editDoctor.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -185,7 +186,7 @@ public class EditDoctor extends JDialog implements ActionListener {
                 editDoctor.setForeground(new Color(164, 92, 255));
             }
         });
-        addDoctorBtnContainer.add(editDoctor);
+        updateDoctorBtnContainer.add(editDoctor);
 
         // Cancel button
         JPanel addAndCancelButtons = new JPanel(new FlowLayout());
@@ -229,7 +230,7 @@ public class EditDoctor extends JDialog implements ActionListener {
         mainPanel.add(mainBorderLayouts[2]);
         mainPanel.add(availabilityPanel);
         mainPanel.add(addSpace(520,30));
-        mainPanel.add(addDoctorBtnContainer);
+        mainPanel.add(updateDoctorBtnContainer);
         mainPanel.add(addAndCancelButtons);
         mainPanel.add(addSpace(520,50));
         mainFrame.add(mainPanel);
@@ -272,6 +273,8 @@ public class EditDoctor extends JDialog implements ActionListener {
                             doc.setAvailability(availability);
 
                             JOptionPane.showMessageDialog(null, "Doctor Edited Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            FindDoctor.tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
+                            DoctorsPanel.tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
                             mainFrame.dispose();
                         }
                     }

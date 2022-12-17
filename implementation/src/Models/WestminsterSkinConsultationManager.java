@@ -15,7 +15,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
 
 
     public static ArrayList<Person> doctorArrayList = new ArrayList<>();
-    private ArrayList<Person> patientArrayList = new ArrayList<>();
+    public static ArrayList<Person> patientArrayList = new ArrayList<>();
     private ArrayList<Sessions> sessionsArrayList = new ArrayList<>();
     File doctorFile = new File("doctorList.txt");
     File patientFile = new File("patientList.txt");
@@ -27,7 +27,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         return doctorArrayList;
     }
 
-    public ArrayList<Person> getPatientArrayList() {
+    public static ArrayList<Person> getPatientArrayList() {
         return patientArrayList;
     }
 
@@ -101,6 +101,9 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      */
     @Override
     public void saveDoctorsToFile() {
+        if (doctorFile.exists()){
+            doctorFile.delete();
+        }
         saveToFile(doctorFile,"Doctor");
     }
 
@@ -152,9 +155,9 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      * correct format Example 15-MAR-2000
      */
     @Override
-    public void addNewPatient(String name, String surName, String stringDateOfBirth, String mobileNumber, String patentId) {
+    public void addNewPatient(String name, String surName, String stringDateOfBirth, String mobileNumber, String patentId,String gender) {
         Date dateOfBirth = strToDate(stringDateOfBirth);
-        Patient patient = new Patient(name,surName,dateOfBirth,mobileNumber,patentId);
+        Patient patient = new Patient(name,surName,dateOfBirth,mobileNumber,patentId, gender);
         patientArrayList.add(patient);
     }
 
@@ -194,6 +197,9 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      */
     @Override
     public void savePatientsToFile() {
+        if (patientFile.exists()){
+            patientFile.delete();
+        }
         saveToFile(patientFile,"Patient");
     }
 
@@ -287,8 +293,9 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
                 String dateOfBirth = dataItems.get(4) + "-" + dataItems.get(3) + "-" + dataItems.get(7);
                 String mobileNumber = dataItems.get(8);
                 String patentId = dataItems.get(9);
+                String gender = dataItems.get(10);
 
-                addNewPatient(name, surName, dateOfBirth, mobileNumber, patentId);
+                addNewPatient(name, surName, dateOfBirth, mobileNumber, patentId, gender);
             }
         }
     }
@@ -313,7 +320,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
             }else if (type.equals("Patient")){
                 for (Person patient : patientArrayList) {
                     Patient patientType = (Patient) patient;
-                    bufferedWriter.write(patientType.getName() + " " + patientType.getSurName() + " " + patientType.getDateOfBirth() + " " + patientType.getMobileNumber() + " " + patientType.getPatientId() + "\n");
+                    bufferedWriter.write(patientType.getName() + " " + patientType.getSurName() + " " + patientType.getDateOfBirth() + " " + patientType.getMobileNumber() + " " + patientType.getPatientId() + " " + patientType.getGender() + "\n");
                 }
             }
             bufferedWriter.close();

@@ -11,6 +11,8 @@ import Models.WestminsterSkinConsultationManager;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -21,19 +23,21 @@ import java.util.ArrayList;
 import static GUI.MainFrame.addSpace;
 import static GUI.MainFrame.scaleImage;
 
-public class DoctorsPanel extends JPanel implements ActionListener, MouseListener {
+public class DoctorsPanel extends JPanel implements ActionListener, MouseListener, DocumentListener {
     JPanel mainPanel1, mainPanel2, mainPanel3;
     JPanel panel1Top, panel1Bottom;
     JPanel panel1BottomWest, panel1BottomEast;
     JPanel searchPanel;
     JTextField searchField;
+    String name;
     ImageIcon searchIcon;
-    int numberOfDoctors;
-    JLabel panelTitle, allDoctors;
+    static int numberOfDoctors;
+    JLabel panelTitle;
+    static JLabel allDoctors;
     JButton addDoctor, deleteEditDoctor,importData;
     JButton[] purpleButtons = new JButton[3];
     JButton refreshButton;
-    JTable doctorsTable;
+    static JTable doctorsTable;
     JPanel tablePanel;
     JScrollPane doctorsTableScroll;
     JPanel panel3West, panel3East;
@@ -101,6 +105,7 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
             }
         });
         searchField.setPreferredSize(new Dimension(320, 30));
+        searchField.getDocument().addDocumentListener(this);
         searchPanel.add(addSpace(30, 10), BorderLayout.WEST);
         searchPanel.add(searchField,BorderLayout.CENTER);
 
@@ -315,11 +320,12 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
             FindDoctor findDoctor = new FindDoctor();
         }
         if (e.getSource() == refreshButton){
-            tableReRender();
+            tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
         }
         if (e.getSource() == importData){
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
             manager.loadDoctorsFromFile();
+            tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
         }
         if (e.getSource() == saveDataButton){
             System.out.println("save data");
@@ -331,7 +337,7 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
             System.out.println("sort data");
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
             manager.sort(WestminsterSkinConsultationManager.getDoctorArrayList());
-            tableReRender();
+            tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
             SortingDone sortingDone = new SortingDone();
         }
     }
@@ -452,10 +458,9 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
      * This method is called when the refresh button is clicked.
      * The re-rendering is done by changing the Default Table Model.
      */
-    public void tableReRender(){
+    public static void tableReRender(ArrayList<Person> doctors){
         String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Availability"};
 
-        ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
         String[][] newDoctorData = new String[doctors.size()][6];
 
         numberOfDoctors = doctors.size();
@@ -476,5 +481,41 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
             doctorsTable.getColumnModel().getColumn(i).setCellRenderer(new StatusColumnCellRenderer());
         }
         allDoctors.setText("All Doctors "+numberOfDoctors);
+    }
+
+    @Override
+    public void insertUpdate(DocumentEvent e) {
+        if (e.getDocument() == searchField.getDocument()){
+            filterDataBySearchField();
+        }
+    }
+
+    @Override
+    public void removeUpdate(DocumentEvent e) {
+        if (e.getDocument() == searchField.getDocument()){
+            filterDataBySearchField();
+        }
+    }
+
+    @Override
+    public void changedUpdate(DocumentEvent e) {
+        if (e.getDocument() == searchField.getDocument()){
+            filterDataBySearchField();
+        }
+    }
+
+    public void filterDataBySearchField(){
+        ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
+        if (!searchField.getText().equals("") && !searchField.getText().equals("Search Doctors...")){
+            ArrayList<Person> searchedDoctors = new ArrayList<>();
+            for (Person doctor : doctors) {
+                if (doctor.getName().toLowerCase().contains(searchField.getText().toLowerCase()) || doctor.getSurName().toLowerCase().contains(searchField.getText().toLowerCase())){
+                    searchedDoctors.add(doctor);
+                }
+            }
+            tableReRender(searchedDoctors);
+        } else {
+            tableReRender(doctors);
+        }
     }
 }

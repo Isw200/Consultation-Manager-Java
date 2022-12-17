@@ -16,7 +16,7 @@ public interface SkinConsultationManager {
     void loadDoctorsFromFile();
 
     //methods for patients
-    void addNewPatient(String name, String surName,  String stringDateOfBirth, String mobileNumber, String patentId);
+    void addNewPatient(String name, String surName,  String stringDateOfBirth, String mobileNumber, String patentId, String gender);
 
     void deleteAPatient(String patentId);
 

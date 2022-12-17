@@ -1,5 +1,8 @@
 package GUI.GUILibs;
 
+import GUI.MainFrame;
+import GUI.Main_Frames.DoctorsPanel;
+
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -44,7 +47,7 @@ public class SavingDone {
                             gbc.gridy = 1;
                             dialog.add(pb, gbc);
                             dialog.pack();
-                            dialog.setLocationRelativeTo(null);
+                            dialog.setLocationRelativeTo(MainFrame.getFrames()[0]);
                             dialog.setVisible(true);
                         }
                         pb.setValue(getProgress());

@@ -76,7 +76,9 @@ public class Main {
                 String mobileNumber = input.nextLine();
                 System.out.print("Enter Patient ID: ");
                 String patentId = input.nextLine();
-                westminsterSkinConsultationManager.addNewPatient(name, surName, dateOfBirth,mobileNumber,patentId);
+                System.out.print("Enter Gender: ");
+                String gender = input.nextLine();
+                westminsterSkinConsultationManager.addNewPatient(name, surName, dateOfBirth,mobileNumber,patentId,gender);
             } else if (answer.equalsIgnoreCase("PD")) {
                 System.out.print("Enter Patient ID: ");
                 String patentId = input.nextLine();
@@ -95,6 +97,8 @@ public class Main {
             else if (answer.equalsIgnoreCase("GL")) {
                 westminsterSkinConsultationManager.loadDoctorsFromFile();
                 westminsterSkinConsultationManager.saveDoctorsToFile();
+                westminsterSkinConsultationManager.loadPatientsFromFile();
+                westminsterSkinConsultationManager.savePatientsToFile();
                 westminsterSkinConsultationManager.runGUI();
             }
             else if (answer.equalsIgnoreCase("GN")) {

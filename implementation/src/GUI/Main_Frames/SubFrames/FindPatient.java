@@ -1,8 +1,9 @@
 package GUI.Main_Frames.SubFrames;
 
 import GUI.MainFrame;
-import GUI.Main_Frames.DoctorsPanel;
+import GUI.Main_Frames.PatientsPanel;
 import Models.Doctor;
+import Models.Patient;
 import Models.Person;
 import Models.WestminsterSkinConsultationManager;
 
@@ -17,23 +18,23 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-public class FindDoctor extends JFrame implements ActionListener, MouseListener, DocumentListener {
-    String fName, lName, medicalLicenceNum;
+public class FindPatient extends JFrame implements ActionListener, MouseListener, DocumentListener {
+    String fName, lName, patientId;
     JFrame mainFrame;
-    JLabel fNameLabel, lNameLabel, medicalLicenceNumLabel;
-    JTextField fNameField, lNameField, medicalLicenceNumField;
+    JLabel fNameLabel, lNameLabel, patientIdLabel;
+    JTextField fNameField, lNameField, patientIdField;
     JPanel topPanel, topPanelUp, topPanelDown, bottomPanel;
-    JButton findDoctor;
-    static JTable doctorTable;
+    JButton findPatient;
+    static JTable patientTable;
     JScrollPane scrollPane;
     JButton edit, delete;
-    public FindDoctor() {
+    public FindPatient() {
         fName = "";
         lName = "";
-        medicalLicenceNum = "";
+        patientId = "";
 
         mainFrame = new JFrame();
-        mainFrame.setTitle("Find Doctor");
+        mainFrame.setTitle("Find Patient");
         mainFrame.setSize(800, 500);
         mainFrame.setLayout(new FlowLayout());
         mainFrame.setResizable(false);
@@ -50,14 +51,14 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
         fNameLabel.setPreferredSize(new Dimension(150, 20));
         lNameLabel = new JLabel("Last Name");
         lNameLabel.setPreferredSize(new Dimension(150, 20));
-        medicalLicenceNumLabel = new JLabel("Medical Licence Number");
-        medicalLicenceNumLabel.setPreferredSize(new Dimension(250, 20));
+        patientIdLabel = new JLabel("Patient ID");
+        patientIdLabel.setPreferredSize(new Dimension(250, 20));
 
         topPanelUp = new JPanel(new FlowLayout());
         topPanelUp.setPreferredSize(new Dimension(800, 20));
         topPanelUp.add(fNameLabel);
         topPanelUp.add(lNameLabel);
-        topPanelUp.add(medicalLicenceNumLabel);
+        topPanelUp.add(patientIdLabel);
         topPanel.add(topPanelUp);
 
         // Top Panel Down
@@ -71,24 +72,24 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
         lNameField.setPreferredSize(new Dimension(150, 30));
         lNameField.getDocument().addDocumentListener(this);
 
-        medicalLicenceNumField = new JTextField();
-        medicalLicenceNumField.setPreferredSize(new Dimension(250, 30));
-        medicalLicenceNumField.getDocument().addDocumentListener(this);
+        patientIdField = new JTextField();
+        patientIdField.setPreferredSize(new Dimension(250, 30));
+        patientIdField.getDocument().addDocumentListener(this);
 
         topPanelDown.add(fNameField);
         topPanelDown.add(lNameField);
-        topPanelDown.add(medicalLicenceNumField);
+        topPanelDown.add(patientIdField);
         topPanel.add(topPanelDown);
 
         // Find Doctor Button
-        findDoctor = new JButton("Find Doctor");
-        findDoctor.setPreferredSize(new Dimension(150, 30));
-        findDoctor.addActionListener(this);
-        findDoctor.addMouseListener(this);
-        findDoctor.setForeground(new Color(164, 92, 255));
-        findDoctor.setFont(new Font("Arial", Font.PLAIN, 14));
-        findDoctor.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
-        topPanel.add(findDoctor);
+        findPatient = new JButton("Find Patient");
+        findPatient.setPreferredSize(new Dimension(150, 30));
+        findPatient.addActionListener(this);
+        findPatient.addMouseListener(this);
+        findPatient.setForeground(new Color(164, 92, 255));
+        findPatient.setFont(new Font("Arial", Font.PLAIN, 14));
+        findPatient.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
+        topPanel.add(findPatient);
         mainFrame.add(topPanel);
 
 
@@ -96,29 +97,30 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
         bottomPanel = new JPanel(new FlowLayout());
         bottomPanel.setPreferredSize(new Dimension(800, 400));
 
-        String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Availability"};
-        ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
-        String[][] doctorData = new String[doctors.size()][6];
-        for (int i = 0; i < doctors.size(); i++) {
-            Doctor doctor = (Doctor) WestminsterSkinConsultationManager.getDoctorArrayList().get(i);
-            doctorData[i][0] = doctor.getMedicalLicenceNumber();
-            doctorData[i][1] = doctor.getName();
-            doctorData[i][2] = doctor.getSurName();
-            doctorData[i][3] = doctor.getMobileNumber();
-            doctorData[i][4] = doctor.getSpecialisation();
-            doctorData[i][5] = doctor.getAvailability();
+        String[] patientsTableColumns = {"Patient ID", "First Name", "Last Name","Age","Gender", "Phone Number"};
+        ArrayList<Person> patients = WestminsterSkinConsultationManager.getPatientArrayList();
+        String[][] patientsData = new String[patients.size()][6];
+
+        for (int i = 0; i < patients.size(); i++) {
+            Patient patient = (Patient) WestminsterSkinConsultationManager.getPatientArrayList().get(i);
+            patientsData[i][0] = patient.getPatientId();
+            patientsData[i][1] = patient.getName();
+            patientsData[i][2] = patient.getSurName();
+            patientsData[i][3] = String.valueOf(patient.getAge());
+            patientsData[i][4] = patient.getGender();
+            patientsData[i][5] = patient.getMobileNumber();
         }
 
-        doctorTable = new JTable();
-        doctorTable.setPreferredScrollableViewportSize(new Dimension(750, 300));
-        doctorTable.setModel(new DefaultTableModel(doctorData, doctorsTableColumns));
-        doctorTable.setRowHeight(30);
-        doctorTable.setFont(new Font("Arial", Font.PLAIN, 14));
-        doctorTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        doctorTable.setShowGrid(true);
-        doctorTable.setGridColor(new Color(234, 214, 255));
-        doctorTable.setModel(new DefaultTableModel(doctorData, doctorsTableColumns));
-        JTableHeader header = doctorTable.getTableHeader();
+        patientTable = new JTable();
+        patientTable.setPreferredScrollableViewportSize(new Dimension(750, 300));
+        patientTable.setModel(new DefaultTableModel(patientsData, patientsTableColumns));
+        patientTable.setRowHeight(30);
+        patientTable.setFont(new Font("Arial", Font.PLAIN, 14));
+        patientTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        patientTable.setShowGrid(true);
+        patientTable.setGridColor(new Color(234, 214, 255));
+        patientTable.setModel(new DefaultTableModel(patientsData, patientsTableColumns));
+        JTableHeader header = patientTable.getTableHeader();
         header.setBackground(new Color(30, 0, 70));
         header.setForeground(Color.WHITE);
         header.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -127,20 +129,20 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
         /**
          * This is to get values from selected row from the table
          */
-        doctorTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+        patientTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
-                int viewRow = doctorTable.getSelectedRow();
+                int viewRow = patientTable.getSelectedRow();
 
                 if (!e.getValueIsAdjusting() && viewRow != -1) {
                     int columnIndex = 0;
-                    int modelRow = doctorTable.convertRowIndexToModel(viewRow);
-                    Object doctorId = doctorTable.getModel().getValueAt(modelRow, columnIndex);
-                    JDialog dialog = new JDialog(mainFrame, "Doctor Details", true);
+                    int modelRow = patientTable.convertRowIndexToModel(viewRow);
+                    Object patientId = patientTable.getModel().getValueAt(modelRow, columnIndex);
+                    JDialog dialog = new JDialog(mainFrame, "Patient Details", true);
                     dialog.setSize(400, 100);
                     dialog.setLayout(new FlowLayout());
                     dialog.setResizable(false);
-                    dialog.setLocationRelativeTo(FindDoctor.getFrames()[0]);
+                    dialog.setLocationRelativeTo(FindPatient.getFrames()[0]);
 
                     // Edit and Delete Buttons
                     edit = new JButton("Edit");
@@ -167,7 +169,7 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             dialog.dispose();
-                            new EditDoctor(doctorId.toString());
+                            new EditPatient(patientId.toString());
                         }
                     });
 
@@ -194,23 +196,23 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
                     delete.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            Person doctor = null;
-                            for (int i = 0; i < WestminsterSkinConsultationManager.doctorArrayList.size(); i++) {
-                                Doctor doc = (Doctor) WestminsterSkinConsultationManager.doctorArrayList.get(i);
-                                if (doc.getMedicalLicenceNumber().equals(doctorId)) {
-                                    doctor = WestminsterSkinConsultationManager.doctorArrayList.get(i);
+                            Person patient = null;
+                            for (int i = 0; i < WestminsterSkinConsultationManager.patientArrayList.size(); i++) {
+                                Patient p = (Patient) WestminsterSkinConsultationManager.patientArrayList.get(i);
+                                if (p.getPatientId().equals(patientId)) {
+                                    patient = WestminsterSkinConsultationManager.patientArrayList.get(i);
                                 }
                             }
                             int dialogButton = JOptionPane.YES_NO_OPTION;
-                            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete Doctor "+ doctor.getName()+" "+doctor.getSurName()+ " ?", "Warning", dialogButton);
+                            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete Patient "+ patient.getName()+" "+patient.getSurName()+ " ?", "Warning", dialogButton);
 
                             if (dialogResult == JOptionPane.YES_OPTION) {
                                 WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
-                                manager.deleteADoctor(doctorId.toString());
-                                DoctorsPanel.tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
+                                manager.deleteAPatient(patientId.toString());
+                                PatientsPanel.tableReRender(WestminsterSkinConsultationManager.getPatientArrayList());
                                 dialog.dispose();
                                 mainFrame.dispose();
-                                new FindDoctor();
+                                new FindPatient();
                             }
                         }
                     });
@@ -221,7 +223,7 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
             }
         });
 
-        scrollPane = new JScrollPane(doctorTable);
+        scrollPane = new JScrollPane(patientTable);
 
         bottomPanel.add(scrollPane);
         mainFrame.add(bottomPanel);
@@ -231,14 +233,14 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == findDoctor) {
+        if (e.getSource() == findPatient) {
             ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
             ArrayList<Person> filteredDoctors = new ArrayList<>();
 
             for (Person doctor : doctors) {
                 System.out.println(fName);
                 Doctor doc = (Doctor) doctor;
-                if (doctor.getName().equalsIgnoreCase(fName) && doctor.getSurName().equalsIgnoreCase(lName) && doc.getMedicalLicenceNumber().equalsIgnoreCase(medicalLicenceNum)) {
+                if (doctor.getName().equalsIgnoreCase(fName) && doctor.getSurName().equalsIgnoreCase(lName) && doc.getMedicalLicenceNumber().equalsIgnoreCase(patientId)) {
                     filteredDoctors.add(doctor);
                 }
             }
@@ -253,37 +255,37 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
 
     @Override
     public void mousePressed(MouseEvent e) {
-        if (e.getSource() == findDoctor) {
-            findDoctor.setForeground(new Color(164, 92, 255));
-            findDoctor.setBackground(Color.WHITE);
-            findDoctor.setOpaque(true);
+        if (e.getSource() == findPatient) {
+            findPatient.setForeground(new Color(164, 92, 255));
+            findPatient.setBackground(Color.WHITE);
+            findPatient.setOpaque(true);
         }
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        if (e.getSource() == findDoctor) {
-            findDoctor.setForeground(Color.WHITE);
-            findDoctor.setBackground(new Color(164, 92, 255));
-            findDoctor.setOpaque(true);
+        if (e.getSource() == findPatient) {
+            findPatient.setForeground(Color.WHITE);
+            findPatient.setBackground(new Color(164, 92, 255));
+            findPatient.setOpaque(true);
         }
     }
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        if (e.getSource() == findDoctor) {
-            findDoctor.setForeground(Color.WHITE);
-            findDoctor.setBackground(new Color(164, 92, 255));
-            findDoctor.setOpaque(true);
+        if (e.getSource() == findPatient) {
+            findPatient.setForeground(Color.WHITE);
+            findPatient.setBackground(new Color(164, 92, 255));
+            findPatient.setOpaque(true);
         }
     }
 
     @Override
     public void mouseExited(MouseEvent e) {
-        if (e.getSource() == findDoctor) {
-            findDoctor.setForeground(new Color(164, 92, 255));
-            findDoctor.setBackground(Color.WHITE);
-            findDoctor.setOpaque(true);
+        if (e.getSource() == findPatient) {
+            findPatient.setForeground(new Color(164, 92, 255));
+            findPatient.setBackground(Color.WHITE);
+            findPatient.setOpaque(true);
         }
     }
 
@@ -291,13 +293,13 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
     public void insertUpdate(DocumentEvent e) {
         if (e.getDocument() == fNameField.getDocument()) {
             fName = fNameField.getText();
-            updateTable(fName, lName, medicalLicenceNum);
+            updateTable(fName, lName, patientId);
         } else if (e.getDocument() == lNameField.getDocument()) {
             lName = lNameField.getText();
-            updateTable(fName, lName, medicalLicenceNum);
-        } else if (e.getDocument() == medicalLicenceNumField.getDocument()) {
-            medicalLicenceNum = medicalLicenceNumField.getText();
-            updateTable(fName, lName, medicalLicenceNum);
+            updateTable(fName, lName, patientId);
+        } else if (e.getDocument() == patientIdField.getDocument()) {
+            patientId = patientIdField.getText();
+            updateTable(fName, lName, patientId);
         }
     }
 
@@ -310,41 +312,41 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
     public void changedUpdate(DocumentEvent e) {
         if (e.getDocument() == fNameField.getDocument()) {
             fName = fNameField.getText();
-            updateTable(fName, lName, medicalLicenceNum);
+            updateTable(fName, lName, patientId);
         } else if (e.getDocument() == lNameField.getDocument()) {
             lName = lNameField.getText();
-            updateTable(fName, lName, medicalLicenceNum);
-        } else if (e.getDocument() == medicalLicenceNumField.getDocument()) {
-            medicalLicenceNum = medicalLicenceNumField.getText();
-            updateTable(fName, lName, medicalLicenceNum);
+            updateTable(fName, lName, patientId);
+        } else if (e.getDocument() == patientIdField.getDocument()) {
+            patientId = patientIdField.getText();
+            updateTable(fName, lName, patientId);
         }
     }
 
-    public void updateTable(String fName, String lName, String doctorId) {
-        ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
-        ArrayList<Person> filteredDoctors = new ArrayList<>();
+    public void updateTable(String fName, String lName, String patientId) {
+        ArrayList<Person> patients = WestminsterSkinConsultationManager.getPatientArrayList();
+        ArrayList<Person> filteredPatients = new ArrayList<>();
 
-        for (Person doctor : doctors) {
-            Doctor doc = (Doctor) doctor;
-            if (doctor.getName().equalsIgnoreCase(fName) && doctor.getSurName().equalsIgnoreCase(lName) || doc.getMedicalLicenceNumber().equalsIgnoreCase(doctorId)) {
-                filteredDoctors.add(doctor);
+        for (Person patient : patients) {
+            Patient p = (Patient) patient;
+            if (patient.getName().equalsIgnoreCase(fName) && patient.getSurName().equalsIgnoreCase(lName) || p.getPatientId().equalsIgnoreCase(patientId)) {
+                filteredPatients.add(patient);
             }
         }
-        tableReRender(filteredDoctors);
+        tableReRender(filteredPatients);
     }
 
-    public static void tableReRender(ArrayList<Person> filteredDoctors){
-        String[][] filteredDoctorsTableData = new String[filteredDoctors.size()][6];
-        for (int i = 0; i < filteredDoctors.size(); i++) {
-            Doctor doc = (Doctor) filteredDoctors.get(i);
-            filteredDoctorsTableData[i][0] = doc.getMedicalLicenceNumber();
-            filteredDoctorsTableData[i][1] = doc.getName();
-            filteredDoctorsTableData[i][2] = doc.getSurName();
-            filteredDoctorsTableData[i][3] = doc.getMobileNumber();
-            filteredDoctorsTableData[i][4] = doc.getSpecialisation();
-            filteredDoctorsTableData[i][5] = doc.getAvailability();
+    public static void tableReRender(ArrayList<Person> filteredPatients){
+        String[][] filteredPatientsTableData = new String[filteredPatients.size()][6];
+        for (int i = 0; i < filteredPatients.size(); i++) {
+            Patient patient = (Patient) filteredPatients.get(i);
+            filteredPatientsTableData[i][0] = patient.getPatientId();
+            filteredPatientsTableData[i][1] = patient.getName();
+            filteredPatientsTableData[i][2] = patient.getSurName();
+            filteredPatientsTableData[i][3] = String.valueOf(patient.getAge());
+            filteredPatientsTableData[i][4] = patient.getGender();
+            filteredPatientsTableData[i][5] = patient.getMobileNumber();
         }
-        String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Availability"};
-        doctorTable.setModel(new DefaultTableModel(filteredDoctorsTableData, doctorsTableColumns));
+        String[] patientsTableColumns = {"Patient ID", "First Name", "Last Name","Age","Gender", "Phone Number"};
+        patientTable.setModel(new DefaultTableModel(filteredPatientsTableData, patientsTableColumns));
     }
 }

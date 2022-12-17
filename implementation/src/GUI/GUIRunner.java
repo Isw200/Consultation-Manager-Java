@@ -1,6 +1,8 @@
 package GUI;
 
+import GUI.Main_Frames.SubFrames.AddPatients;
 import GUI.Main_Frames.SubFrames.FindDoctor;
+import Models.WestminsterSkinConsultationManager;
 
 import javax.swing.*;
 
@@ -13,7 +15,13 @@ public class GUIRunner {
 //        mainFrame.setVisible(true);
 //    }
 
-//    public static void main(String[] args) {
-//        FindDoctor findDoctor = new FindDoctor();
-//    }
+    public static void main(String[] args) {
+        WestminsterSkinConsultationManager westminsterSkinConsultationManager = new WestminsterSkinConsultationManager();
+        westminsterSkinConsultationManager.loadDoctorsFromFile();
+        westminsterSkinConsultationManager.saveDoctorsToFile();
+        westminsterSkinConsultationManager.loadPatientsFromFile();
+        westminsterSkinConsultationManager.savePatientsToFile();
+        westminsterSkinConsultationManager.runGUI();
+//        AddPatients addPatients = new AddPatients();
+    }
 }

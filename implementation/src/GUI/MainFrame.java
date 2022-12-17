@@ -3,6 +3,7 @@ package GUI;
 import GUI.GUILibs.RoundedBorder;
 import GUI.Main_Frames.DashBoardPanel;
 import GUI.Main_Frames.DoctorsPanel;
+import GUI.Main_Frames.PatientsPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -13,6 +14,7 @@ public class MainFrame extends JFrame implements ActionListener {
     JPanel leftPanel, rightPanel;
     DashBoardPanel dashBoardPanel;
     DoctorsPanel doctorsPanel;
+    PatientsPanel patientsPanel;
     JPanel operatorContainer, logoContainer, logoutContainer;
     JButton dashboardButton, doctorButton, patientButton, appointmentButton, sessionButton;
     JButton logoutButton;
@@ -172,6 +174,7 @@ public class MainFrame extends JFrame implements ActionListener {
 //        rightPanel.add(doctorsPanel, BorderLayout.CENTER);
 
         doctorsPanel = new DoctorsPanel();
+        patientsPanel = new PatientsPanel();
 
         add(rightPanel, BorderLayout.CENTER);
 
@@ -191,6 +194,7 @@ public class MainFrame extends JFrame implements ActionListener {
         }
         else if (e.getSource() == patientButton) {
             changeClickedButtonStyle(patientButton);
+            changeRightPanel(patientsPanel);
         }
         else if (e.getSource() == appointmentButton) {
             System.out.println("Appointment");

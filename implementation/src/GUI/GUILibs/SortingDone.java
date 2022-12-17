@@ -1,5 +1,7 @@
 package GUI.GUILibs;
 
+import GUI.MainFrame;
+
 import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -40,15 +42,11 @@ public class SortingDone {
                             gbc.weightx = 1;
                             gbc.gridy = 0;
                             dialog.add(new JLabel("Sorting Done..."), gbc);
-    //                        pb = new JProgressBar();
                             gbc.gridy = 1;
-    //                        dialog.add(pb, gbc);
                             dialog.pack();
-                            dialog.setLocationRelativeTo(null);
+                            dialog.setLocationRelativeTo(MainFrame.getFrames()[0]);
                             dialog.setVisible(true);
-                        }
-    //                    pb.setValue(getProgress());
-                    }
+                        }}
                 }
 
             });
