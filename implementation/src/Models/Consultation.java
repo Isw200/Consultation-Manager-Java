@@ -10,7 +10,7 @@ public class Consultation {
     private Patient patient;
     private double price;
     private Date date;
-    private Time time;
+    private Date time;
 
     private double hours;
 
@@ -60,7 +60,7 @@ public class Consultation {
         return date;
     }
 
-    public Time getTime() {
+    public Date getTime() {
         return time;
     }
 }

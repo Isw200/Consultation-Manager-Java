@@ -28,6 +28,13 @@ public class Main {
                     (PR) -> Read file
                     (PL) -> Load data from Files
                     
+                    (SA) -> Add a new Session
+                    (SD) -> Delete a Session
+                    (SP) -> List of all Sessions
+                    (SS) -> Save to File
+                    (SR) -> Read file
+                    (SL) -> Load data from Files
+                    
                     (GL)  -> Open GUI with all the data
                     (GN)  -> Open GUI with no data
                     _____________________________
@@ -91,6 +98,33 @@ public class Main {
                 westminsterSkinConsultationManager.readPatientFile();
             } else if (answer.equalsIgnoreCase("PL")) {
                 westminsterSkinConsultationManager.loadPatientsFromFile();
+            }
+
+            // Session
+            else if (answer.equalsIgnoreCase("SA")) {
+                System.out.print("Enter Session ID: ");
+                String sessionId = input.nextLine();
+                System.out.print("Enter Doctor ID: ");
+                String doctorId = input.nextLine();
+                System.out.print("Enter Date: ");
+                String date = input.nextLine();
+                System.out.print("Enter Time: ");
+                String time = input.nextLine();
+                System.out.print("Enter Maximum Patients: ");
+                int maxPatients = input.nextInt();
+                westminsterSkinConsultationManager.addNewSession(sessionId, doctorId, date,time,maxPatients, "Active");
+            } else if (answer.equalsIgnoreCase("SD")) {
+                System.out.print("Enter Session ID: ");
+                String sessionId = input.nextLine();
+                westminsterSkinConsultationManager.deleteASession(sessionId);
+            } else if (answer.equalsIgnoreCase("SP")) {
+                westminsterSkinConsultationManager.printAllSessions();
+            } else if (answer.equalsIgnoreCase("SS")) {
+                westminsterSkinConsultationManager.saveSessionsToFile();
+            } else if (answer.equalsIgnoreCase("SR")) {
+                westminsterSkinConsultationManager.readSessionFile();
+            } else if (answer.equalsIgnoreCase("SL")) {
+                westminsterSkinConsultationManager.loadSessionsFromFile();
             }
 
             // GUI

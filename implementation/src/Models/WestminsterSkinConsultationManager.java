@@ -5,8 +5,11 @@ import Interfaces.SkinConsultationManager;
 
 import javax.swing.*;
 import java.io.*;
+import java.sql.Time;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -16,9 +19,10 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
 
     public static ArrayList<Person> doctorArrayList = new ArrayList<>();
     public static ArrayList<Person> patientArrayList = new ArrayList<>();
-    private ArrayList<Sessions> sessionsArrayList = new ArrayList<>();
+    private static ArrayList<Sessions> sessionsArrayList = new ArrayList<>();
     File doctorFile = new File("doctorList.txt");
     File patientFile = new File("patientList.txt");
+    File sessionsFile = new File("sessionsList.txt");
 
     public WestminsterSkinConsultationManager() {
     }
@@ -41,43 +45,42 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      * Pass all parameters to Doctor object.
      * Add Doctor object to doctorArrayList
      *
-     * @param name String name
-     * @param surName String Surname
-     * @param stringDateOfBirth String date of birth
-     * @param mobileNumber String Mobile Number
+     * @param name                 String name
+     * @param surName              String Surname
+     * @param stringDateOfBirth    String date of birth
+     * @param mobileNumber         String Mobile Number
      * @param medicalLicenceNumber String Medical Licence Number
-     * @param specialisation String Specialisation
-     *
+     * @param specialisation       String Specialisation
      * @Catch ParseException if the date of birth is not in correct format.
      * correct format Example 15-MAR-2000
      */
     @Override
     public void addANewDoctor(String name, String surName, String stringDateOfBirth, String mobileNumber, String medicalLicenceNumber, String specialisation) {
         Date dateOfBirth = strToDate(stringDateOfBirth);
-        Person doctor = new Doctor(name, surName, dateOfBirth,mobileNumber,medicalLicenceNumber,specialisation, "Available");
+        Person doctor = new Doctor(name, surName, dateOfBirth, mobileNumber, medicalLicenceNumber, specialisation, "Available");
         doctorArrayList.add(doctor);
     }
 
     /**
      * @param medicalLicenceNumber Medical Licence Number of the doctor we want ro delete.
-     * Traversal through doctorArrayList ArrayList and matching (i)th Doctor objects medicalLicenceNumber with parameter.
-     * If they matched removed matched (i)th element from the ArrayList.
+     *                             Traversal through doctorArrayList ArrayList and matching (i)th Doctor objects medicalLicenceNumber with parameter.
+     *                             If they matched removed matched (i)th element from the ArrayList.
      * @Variable boolean "found" to keep track item found or not. It will update it in to true if (i)th element's medicalLicenceNumber matched with the parameter
      */
     @Override
     public void deleteADoctor(String medicalLicenceNumber) {
         boolean found = false;
-        for (int i = 0; i < doctorArrayList.size(); i++){
+        for (int i = 0; i < doctorArrayList.size(); i++) {
             Doctor doctor = (Doctor) doctorArrayList.get(i);
-            if (medicalLicenceNumber.equals(doctor.getMedicalLicenceNumber())){
-                System.out.println("Doctor "+ doctor.getName()+" "+ doctor.getSurName()+" deleted successfully.");
+            if (medicalLicenceNumber.equals(doctor.getMedicalLicenceNumber())) {
+                System.out.println("Doctor " + doctor.getName() + " " + doctor.getSurName() + " deleted successfully.");
                 found = true;
                 doctorArrayList.remove(i);
                 break;
             }
         }
-        if (!found){
-            System.out.println("Doctor not found by Medical Licence Number: "+medicalLicenceNumber);
+        if (!found) {
+            System.out.println("Doctor not found by Medical Licence Number: " + medicalLicenceNumber);
         }
     }
 
@@ -88,9 +91,9 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     @Override
     public void printAllDoctors() {
         sort(doctorArrayList);
-        for (int i = 0; i < doctorArrayList.size(); i++){
+        for (int i = 0; i < doctorArrayList.size(); i++) {
             Doctor doctor = (Doctor) doctorArrayList.get(i);
-            System.out.println("Doctor "+ (i+1)+": "+doctor.print());
+            System.out.println("Doctor " + (i + 1) + ": " + doctor.print());
         }
     }
 
@@ -101,10 +104,10 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      */
     @Override
     public void saveDoctorsToFile() {
-        if (doctorFile.exists()){
+        if (doctorFile.exists()) {
             doctorFile.delete();
         }
-        saveToFile(doctorFile,"Doctor");
+        saveToFile(doctorFile, "Doctor");
     }
 
 
@@ -116,11 +119,12 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     /**
      * Traversal through the doctorList text file and create Doctor object from each line.
      * To avoid exception if condition has been used. if only corresponding file exists read the file.
+     *
      * @Variable line - A line from text file
      * @ArrayList dataItems - An ArrayList for hold each field regarding a doctor from a line temporally.
      * @ArrayList tempItem - An ArrayList for hold each letter for each field regarding a doctor from a line temporally.
-     *Traveled through a line and add each character to tempItem, if found a " " blank String, tempItem will add to dataItems and clear tempItem ArrayList.
-     *  @Variable name, surName, dateOfBirth, mobileNumber, medicalLicenceNumber,specialisation - For hold values to pass addANewDoctor as arguments.
+     * Traveled through a line and add each character to tempItem, if found a " " blank String, tempItem will add to dataItems and clear tempItem ArrayList.
+     * @Variable name, surName, dateOfBirth, mobileNumber, medicalLicenceNumber,specialisation - For hold values to pass addANewDoctor as arguments.
      * After finishing a line create a new doctor by calling addANewDoctor method.
      */
     @Override
@@ -128,7 +132,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         if (doctorFile.exists()) {
             try {
                 Scanner myReader = new Scanner(doctorFile);
-                loadFromFile(myReader,"Doctor");
+                loadFromFile(myReader, "Doctor");
                 doctorFile.delete();
                 myReader.close();
             } catch (FileNotFoundException e) {
@@ -145,36 +149,36 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      * Get date of birth as a String parameter and cast it in to Date object using strToDate method.
      * Pass all parameters to Patient object.
      * Add Patient object to patientArrayList
-     * @param name Name of the patient.
-     * @param surName Surname of the patient.
-     * @param stringDateOfBirth String birthday of the patient.
-     * @param mobileNumber Mobile number of the patient.
-     * @param patentId Unique ID for the patient.
      *
+     * @param name              Name of the patient.
+     * @param surName           Surname of the patient.
+     * @param stringDateOfBirth String birthday of the patient.
+     * @param mobileNumber      Mobile number of the patient.
+     * @param patentId          Unique ID for the patient.
      * @Catch ParseException if the date of birth is not in correct format.
      * correct format Example 15-MAR-2000
      */
     @Override
-    public void addNewPatient(String name, String surName, String stringDateOfBirth, String mobileNumber, String patentId,String gender) {
+    public void addNewPatient(String name, String surName, String stringDateOfBirth, String mobileNumber, String patentId, String gender) {
         Date dateOfBirth = strToDate(stringDateOfBirth);
-        Patient patient = new Patient(name,surName,dateOfBirth,mobileNumber,patentId, gender);
+        Patient patient = new Patient(name, surName, dateOfBirth, mobileNumber, patentId, gender);
         patientArrayList.add(patient);
     }
 
     @Override
     public void deleteAPatient(String patentId) {
         boolean found = false;
-        for (int i = 0; i < patientArrayList.size(); i++){
+        for (int i = 0; i < patientArrayList.size(); i++) {
             Patient patient = (Patient) patientArrayList.get(i);
-            if (patentId.equals(patient.getPatientId())){
-                System.out.println("Doctor "+ patient.getName()+" "+ patient.getSurName()+" deleted successfully.");
+            if (patentId.equals(patient.getPatientId())) {
+                System.out.println("Doctor " + patient.getName() + " " + patient.getSurName() + " deleted successfully.");
                 found = true;
                 patientArrayList.remove(i);
                 break;
             }
         }
-        if (!found){
-            System.out.println("Patient not found by Medical Licence Number: "+patientArrayList);
+        if (!found) {
+            System.out.println("Patient not found by Medical Licence Number: " + patientArrayList);
         }
     }
 
@@ -184,9 +188,9 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     @Override
     public void printAllPatients() {
         sort(patientArrayList);
-        for (int i = 0; i < patientArrayList.size(); i++){
+        for (int i = 0; i < patientArrayList.size(); i++) {
             Patient patient = (Patient) patientArrayList.get(i);
-            System.out.println("Patient "+ (i+1)+": "+patient.print());
+            System.out.println("Patient " + (i + 1) + ": " + patient.print());
         }
     }
 
@@ -197,10 +201,10 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      */
     @Override
     public void savePatientsToFile() {
-        if (patientFile.exists()){
+        if (patientFile.exists()) {
             patientFile.delete();
         }
-        saveToFile(patientFile,"Patient");
+        saveToFile(patientFile, "Patient");
     }
 
     @Override
@@ -225,6 +229,93 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         }
     }
 
+
+    // Sessions methods
+    @Override
+    public void addNewSession(String sessionID, String doctorID, String date, String time, int maxPatients, String sessionStatus) {
+        Date sessionDate = strToDate(date);
+        Doctor doctor = null;
+        for (int i = 0; i < doctorArrayList.size(); i++) {
+            Doctor tempDoctor = (Doctor) doctorArrayList.get(i);
+            if (doctorID.equals(tempDoctor.getMedicalLicenceNumber())) {
+                doctor = tempDoctor;
+                break;
+            }
+        }
+        Date sessionTime = strToTime(time);
+        if (doctor != null) {
+            Sessions session = new Sessions(sessionID, doctor, sessionDate, sessionTime, maxPatients, "Active");
+            sessionsArrayList.add(session);
+        } else {
+            System.out.println("Doctor not found by Medical Licence Number: " + doctorID);
+        }
+    }
+
+    @Override
+    public void deleteASession(String sessionID) {
+        boolean found = false;
+        for (int i = 0; i < sessionsArrayList.size(); i++) {
+            Sessions session = (Sessions) sessionsArrayList.get(i);
+            if (sessionID.equals(session.getSessionId())) {
+                System.out.println("Session " + session.getSessionId() + " deleted successfully.");
+                found = true;
+                sessionsArrayList.remove(i);
+                break;
+            }
+        }
+        if (!found) {
+            System.out.println("Session not found by Session ID: " + sessionID);
+        }
+    }
+
+    @Override
+    public void printAllSessions() {
+        for (int i = 0; i < sessionsArrayList.size(); i++) {
+            Sessions session = (Sessions) sessionsArrayList.get(i);
+            System.out.println("Session " + (i + 1) + ": " + session.print());
+        }
+    }
+
+    @Override
+    public void saveSessionsToFile() {
+        if (sessionsFile.exists()) {
+            sessionsFile.delete();
+        }
+        saveToFile(sessionsFile, "Session");
+    }
+
+    @Override
+    public void readSessionFile() {
+        readFile(sessionsFile);
+    }
+
+    @Override
+    public void loadSessionsFromFile() {
+        if (sessionsFile.exists()) {
+            try {
+                Scanner reader = new Scanner(sessionsFile);
+                loadFromFile(reader, "Session");
+                sessionsFile.delete();
+                reader.close();
+            } catch (FileNotFoundException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("File not exists!");
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
     /**
      * Traversal through a text file and print each line. To avoid exception if condition has been used. if only corresponding file exists read the file.
      */
@@ -248,12 +339,13 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
 
     /**
      * Get date of birth as a String parameter and cast it in to Date object using @Class SimpleDateFormat
+     *
      * @param strDate String date.
      * @return A date typed Date.
      * @Catch: ParseException if the date of birth is not in correct format.
      * correct format Example 15-MAR-2000
      */
-    public static Date strToDate(String strDate){
+    public static Date strToDate(String strDate) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MMM-yyyy");
         Date dateDate = null;
         try {
@@ -264,16 +356,28 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         return dateDate;
     }
 
+    public static Date strToTime(String strTime) {
+       DateFormat dateFormat = new SimpleDateFormat("hh:mm");
+       Date date = null;
+       try {
+           date = dateFormat.parse(strTime);
+       } catch (ParseException e) {
+           e.printStackTrace();
+       }
+       return date;
+    }
+
 
     /**
      * Read a text file and add each line to a ArrayList.
      * If text file is doctor file, create a doctor object by calling addANewDoctor method.
      * If text file is patient file, create a patient object by calling addNewPatient method.
+     *
      * @param reader Scanner object to read a text file.
-     * @param type Type of the file. Doctor or Patient.
+     * @param type   Type of the file. Doctor or Patient.
      */
-    public void loadFromFile(Scanner reader,String type){
-        if (type.equals("Doctor")){
+    public void loadFromFile(Scanner reader, String type) {
+        if (type.equals("Doctor")) {
             while (reader.hasNextLine()) {
                 ArrayList<String> dataItems = lineReader(reader.nextLine());
                 String name = dataItems.get(0);
@@ -285,7 +389,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
 
                 addANewDoctor(name, surName, dateOfBirth, mobileNumber, medicalLicenceNumber, specialisation);
             }
-        }else if (type.equals("Patient")){
+        } else if (type.equals("Patient")) {
             while (reader.hasNextLine()) {
                 ArrayList<String> dataItems = lineReader(reader.nextLine());
                 String name = dataItems.get(0);
@@ -297,45 +401,65 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
 
                 addNewPatient(name, surName, dateOfBirth, mobileNumber, patentId, gender);
             }
+        } else if (type.equals("Session")) {
+            while (reader.hasNextLine()) {
+                ArrayList<String> dataItems = lineReader(reader.nextLine());
+                String sessionID = dataItems.get(0);
+                String doctorID = dataItems.get(1);
+                String date = dataItems.get(4) + "-" + dataItems.get(3) + "-" + dataItems.get(7);
+                String time = dataItems.get(11);
+                int maxPatients = Integer.parseInt(dataItems.get(14));
+                String sessionStatus = dataItems.get(15);
+
+                addNewSession(sessionID, doctorID, date, time, maxPatients, sessionStatus);
+            }
         }
+
     }
 
     /**
      * Read data in an array list and Store that daa in to a text file.
+     *
      * @param file A file that data should save.
      * @param type The type of ArrayList.
-     * If Doctor ArrayList it has additional attribute MedicalLicenceNumber & Specialisation.
-     * If Patient ArrayList it has additional attribute PatientId.
+     *             If Doctor ArrayList it has additional attribute MedicalLicenceNumber & Specialisation.
+     *             If Patient ArrayList it has additional attribute PatientId.
      */
-    public void saveToFile(File file, String type){
-        try{
+    public void saveToFile(File file, String type) {
+        try {
             FileWriter fileWriter = new FileWriter(file, true);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-            if (type.equals("Doctor")){
+            if (type.equals("Doctor")) {
                 for (Person doctor : doctorArrayList) {
                     Doctor doctorType = (Doctor) doctor;
                     bufferedWriter.write(doctorType.getName() + " " + doctorType.getSurName() + " " + doctorType.getDateOfBirth() + " " + doctorType.getMobileNumber() + " " + doctorType.getMedicalLicenceNumber() + " " + doctorType.getSpecialisation() + "\n");
                 }
-            }else if (type.equals("Patient")){
+            } else if (type.equals("Patient")) {
                 for (Person patient : patientArrayList) {
                     Patient patientType = (Patient) patient;
                     bufferedWriter.write(patientType.getName() + " " + patientType.getSurName() + " " + patientType.getDateOfBirth() + " " + patientType.getMobileNumber() + " " + patientType.getPatientId() + " " + patientType.getGender() + "\n");
                 }
+            } else if (type.equals("Session")) {
+                for (Sessions session : sessionsArrayList) {
+                    Doctor doctorType = (Doctor) session.getDoctor();
+                    bufferedWriter.write(session.getSessionId() + " " + doctorType.getMedicalLicenceNumber() + " " + session.getDate() + " " + session.getTime() + " " + session.getMaxPatients() + " " + session.getSessionStatus() + "\n");
+                }
             }
             bufferedWriter.close();
 
-        } catch(IOException e) {
+        } catch (IOException e) {
             System.out.println(e);
         }
     }
 
     /**
      * Get a line as a String parameter and split it by space.
+     *
      * @param line A line of a text file.
      * @return An ArrayList of String.
      */
-    public ArrayList<String> lineReader(String line){
+    public ArrayList<String> lineReader(String line) {
         ArrayList<String> dataItems = new ArrayList<>();
         ArrayList<String> tempItem = new ArrayList<>();
         for (int i = 0; i < line.length(); i++) {
@@ -355,24 +479,25 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
 
     /**
      * Sort a given ArrayList using a bubble sort algorithm
+     *
      * @param arrayList ArrayList to sort.
      */
-    public void sort(ArrayList<Person> arrayList){
+    public void sort(ArrayList<Person> arrayList) {
         Person temp;
-        for (int i = 0; i < arrayList.size(); i++){
-            for (int j = 1; j < (arrayList.size()); j++){
-                int comparisonReturn = (arrayList.get(j-1).getSurName()).compareTo(arrayList.get(j).getSurName());
-                if (comparisonReturn > 0){
-                    temp = arrayList.get(j-1);
-                    arrayList.set(j-1,arrayList.get(j));
-                    arrayList.set(j,temp);
+        for (int i = 0; i < arrayList.size(); i++) {
+            for (int j = 1; j < (arrayList.size()); j++) {
+                int comparisonReturn = (arrayList.get(j - 1).getSurName()).compareTo(arrayList.get(j).getSurName());
+                if (comparisonReturn > 0) {
+                    temp = arrayList.get(j - 1);
+                    arrayList.set(j - 1, arrayList.get(j));
+                    arrayList.set(j, temp);
                 }
             }
         }
     }
 
     // Run GUI
-    public void runGUI(){
+    public void runGUI() {
         MainFrame mainFrame = new MainFrame();
         mainFrame.setTitle("Hospital Management System");
         mainFrame.setSize(1300, 800);
