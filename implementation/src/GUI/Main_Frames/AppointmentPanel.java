@@ -1,4 +1,4 @@
 package GUI.Main_Frames;
 
-public class AppointmentPanel {
+public class AppointmentPanel{
 }

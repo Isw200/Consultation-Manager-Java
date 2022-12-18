@@ -1,5 +1,9 @@
 package Interfaces;
 
+import Models.Person;
+import Models.Session;
+
+import java.io.IOException;
 import java.util.Date;
 
 public interface SkinConsultationManager {
@@ -40,5 +44,14 @@ public interface SkinConsultationManager {
     void saveSessionsToFile();
     void readSessionFile();
     void loadSessionsFromFile();
+
+
+    // Consultation Methods
+    void addNewConsultation(String consultationId, Session session, Person doctor, Person patient, double hours, String notes, String imagePath) throws IOException;
+    void deleteAConsultation(String consultationID);
+    void printAllConsultations();
+    void saveConsultationsToFile();
+    void readConsultationFile();
+    void loadConsultationsFromFile();
 }
 

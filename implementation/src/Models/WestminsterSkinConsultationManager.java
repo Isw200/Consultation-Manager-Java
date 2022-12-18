@@ -13,14 +13,14 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class WestminsterSkinConsultationManager implements SkinConsultationManager {
-
-
     public static ArrayList<Person> doctorArrayList = new ArrayList<>();
     public static ArrayList<Person> patientArrayList = new ArrayList<>();
     public static ArrayList<Session> sessionArrayList = new ArrayList<>();
+    public static ArrayList<Consultation> consultationArrayList = new ArrayList<>();
     File doctorFile = new File("doctorList.txt");
     File patientFile = new File("patientList.txt");
     File sessionsFile = new File("sessionsList.txt");
+    File consultationsFile = new File("consultationsList.txt");
 
     public WestminsterSkinConsultationManager() {
     }
@@ -304,11 +304,67 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         }
     }
 
+    // Consultation methods
+    @Override
+    public void addNewConsultation(String consultationId, Session session, Person doctor, Person patient, double hours, String notes, String imagePath) throws IOException {
+        Consultation consultation = new Consultation(consultationId, session, doctor, patient, hours, notes, imagePath);
+        consultationArrayList.add(consultation);
+    }
 
+    @Override
+    public void deleteAConsultation(String consultationID) {
+        boolean found = false;
+        for (int i = 0; i < consultationArrayList.size(); i++) {
+            Consultation consultation = consultationArrayList.get(i);
+            if (consultationID.equals(consultation.getConsultationId())) {
+                System.out.println("Consultation " + consultation.getConsultationId() + " deleted successfully.");
+                found = true;
+                consultationArrayList.remove(i);
+                break;
+            }
+        }
+        if (!found) {
+            System.out.println("Consultation not found by Consultation ID: " + consultationID);
+        }
+    }
 
+    @Override
+    public void printAllConsultations() {
+        for (int i = 0; i < consultationArrayList.size(); i++) {
+            Consultation consultation = (Consultation) consultationArrayList.get(i);
+            System.out.println("Consultation " + (i + 1) + ": " + consultation.print());
+        }
+    }
 
+    @Override
+    public void saveConsultationsToFile() {
+        if (consultationsFile.exists()) {
+            consultationsFile.delete();
+        }
+        saveToFile(consultationsFile, "Consultation");
+    }
 
+    @Override
+    public void readConsultationFile() {
+        readFile(consultationsFile);
+    }
 
+    @Override
+    public void loadConsultationsFromFile() {
+        if (consultationsFile.exists()) {
+            try {
+                Scanner reader = new Scanner(consultationsFile);
+                loadFromFile(reader, "Consultation");
+                consultationsFile.delete();
+                reader.close();
+            } catch (FileNotFoundException e) {
+                System.out.println("An error occurred.");
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("File not exists!");
+        }
+    }
 
 
 
@@ -412,6 +468,19 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
 
                 addNewSession(sessionID, doctorID, date, time, maxPatients, sessionStatus);
             }
+        } else if (type.equals("Consultation")) {
+            while (reader.hasNextLine()) {
+                ArrayList<String> dataItems = lineReader(reader.nextLine());
+                String consultationID = dataItems.get(0);
+                String sessionID = dataItems.get(1);
+                String patientID = dataItems.get(2);
+                String date = dataItems.get(4) + "-" + dataItems.get(3) + "-" + dataItems.get(7);
+                String time = dataItems.get(11);
+                String consultationStatus = dataItems.get(15);
+
+//                addNewConsultation(consultationID, sessionID, patientID, date, time, consultationStatus);
+            }
+
         }
 
     }
@@ -443,6 +512,13 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
                 for (Session session : sessionArrayList) {
                     Doctor doctorType = (Doctor) session.getDoctor();
                     bufferedWriter.write(session.getSessionId() + " " + doctorType.getMedicalLicenceNumber() + " " + session.getDate() + " " + session.getTime() + " " + session.getMaxPatients() + " " + session.getSessionStatus() + "\n");
+                }
+            } else if (type.equals("Consultation")) {
+                for (Consultation consultation : consultationArrayList) {
+                    Patient patientType = (Patient) consultation.getPatient();
+                    Doctor doctorType = (Doctor) consultation.getDoctor();
+
+                    bufferedWriter.write(consultation.getConsultationId() + " " + consultation.getSession().getSessionId() + " " + doctorType.getMedicalLicenceNumber()+ " " + patientType.getPatientId() + consultation.getHours() + " " + consultation.getNotes() + " " + consultation.getImagePath() + "\n");
                 }
             }
             bufferedWriter.close();

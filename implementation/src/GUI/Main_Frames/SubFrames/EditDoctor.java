@@ -133,7 +133,8 @@ public class EditDoctor extends JDialog implements ActionListener {
         });
 
         // Add specialisation drop down menu
-        String[] specialisations = {"General Practitioner", "Cardiologist", "Dentist", "Dermatologist", "Endocrinologist", "Gastroenterologist", "Geriatrician", "Gynecologist", "Neurologist", "Oncologist", "Ophthalmologist", "Orthopedist", "Pediatrician", "Psychiatrist", "Rheumatologist", "Surgeon"};
+        String[] specialisations = {"Cosmetic Dermatology", "Medical Dermatology", "Paediatric Dermatology", "Surgical Dermatology"};
+
 
         specialisationDropDown = new JComboBox(specialisations);
         specialisationDropDown.setPreferredSize(new Dimension(220, 30));

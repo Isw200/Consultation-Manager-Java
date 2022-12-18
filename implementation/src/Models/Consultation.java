@@ -1,65 +1,172 @@
 package Models;
 
+import Interfaces.Printable;
+import Models.SubModels.EncryptAndDecrypt;
+
+import javax.swing.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Consultation {
+public class Consultation implements Printable {
+    private String consultationId;
     private Person doctor;
     private Session session;
-    private Patient patient;
+    private Person patient;
     private double price;
     private Date date;
     private Date time;
 
+    // Encrypted data
+    private String notes;
+    private String imagePath;
+
     private double hours;
 
-    public Consultation(String doctorName, Patient patient, ArrayList<Session> sessions, double hours) {
-        boolean isFirstConsultation = true;
-        for (int i = 0; i < sessions.size(); i++) {
-            if (sessions.get(i).getDoctor().getName().equals(doctorName)) {
-                this.doctor = sessions.get(i).getDoctor();
-                this.session = sessions.get(i);
-                this.patient = patient;
-                this.date = sessions.get(i).getDate();
-                this.time = sessions.get(i).getTime();
+    public Consultation(String consultationId, Session session, Person doctor, Person patient, double hours, String notes, String imagePath) throws IOException {
+        this.consultationId = consultationId;
+        this.session = session;
+        this.doctor = doctor;
+        this.patient = patient;
+        this.hours = hours;
+        this.notes = EncryptAndDecrypt.encryptText(notes, 5);
+        this.imagePath = imagePath;
+        this.date = session.getDate();
+
+
+        EncryptAndDecrypt.encryptImage(imagePath, 5);
+
+        // Set consultation time
+        Consultation[] consultations = session.getConsultations();
+        time = session.getTime();
+        int minutes = 0;
+        for (int i = 0; i < consultations.length; i++) {
+            if (consultations[i] != null) {
+                minutes += consultations[i].getHours() * 60;
             }
-            for (int j = 0; j < sessions.get(i).getConsultations().length; j++) {
-                if (sessions.get(i).getConsultations()[j] != null) {
-                    if (sessions.get(i).getConsultations()[j].getPatient().getName().equals(patient.getName())) {
-                        isFirstConsultation = false;
+        }
+        // Add minutes to time
+        time.setMinutes(time.getMinutes() + minutes);
+
+
+        // Calculate cost
+        boolean isFirstConsultation = true;
+        Patient patient1 = (Patient) patient;
+        for (Session session1 : WestminsterSkinConsultationManager.getSessionsArrayList()) {
+            if (session1.getSessionId().equals(session.getSessionId())) {
+                for (Consultation consultation : session1.getConsultations()) {
+                    if (consultation != null) {
+                        Patient patient2 = (Patient) consultation.getPatient();
+                        if (patient2.getPatientId().equals(patient1.getPatientId())) {
+                            isFirstConsultation = false;
+                        }
                     }
                 }
             }
         }
+
         if (isFirstConsultation) {
-            this.price = 15 * hours;
+            if (hours <= 1) {
+                this.price = 15;
+            } else {
+                this.price = 15 * hours;
+            }
         } else {
-            this.price = 25 * hours;
+            if (hours <= 1) {
+                this.price = 25;
+            } else {
+                this.price = 25 * hours;
+            }
         }
-        this.patient = patient;
     }
 
     public Person getDoctor() {
         return doctor;
     }
 
+    public void setDoctor(Person doctor) {
+        this.doctor = doctor;
+    }
+
     public Session getSession() {
         return session;
     }
 
-    public Patient getPatient() {
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
+    public Person getPatient() {
         return patient;
+    }
+
+    public void setPatient(Person patient) {
+        this.patient = patient;
     }
 
     public double getPrice() {
         return price;
     }
 
+    public void setPrice(double price) {
+        this.price = price;
+    }
+
     public Date getDate() {
         return date;
     }
 
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
     public Date getTime() {
         return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
+    public double getHours() {
+        return hours;
+    }
+
+    public void setHours(double hours) {
+        this.hours = hours;
+    }
+
+    public String getConsultationId() {
+        return consultationId;
+    }
+
+    public void setConsultationId(String consultationId) {
+        this.consultationId = consultationId;
+    }
+
+    @Override
+    public String print() {
+        Doctor doctor = (Doctor) this.doctor;
+        Patient patient = (Patient) this.patient;
+
+        return "Consultation ID: " + consultationId + " Doctor: " + doctor.getName() + " " + doctor.getSurName() + " Patient: " + patient.getName() + " " + patient.getSurName() + " Date: " + date + " Time: " + time + " Price: " + price + " Notes: " + notes + " Image Path: " + imagePath + " Hours: " + hours;
     }
 }

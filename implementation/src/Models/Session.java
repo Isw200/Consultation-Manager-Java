@@ -1,8 +1,6 @@
 package Models;
 
 import Interfaces.Printable;
-
-import java.sql.Time;
 import java.util.Date;
 
 public class Session implements Printable {
@@ -13,7 +11,7 @@ public class Session implements Printable {
     private int maxPatients;
     private String sessionStatus; // Active, Ongoing, On Hold;
     private int currentPatients;
-    private static Consultation[] consultations;
+    private Consultation[] consultations;
 
     public Session(String sessionId, Person doctor, Date date, Date time, int maxPatients, String sessionStatus) {
         this.sessionId = sessionId;
