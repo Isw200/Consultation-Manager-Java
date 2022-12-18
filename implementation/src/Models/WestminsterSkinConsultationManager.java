@@ -5,11 +5,9 @@ import Interfaces.SkinConsultationManager;
 
 import javax.swing.*;
 import java.io.*;
-import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
@@ -19,7 +17,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
 
     public static ArrayList<Person> doctorArrayList = new ArrayList<>();
     public static ArrayList<Person> patientArrayList = new ArrayList<>();
-    private static ArrayList<Sessions> sessionsArrayList = new ArrayList<>();
+    public static ArrayList<Session> sessionArrayList = new ArrayList<>();
     File doctorFile = new File("doctorList.txt");
     File patientFile = new File("patientList.txt");
     File sessionsFile = new File("sessionsList.txt");
@@ -35,8 +33,8 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         return patientArrayList;
     }
 
-    public ArrayList<Sessions> getSessionsArrayList() {
-        return sessionsArrayList;
+    public static ArrayList<Session> getSessionsArrayList() {
+        return sessionArrayList;
     }
 
     /**
@@ -55,9 +53,9 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      * correct format Example 15-MAR-2000
      */
     @Override
-    public void addANewDoctor(String name, String surName, String stringDateOfBirth, String mobileNumber, String medicalLicenceNumber, String specialisation) {
+    public void addANewDoctor(String name, String surName, String stringDateOfBirth, String mobileNumber, String medicalLicenceNumber, String specialisation, String availability) {
         Date dateOfBirth = strToDate(stringDateOfBirth);
-        Person doctor = new Doctor(name, surName, dateOfBirth, mobileNumber, medicalLicenceNumber, specialisation, "Available");
+        Person doctor = new Doctor(name, surName, dateOfBirth, mobileNumber, medicalLicenceNumber, specialisation, availability);
         doctorArrayList.add(doctor);
     }
 
@@ -244,8 +242,8 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         }
         Date sessionTime = strToTime(time);
         if (doctor != null) {
-            Sessions session = new Sessions(sessionID, doctor, sessionDate, sessionTime, maxPatients, "Active");
-            sessionsArrayList.add(session);
+            Session session = new Session(sessionID, doctor, sessionDate, sessionTime, maxPatients, sessionStatus);
+            sessionArrayList.add(session);
         } else {
             System.out.println("Doctor not found by Medical Licence Number: " + doctorID);
         }
@@ -254,12 +252,12 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     @Override
     public void deleteASession(String sessionID) {
         boolean found = false;
-        for (int i = 0; i < sessionsArrayList.size(); i++) {
-            Sessions session = (Sessions) sessionsArrayList.get(i);
+        for (int i = 0; i < sessionArrayList.size(); i++) {
+            Session session = (Session) sessionArrayList.get(i);
             if (sessionID.equals(session.getSessionId())) {
                 System.out.println("Session " + session.getSessionId() + " deleted successfully.");
                 found = true;
-                sessionsArrayList.remove(i);
+                sessionArrayList.remove(i);
                 break;
             }
         }
@@ -270,8 +268,8 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
 
     @Override
     public void printAllSessions() {
-        for (int i = 0; i < sessionsArrayList.size(); i++) {
-            Sessions session = (Sessions) sessionsArrayList.get(i);
+        for (int i = 0; i < sessionArrayList.size(); i++) {
+            Session session = (Session) sessionArrayList.get(i);
             System.out.println("Session " + (i + 1) + ": " + session.print());
         }
     }
@@ -386,8 +384,9 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
                 String mobileNumber = dataItems.get(8);
                 String medicalLicenceNumber = dataItems.get(9);
                 String specialisation = dataItems.get(10);
+                String availability = dataItems.get(11);
 
-                addANewDoctor(name, surName, dateOfBirth, mobileNumber, medicalLicenceNumber, specialisation);
+                addANewDoctor(name, surName, dateOfBirth, mobileNumber, medicalLicenceNumber, specialisation, availability);
             }
         } else if (type.equals("Patient")) {
             while (reader.hasNextLine()) {
@@ -433,7 +432,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
             if (type.equals("Doctor")) {
                 for (Person doctor : doctorArrayList) {
                     Doctor doctorType = (Doctor) doctor;
-                    bufferedWriter.write(doctorType.getName() + " " + doctorType.getSurName() + " " + doctorType.getDateOfBirth() + " " + doctorType.getMobileNumber() + " " + doctorType.getMedicalLicenceNumber() + " " + doctorType.getSpecialisation() + "\n");
+                    bufferedWriter.write(doctorType.getName() + " " + doctorType.getSurName() + " " + doctorType.getDateOfBirth() + " " + doctorType.getMobileNumber() + " " + doctorType.getMedicalLicenceNumber() + " " + doctorType.getSpecialisation() + " " + doctorType.getAvailability() + "\n");
                 }
             } else if (type.equals("Patient")) {
                 for (Person patient : patientArrayList) {
@@ -441,7 +440,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
                     bufferedWriter.write(patientType.getName() + " " + patientType.getSurName() + " " + patientType.getDateOfBirth() + " " + patientType.getMobileNumber() + " " + patientType.getPatientId() + " " + patientType.getGender() + "\n");
                 }
             } else if (type.equals("Session")) {
-                for (Sessions session : sessionsArrayList) {
+                for (Session session : sessionArrayList) {
                     Doctor doctorType = (Doctor) session.getDoctor();
                     bufferedWriter.write(session.getSessionId() + " " + doctorType.getMedicalLicenceNumber() + " " + session.getDate() + " " + session.getTime() + " " + session.getMaxPatients() + " " + session.getSessionStatus() + "\n");
                 }
@@ -487,6 +486,19 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         for (int i = 0; i < arrayList.size(); i++) {
             for (int j = 1; j < (arrayList.size()); j++) {
                 int comparisonReturn = (arrayList.get(j - 1).getSurName()).compareTo(arrayList.get(j).getSurName());
+                if (comparisonReturn > 0) {
+                    temp = arrayList.get(j - 1);
+                    arrayList.set(j - 1, arrayList.get(j));
+                    arrayList.set(j, temp);
+                }
+            }
+        }
+    }
+    public void sortSession(ArrayList<Session> arrayList) {
+        Session temp;
+        for (int i = 0; i < arrayList.size(); i++) {
+            for (int j = 1; j < (arrayList.size()); j++) {
+                int comparisonReturn = (arrayList.get(j - 1).getDate()).compareTo(arrayList.get(j).getDate());
                 if (comparisonReturn > 0) {
                     temp = arrayList.get(j - 1);
                     arrayList.set(j - 1, arrayList.get(j));

@@ -4,6 +4,7 @@ import GUI.GUILibs.RoundedBorder;
 import GUI.Main_Frames.DashBoardPanel;
 import GUI.Main_Frames.DoctorsPanel;
 import GUI.Main_Frames.PatientsPanel;
+import GUI.Main_Frames.SessionsPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +16,7 @@ public class MainFrame extends JFrame implements ActionListener {
     DashBoardPanel dashBoardPanel;
     DoctorsPanel doctorsPanel;
     PatientsPanel patientsPanel;
+    SessionsPanel sessionsPanel;
     JPanel operatorContainer, logoContainer, logoutContainer;
     JButton dashboardButton, doctorButton, patientButton, appointmentButton, sessionButton;
     JButton logoutButton;
@@ -175,6 +177,7 @@ public class MainFrame extends JFrame implements ActionListener {
 
         doctorsPanel = new DoctorsPanel();
         patientsPanel = new PatientsPanel();
+        sessionsPanel = new SessionsPanel();
 
         add(rightPanel, BorderLayout.CENTER);
 
@@ -202,8 +205,8 @@ public class MainFrame extends JFrame implements ActionListener {
 
         }
         else if (e.getSource() == sessionButton) {
-            System.out.println("Session");
             changeClickedButtonStyle(sessionButton);
+            changeRightPanel(sessionsPanel);
 
         }
         else if (e.getSource() == logoutButton) {

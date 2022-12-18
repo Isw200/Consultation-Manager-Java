@@ -29,7 +29,6 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
     JPanel panel1BottomWest, panel1BottomEast;
     JPanel searchPanel;
     JTextField searchField;
-    String name;
     ImageIcon searchIcon;
     static int numberOfDoctors;
     JLabel panelTitle;
@@ -201,7 +200,6 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
 
         // Table
         String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Availability"};
-        WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
 
         ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
         String[][] doctorData = new String[doctors.size()][6];
@@ -295,7 +293,6 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
         panel3East.add(panel3Buttons[1]);
 
         // Panel 3 West Components
-        // set all doctor count ************************************************************
         allDoctors = new JLabel("All Doctors "+numberOfDoctors);
         allDoctors.setFont(new Font("Segoe UI", Font.PLAIN, 24));
         allDoctors.setForeground(Color.GRAY);
@@ -314,10 +311,10 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addDoctor){
-            AddDoctor addDoctor = new AddDoctor();
+            new AddDoctor();
         }
         if (e.getSource() == deleteEditDoctor){
-            FindDoctor findDoctor = new FindDoctor();
+            new FindDoctor();
         }
         if (e.getSource() == refreshButton){
             tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
@@ -328,17 +325,15 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
             tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
         }
         if (e.getSource() == saveDataButton){
-            System.out.println("save data");
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
             manager.saveDoctorsToFile();
-            SavingDone savingDone = new SavingDone();
+            new SavingDone();
         }
         if (e.getSource() == sortDataButton){
-            System.out.println("sort data");
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
             manager.sort(WestminsterSkinConsultationManager.getDoctorArrayList());
             tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
-            SortingDone sortingDone = new SortingDone();
+            new SortingDone();
         }
     }
 

@@ -55,7 +55,9 @@ public class Main {
                 String medicalLicenceNumber = input.nextLine();
                 System.out.print("Enter Specialisation: ");
                 String specialisation = input.nextLine();
-                westminsterSkinConsultationManager.addANewDoctor(name, surName, dateOfBirth,mobileNumber,medicalLicenceNumber,specialisation);
+                System.out.print("Enter Availability: ");
+                String availability = input.nextLine();
+                westminsterSkinConsultationManager.addANewDoctor(name, surName, dateOfBirth,mobileNumber,medicalLicenceNumber,specialisation, availability);
             } else if (answer.equalsIgnoreCase("DD")) {
                 System.out.print("Enter Medical Licence Number: ");
                 String medicalLicenceNumber = input.nextLine();
@@ -133,6 +135,8 @@ public class Main {
                 westminsterSkinConsultationManager.saveDoctorsToFile();
                 westminsterSkinConsultationManager.loadPatientsFromFile();
                 westminsterSkinConsultationManager.savePatientsToFile();
+                westminsterSkinConsultationManager.loadSessionsFromFile();
+                westminsterSkinConsultationManager.saveSessionsToFile();
                 westminsterSkinConsultationManager.runGUI();
             }
             else if (answer.equalsIgnoreCase("GN")) {

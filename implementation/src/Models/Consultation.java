@@ -1,12 +1,11 @@
 package Models;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Consultation {
     private Person doctor;
-    private Sessions session;
+    private Session session;
     private Patient patient;
     private double price;
     private Date date;
@@ -14,7 +13,7 @@ public class Consultation {
 
     private double hours;
 
-    public Consultation(String doctorName, Patient patient, ArrayList<Sessions> sessions, double hours) {
+    public Consultation(String doctorName, Patient patient, ArrayList<Session> sessions, double hours) {
         boolean isFirstConsultation = true;
         for (int i = 0; i < sessions.size(); i++) {
             if (sessions.get(i).getDoctor().getName().equals(doctorName)) {
@@ -44,7 +43,7 @@ public class Consultation {
         return doctor;
     }
 
-    public Sessions getSession() {
+    public Session getSession() {
         return session;
     }
 

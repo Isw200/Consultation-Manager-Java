@@ -1,13 +1,26 @@
-Anne Jenifer Sat Jan 12 00:00:00 IST 2002 0702010060 ID323233 Gastroenterologist
-Mary Bland Mon Aug 12 00:00:00 IST 2002 0702010061 ID323234 Orthopedist
-Kamal Bhatia Wed May 12 00:00:00 IST 2004 0702010062 ID323235 Orthopedist
-Sandra Bland Sat Dec 12 00:00:00 IST 1992 0702010063 ID323236 Gastroenterologist
-Samuel Mandi Sat Nov 12 00:00:00 IST 1994 0702010064 ID323237 Psychiatrist
-Kiran Gov Tue Aug 12 00:00:00 IST 2003 0702010065 ID323238 Gastroenterologist
-Janet Bower Sun Jan 12 00:00:00 IST 1997 0702010066 ID323239 Cardiologist
-Louise Daniel Tue May 12 00:00:00 IST 1992 0702010067 ID323240 Dermatologist
-Valerie Nowell Wed Feb 12 00:00:00 IST 1997 0702010068 ID323241 Gastroenterologist
-Mary Bower Fri May 12 00:00:00 IST 2000 0702010069 ID323242 Neurologist
-Karin Bruce Thu Nov 12 00:00:00 IST 1998 0702010070 ID323243 Physiotherapy
-Oliver Jannet Wed Dec 12 00:00:00 IST 1990 0702010071 ID323244 Rheumatologist
-Nihal Peris Mon Dec 19 00:00:00 IST 2022 0702010067 doc12345 Dentist
+Anne Jenifer Sat Jan 12 00:00:00 IST 2002 0702010060 ID323233 Gastroenterologist Available
+Mary Bland Mon Aug 12 00:00:00 IST 2002 0702010061 ID323234 Orthopedist Unavailable
+Kamal Bhatia Wed May 12 00:00:00 IST 2004 0702010062 ID323235 Orthopedist Available
+Sandra Bland Sat Dec 12 00:00:00 IST 1992 0702010063 ID323236 Gastroenterologist Available
+Samuel Mandi Sat Nov 12 00:00:00 IST 1994 0702010064 ID323237 Psychiatrist Available
+Kiran Gov Tue Aug 12 00:00:00 IST 2003 0702010065 ID323238 Gastroenterologist Available
+Janet Bower Sun Jan 12 00:00:00 IST 1997 0702010066 ID323239 Cardiologist Available
+Louise Daniel Tue May 12 00:00:00 IST 1992 0702010067 ID323240 Dermatologist Available
+Valerie Nowell Wed Feb 12 00:00:00 IST 1997 0702010068 ID323241 Gastroenterologist Unavailable
+Mary Bower Fri May 12 00:00:00 IST 2000 0702010069 ID323242 Neurologist Available
+Karin Bruce Thu Nov 12 00:00:00 IST 1998 0702010070 ID323243 Physiotherapy Available
+Oliver Jannet Wed Dec 12 00:00:00 IST 1990 0702010071 ID323244 Rheumatologist Available
+Nihal Peris Mon Dec 19 00:00:00 IST 2022 0702010067 doc12345 Dentist Available
+Anne Jenifer Sat Jan 12 00:00:00 IST 2002 0702010060 ID323233 Gastroenterologist Available
+Mary Bland Mon Aug 12 00:00:00 IST 2002 0702010061 ID323234 Orthopedist Unavailable
+Kamal Bhatia Wed May 12 00:00:00 IST 2004 0702010062 ID323235 Orthopedist Available
+Sandra Bland Sat Dec 12 00:00:00 IST 1992 0702010063 ID323236 Gastroenterologist Available
+Samuel Mandi Sat Nov 12 00:00:00 IST 1994 0702010064 ID323237 Psychiatrist Available
+Kiran Gov Tue Aug 12 00:00:00 IST 2003 0702010065 ID323238 Gastroenterologist Available
+Janet Bower Sun Jan 12 00:00:00 IST 1997 0702010066 ID323239 Cardiologist Available
+Louise Daniel Tue May 12 00:00:00 IST 1992 0702010067 ID323240 Dermatologist Available
+Valerie Nowell Wed Feb 12 00:00:00 IST 1997 0702010068 ID323241 Gastroenterologist Unavailable
+Mary Bower Fri May 12 00:00:00 IST 2000 0702010069 ID323242 Neurologist Available
+Karin Bruce Thu Nov 12 00:00:00 IST 1998 0702010070 ID323243 Physiotherapy Available
+Oliver Jannet Wed Dec 12 00:00:00 IST 1990 0702010071 ID323244 Rheumatologist Available
+Nihal Peris Mon Dec 19 00:00:00 IST 2022 0702010067 doc12345 Dentist Available
