@@ -329,8 +329,8 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
 
     // Consultation methods
     @Override
-    public void addNewConsultation(String consultationId, Session session, Person doctor, Person patient, double hours, String notes, String imagePath) throws IOException {
-        Consultation consultation = new Consultation(consultationId, session, doctor, patient, hours, notes, imagePath);
+    public void addNewConsultation(String consultationId, Session session, Person doctor, Person patient, double hours, String notes, ArrayList<String> imagePaths) throws IOException {
+        Consultation consultation = new Consultation(consultationId, session, doctor, patient, hours, notes, imagePaths);
         consultationArrayList.add(consultation);
     }
 
@@ -390,9 +390,6 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     }
 
 
-
-
-
     /**
      * Traversal through a text file and print each line. To avoid exception if condition has been used. if only corresponding file exists read the file.
      */
@@ -434,14 +431,14 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     }
 
     public static Date strToTime(String strTime) {
-       DateFormat dateFormat = new SimpleDateFormat("hh:mm");
-       Date date = null;
-       try {
-           date = dateFormat.parse(strTime);
-       } catch (ParseException e) {
-           e.printStackTrace();
-       }
-       return date;
+        DateFormat dateFormat = new SimpleDateFormat("hh:mm");
+        Date date = null;
+        try {
+            date = dateFormat.parse(strTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
     }
 
 
@@ -541,7 +538,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
                     Patient patientType = (Patient) consultation.getPatient();
                     Doctor doctorType = (Doctor) consultation.getDoctor();
 
-                    bufferedWriter.write(consultation.getConsultationId() + " " + consultation.getSession().getSessionId() + " " + doctorType.getMedicalLicenceNumber()+ " " + patientType.getPatientId() + consultation.getHours() + " " + consultation.getNotes() + " " + consultation.getImagePath() + "\n");
+//                    bufferedWriter.write(consultation.getConsultationId() + " " + consultation.getSession().getSessionId() + " " + doctorType.getMedicalLicenceNumber()+ " " + patientType.getPatientId() + consultation.getHours() + " " + consultation.getNotes() + " " + consultation.getImagePath() + "\n");
                 }
             }
             bufferedWriter.close();
@@ -577,6 +574,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
 
     /**
      * Sort a given ArrayList using a bubble sort algorithm.
+     *
      * @param arrayList ArrayList to sort.
      */
     public void sort(ArrayList<Person> arrayList) {
@@ -592,7 +590,8 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
             }
         }
     }
-    public void sortDoctor(Person[] doctorArray){
+
+    public void sortDoctor(Person[] doctorArray) {
         Person temp;
         for (int i = 0; i < doctorArray.length; i++) {
             for (int j = 1; j < (doctorArray.length); j++) {
@@ -605,6 +604,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
             }
         }
     }
+
     public void sortSession(ArrayList<Session> arrayList) {
         Session temp;
         for (int i = 0; i < arrayList.size(); i++) {
@@ -627,9 +627,10 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setVisible(true);
     }
-    public boolean isArrayFull(Person[] array){
+
+    public boolean isArrayFull(Person[] array) {
         for (int i = 0; i < array.length; i++) {
-            if (array[i] == null){
+            if (array[i] == null) {
                 return false;
             }
         }

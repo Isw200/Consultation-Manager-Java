@@ -1,33 +1,43 @@
 package GUI.Main_Frames.SubFrames;
 
 import GUI.MainFrame;
+import GUI.Main_Frames.ConsultationsPanel;
 import GUI.Other_components.DatePicker;
-import Models.Doctor;
-import Models.Person;
-import Models.WestminsterSkinConsultationManager;
+import Models.*;
 
+import javax.print.Doc;
 import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.ImageFilter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
 
 import static GUI.MainFrame.scaleImage;
 
-public class AddConsultation implements ActionListener {
+public class AddConsultation extends JFrame implements ActionListener {
     // Variables
-    private String name;
+    private String patientId;
+    String patientsTimeSlot;
+    String patientsTokenNumber;
+    Person patient;
+    Person doctor;
+    Session session;
+    Date date;
+    String note;
+    ArrayList<String> imagePaths = new ArrayList<>();
+    double duration;
+
+
     // Main Frame
     private JFrame mainFrame;
 
@@ -37,10 +47,10 @@ public class AddConsultation implements ActionListener {
     JButton fromExistingPatientButton, fromNewPatientButton;
 
     // Bottom Panel
-    JLabel patientNameLabel, selectPatientLabel, patientGenderLabel, patientAgeLabel, patientDOBLabel, patientMobileNumberLabel, doctorLabel, dateLabel, hoursLabel, availableBtnLabel, timeLabel, numberLabel;
-    JLabel[] jLabelsStyleArray = new JLabel[12];
+    JLabel patientNameLabel, selectPatientLabel, patientGenderLabel, patientAgeLabel, patientDOBLabel, patientMobileNumberLabel, doctorLabel, dateLabel, hoursLabel, availableBtnLabel;
+    JLabel[] jLabelsStyleArray = new JLabel[10];
     // ContainerPanels
-    JPanel[] containerPanelArray = new JPanel[12];
+    JPanel[] containerPanelArray = new JPanel[10];
 
     // TextFields
     JTextField patientNameTextField, patientGenderTextField, patientAgeTextField, patientDOBTextField, patientMobileNumberTextField, doctorTextField, dateTextField, availableBtnTextField, timeTextField, numberTextField;
@@ -55,7 +65,7 @@ public class AddConsultation implements ActionListener {
     JPanel patientDetails, doctorDetails, consultationDetails;
     JPanel patientDetailsTop, patientDetailsBottom;
     JPanel doctorDetailsTop, doctorDetailsBottom;
-    JButton addConsultationButton, cancelButton;
+    JButton find, addConsultationButton, cancelButton;
 
     public AddConsultation() {
         // Main Frame
@@ -74,10 +84,8 @@ public class AddConsultation implements ActionListener {
         patientMobileNumberLabel = new JLabel("  Mobile Number");
         doctorLabel = new JLabel("  Doctor");
         dateLabel = new JLabel("  Date");
-        hoursLabel = new JLabel("  Hours");
+        hoursLabel = new JLabel("Session Duration");
         availableBtnLabel = new JLabel("");
-        timeLabel = new JLabel("  Patient's Time Slot");
-        numberLabel = new JLabel("  Patient's Token Number");
 
         jLabelsStyleArray[0] = patientNameLabel;
         jLabelsStyleArray[1] = selectPatientLabel;
@@ -89,8 +97,6 @@ public class AddConsultation implements ActionListener {
         jLabelsStyleArray[7] = dateLabel;
         jLabelsStyleArray[8] = hoursLabel;
         jLabelsStyleArray[9] = availableBtnLabel;
-        jLabelsStyleArray[10] = timeLabel;
-        jLabelsStyleArray[11] = numberLabel;
 
         for (JLabel jLabel : jLabelsStyleArray) {
             jLabel.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -151,22 +157,7 @@ public class AddConsultation implements ActionListener {
         patientNameTextField = new JTextField();
         patientNameTextField.setPreferredSize(new Dimension(200, 40));
         patientNameTextField.setFont(new Font("Arial", Font.PLAIN, 16));
-        patientNameTextField.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                name = patientNameTextField.getText();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                name = patientNameTextField.getText();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                name = patientNameTextField.getText();
-            }
-        });
+        patientNameTextField.setEditable(false);
 
         patientGenderTextField = new JTextField();
         patientGenderTextField.setPreferredSize(new Dimension(200, 40));
@@ -189,30 +180,27 @@ public class AddConsultation implements ActionListener {
         patientMobileNumberTextField.setEditable(false);
 
         String[] patientNames = new String[WestminsterSkinConsultationManager.getPatientArrayList().size()];
-        for (int i = 0; i < WestminsterSkinConsultationManager.getPatientArrayList().size(); i++) {
-            patientNames[i] = WestminsterSkinConsultationManager.getPatientArrayList().get(i).getName() + " " + WestminsterSkinConsultationManager.getPatientArrayList().get(i).getSurName();
-        }
-
-        if (patientNameTextField.getText() != null) {
-            ArrayList<String> filteredPatientNames = new ArrayList<>();
-            for (Person patient : WestminsterSkinConsultationManager.getPatientArrayList()) {
-                if (patient.getName().toLowerCase().contains(patientNameTextField.getText().toLowerCase())) {
-                    filteredPatientNames.add(patient.getName() + " " + patient.getSurName());
-                }
-            }
-            patientNames = new String[filteredPatientNames.size()];
-            for (int i = 0; i < filteredPatientNames.size(); i++) {
-                patientNames[i] = filteredPatientNames.get(i);
-            }
+        patientNames[0] = "Select Patient";
+        for (int i = 1; i < WestminsterSkinConsultationManager.getPatientArrayList().size(); i++) {
+            Patient patient = (Patient) WestminsterSkinConsultationManager.getPatientArrayList().get(i);
+            patientNames[i] = patient.getPatientId() + " " + patient.getName() + " " + patient.getSurName();
         }
         patientNameComboBox = new JComboBox(patientNames);
-        patientNameComboBox.setPreferredSize(new Dimension(200, 40));
+        patientNameComboBox.setPreferredSize(new Dimension(140, 40));
+        JPanel patientNameComboBoxPanel = new JPanel(new FlowLayout());
+        find = new JButton("Find");
+        find.addActionListener(this);
+        find.setFont(new Font("Arial", Font.PLAIN, 12));
+        find.setPreferredSize(new Dimension(60, 30));
+        patientNameComboBoxPanel.add(patientNameComboBox);
+        patientNameComboBoxPanel.add(find);
 
-        containerPanelArray[0].add(patientNameLabel);
-        containerPanelArray[0].add(patientNameTextField);
 
-        containerPanelArray[1].add(selectPatientLabel);
-        containerPanelArray[1].add(patientNameComboBox);
+        containerPanelArray[0].add(selectPatientLabel);
+        containerPanelArray[0].add(patientNameComboBoxPanel);
+
+        containerPanelArray[1].add(patientNameLabel);
+        containerPanelArray[1].add(patientNameTextField);
 
         containerPanelArray[2].add(patientGenderLabel);
         containerPanelArray[2].add(patientGenderTextField);
@@ -244,7 +232,7 @@ public class AddConsultation implements ActionListener {
         // Doctor Details Panel
         doctorDetails = new JPanel();
         doctorDetails.setLayout(new FlowLayout());
-        doctorDetails.setPreferredSize(new Dimension(700, 220));
+        doctorDetails.setPreferredSize(new Dimension(700, 190));
         doctorDetails.setOpaque(true);
         doctorDetails.setBorder(BorderFactory.createTitledBorder("Patient Details"));
 
@@ -258,16 +246,15 @@ public class AddConsultation implements ActionListener {
         doctorDetailsBottom.setPreferredSize(new Dimension(700, 80));
         doctorDetailsBottom.setOpaque(false);
 
-        String[] doctorNames = new String[WestminsterSkinConsultationManager.getNumberOfDoctors(WestminsterSkinConsultationManager.getDoctorArray())];
-        int j = 0;
+        String[] doctorNames = new String[WestminsterSkinConsultationManager.getNumberOfDoctors(WestminsterSkinConsultationManager.getDoctorArray()) + 1];
+        doctorNames[0] = "Select Doctor";
+        int j = 1;
         for (Person doctor : WestminsterSkinConsultationManager.getDoctorArray()) {
             if (doctor != null) {
                 doctorNames[j] = doctor.getName() + " " + doctor.getSurName();
                 j++;
             }
         }
-        // TODO: remove sample
-        doctorNames = new String[]{"Dr. John Doe", "Dr. Jane Doe"};
         doctorComboBox = new JComboBox(doctorNames);
         doctorComboBox.setPreferredSize(new Dimension(200, 40));
         doctorComboBox.setBounds(200, 200, 200, 40);
@@ -301,6 +288,7 @@ public class AddConsultation implements ActionListener {
         checkAvailabilityButton.setBackground(new Color(0, 0, 0, 0));
         checkAvailabilityButton.setForeground(new Color(164, 92, 255));
         checkAvailabilityButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        checkAvailabilityButton.addActionListener(this);
         checkAvailabilityButton.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -316,7 +304,7 @@ public class AddConsultation implements ActionListener {
             }
         });
 
-        String[] hours = {"0.25", "0.50", "1", "2"};
+        String[] hours = {"Select", "0.25", "0.50", "1", "2"};
         hoursComboBox = new JComboBox(hours);
         hoursComboBox.setPreferredSize(new Dimension(200, 40));
         hoursComboBox.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -337,24 +325,20 @@ public class AddConsultation implements ActionListener {
         containerPanelArray[7].add(dateLabel);
         containerPanelArray[7].add(selectDatePanel);
 
-        containerPanelArray[8].add(MainFrame.addSpace(200, 25));
+        containerPanelArray[8].add(MainFrame.addSpace(200, 10));
         containerPanelArray[8].add(checkAvailabilityButton);
 
+        containerPanelArray[9].setPreferredSize(new Dimension(410, 40));
+        hoursLabel.setPreferredSize(new Dimension(130, 17));
         containerPanelArray[9].add(hoursLabel);
         containerPanelArray[9].add(hoursComboBox);
 
-        containerPanelArray[10].add(timeLabel);
-        containerPanelArray[10].add(timeTextField);
-
-        containerPanelArray[11].add(numberLabel);
-        containerPanelArray[11].add(numberTextField);
 
         doctorDetailsTop.add(containerPanelArray[6]);
         doctorDetailsTop.add(containerPanelArray[7]);
         doctorDetailsTop.add(containerPanelArray[8]);
         doctorDetailsBottom.add(containerPanelArray[9]);
-        doctorDetailsBottom.add(containerPanelArray[10]);
-        doctorDetailsBottom.add(containerPanelArray[11]);
+        doctorDetailsBottom.setPreferredSize(new Dimension(400, 40));
 
         doctorDetails.add(doctorDetailsTop);
         doctorDetails.add(doctorDetailsBottom);
@@ -421,11 +405,13 @@ public class AddConsultation implements ActionListener {
                     imageIcon = new ImageIcon(newImage);
                     imagePreviewPanel.add(new JLabel(imageIcon));
                     label.setText("Attached " + imageFiles.size() + " image(s)");
-//                    try {
-//                        copyFile(file, new File("src/GUI/SkinImages/" + "user1-" + file.getName()));
-//                    } catch (IOException ex) {
-//                        throw new RuntimeException(ex);
-//                    }
+                    Patient p = (Patient) patient;
+                    try {
+                        copyFile(file, new File("src/GUI/SkinImages/" + p.getPatientId() + file.getName()));
+                        imagePaths.add("src/GUI/SkinImages/" + p.getPatientId() + file.getName());
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
 
                 } else {
                     label.setText("Open command canceled");
@@ -551,6 +537,183 @@ public class AddConsultation implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == find) {
+            if (patientNameComboBox.getSelectedItem().equals("Select Patient")) {
+                JOptionPane.showMessageDialog(null, "Please select a Patient.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                patientId = patientNameComboBox.getSelectedItem().toString().split(" ")[0];
+                for (Person tempPatient : WestminsterSkinConsultationManager.getPatientArrayList()) {
+                    Patient p = (Patient) tempPatient;
+                    if (patientId.equals(p.getPatientId())) {
+                        patient = tempPatient;
+                    }
+                }
+                Patient p = (Patient) patient;
+                patientNameTextField.setText(p.getName() + " " + p.getSurName());
+                patientGenderTextField.setText(p.getGender());
+                patientAgeTextField.setText(String.valueOf(p.getAge()));
+                patientDOBTextField.setText(p.getStringDateOfBirth());
+                patientMobileNumberTextField.setText(p.getMobileNumber());
+            }
+        }
+        if (e.getSource() == checkAvailabilityButton) {
+            if (Objects.equals(doctorComboBox.getSelectedItem(), "Select Doctor")) {
+                JOptionPane.showMessageDialog(null, "Please select a Doctor.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (sessionDate.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "Please select a Date.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                String doctorStr = Objects.requireNonNull(doctorComboBox.getSelectedItem()).toString();
+                String fName = doctorStr.split(" ")[0];
+                String lName = doctorStr.split(" ")[1];
+                for (Person tempDoctor : WestminsterSkinConsultationManager.getDoctorArray()) {
+                    if (tempDoctor != null) {
+                        Doctor d = (Doctor) tempDoctor;
+                        if (fName.equals(d.getName()) && lName.equals(d.getSurName())) {
+                            doctor = tempDoctor;
+                        }
+                    }
+                }
 
+                String error = "";
+                boolean sessionAvailable = false;
+                String strDate = sessionDate.getText();
+                Doctor doc = (Doctor) doctor;
+
+                Date dateType = WestminsterSkinConsultationManager.strToDate(strDate);
+                for (Session tempSession : WestminsterSkinConsultationManager.getSessionsArrayList()) {
+                    Doctor d = (Doctor) tempSession.getDoctor();
+                    if (d.getMedicalLicenceNumber().equals(doc.getMedicalLicenceNumber()) && tempSession.getDate().equals(dateType)) {
+                        if (tempSession.getSessionStatus().equals("Active") || tempSession.getSessionStatus().equals("OnGoing")) {
+                            if (tempSession.getAvailableConsultations() != 0) {
+                                sessionAvailable = true;
+                                session = tempSession;
+                                date = dateType;
+                                break;
+                            } else {
+                                error = "Full";
+                            }
+                        } else {
+                            error = "not Available";
+                        }
+                    }
+                }
+
+                if (sessionAvailable) {
+                    JOptionPane.showMessageDialog(null, "Session is available.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JDialog dialog = new JDialog(mainFrame, "Error", true);
+                    dialog.setSize(400, 150);
+                    dialog.setLayout(new FlowLayout());
+                    dialog.setResizable(false);
+                    dialog.setLocationRelativeTo(AddConsultation.getFrames()[0]);
+
+                    JLabel label1 = new JLabel("Session is " + error + ". But you can choose");
+                    label1.setFont(new Font("Arial", Font.PLAIN, 15));
+                    label1.setPreferredSize(new Dimension(330, 50));
+
+                    String speciality = doc.getSpecialisation();
+
+                    JComboBox<String> doctorComboBox2 = new JComboBox<>();
+                    doctorComboBox2.setPreferredSize(new Dimension(200, 30));
+                    doctorComboBox2.addItem("Select Doctor");
+                    for (Session tempSession : WestminsterSkinConsultationManager.getSessionsArrayList()) {
+                        Doctor d = (Doctor) tempSession.getDoctor();
+                        if (d.getSpecialisation().equals(speciality) && tempSession.getDate().equals(dateType)) {
+                            if (tempSession.getSessionStatus().equals("Active") || tempSession.getSessionStatus().equals("OnGoing")) {
+                                if (tempSession.getAvailableConsultations() != 0) {
+                                    doctorComboBox2.addItem(d.getName() + " " + d.getSurName());
+                                }
+                            }
+                        }
+                    }
+                    JButton okButton = new JButton("OK");
+                    okButton.addActionListener(e1 -> {
+                        if (Objects.equals(doctorComboBox2.getSelectedItem(), "Select Doctor")) {
+                            JOptionPane.showMessageDialog(null, "Please select a Doctor.", "Error", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                            String doctorStr1 = Objects.requireNonNull(doctorComboBox2.getSelectedItem()).toString();
+                            String fName1 = doctorStr1.split(" ")[0];
+                            String lName1 = doctorStr1.split(" ")[1];
+                            for (Person tempDoctor : WestminsterSkinConsultationManager.getDoctorArray()) {
+                                if (tempDoctor != null) {
+                                    Doctor d = (Doctor) tempDoctor;
+                                    if (fName1.equals(d.getName()) && lName1.equals(d.getSurName())) {
+                                        doctor = tempDoctor;
+                                    }
+                                }
+                            }
+                            Doctor doc1 = (Doctor) doctor;
+                            for (Session tempSession : WestminsterSkinConsultationManager.getSessionsArrayList()) {
+                                Doctor d = (Doctor) tempSession.getDoctor();
+                                if (d.getMedicalLicenceNumber().equals(doc1.getMedicalLicenceNumber()) && tempSession.getDate().equals(dateType)) {
+                                    if (tempSession.getSessionStatus().equals("Active") || tempSession.getSessionStatus().equals("OnGoing")) {
+                                        if (tempSession.getAvailableConsultations() != 0) {
+                                            session = tempSession;
+                                            date = dateType;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            doctorComboBox.setSelectedItem(session.getDoctor().getName() + " " + session.getDoctor().getSurName());
+                            dialog.dispose();
+                        }
+                    });
+                    dialog.add(label1);
+                    dialog.add(doctorComboBox2);
+                    dialog.add(okButton);
+                    dialog.setVisible(true);
+                }
+
+            }
+        }
+        if (e.getSource() == addConsultationButton) {
+            if (Objects.equals(patientNameComboBox.getSelectedItem(), "Select Patient")) {
+                JOptionPane.showMessageDialog(null, "Please select a Patient.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (Objects.equals(doctorComboBox.getSelectedItem(), "Select Doctor")) {
+                JOptionPane.showMessageDialog(null, "Please select a Doctor.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else if (Objects.equals(hoursComboBox.getSelectedItem(), "Select")) {
+                JOptionPane.showMessageDialog(null, "Please select a Session Duration.", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                if (session == null) {
+                    JOptionPane.showMessageDialog(null, "Check availability.", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    note = notesTextArea.getText();
+                    duration = Double.parseDouble(Objects.requireNonNull(hoursComboBox.getSelectedItem()).toString());
+                    try {
+                        Consultation consultation = new Consultation(generateConsultationID(), session, doctor, patient, duration, note, imagePaths);
+                        WestminsterSkinConsultationManager.consultationArrayList.add(consultation);
+                        session.addConsultation(consultation);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                    ConsultationsPanel.tableReRender(WestminsterSkinConsultationManager.getConsultationsArrayList());
+                    mainFrame.dispose();
+                }
+            }
+        }
+        if (e.getSource() == cancelButton) {
+            mainFrame.dispose();
+        }
+    }
+
+    public String generateConsultationID() {
+        String id = "CONS";
+        int count = 0;
+        for (Session session : WestminsterSkinConsultationManager.getSessionsArrayList()) {
+            for (Consultation consultation : session.getConsultations()) {
+                if (consultation != null) {
+                    count++;
+                }
+            }
+        }
+        if (count < 10) {
+            id += "00" + count;
+        } else if (count < 100) {
+            id += "0" + count;
+        } else {
+            id += count;
+        }
+        return id;
     }
 }

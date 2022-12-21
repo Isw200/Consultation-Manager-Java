@@ -22,35 +22,41 @@ public class Consultation implements Printable {
 
     // Encrypted data
     private String notes;
-    private String imagePath;
+    private ArrayList<String> imagesPaths;
 
     private double hours;
 
-    public Consultation(String consultationId, Session session, Person doctor, Person patient, double hours, String notes, String imagePath) throws IOException {
+    public Consultation(String consultationId, Session session, Person doctor, Person patient, double hours, String notes, ArrayList<String> imagePaths) throws IOException {
         this.consultationId = consultationId;
         this.session = session;
         this.doctor = doctor;
         this.patient = patient;
         this.hours = hours;
         this.notes = EncryptAndDecrypt.encryptText(notes, 5);
-        this.imagePath = imagePath;
         this.date = session.getDate();
 
-        EncryptAndDecrypt.encryptImage(imagePath, 5);
+        this.imagesPaths = new ArrayList<>();
+        for (String imagePath : imagePaths) {
+            EncryptAndDecrypt.encryptImage(imagePath, 5);
+        }
 
         // Set consultation time
+        time = new Date();
         Consultation[] consultations = session.getConsultations();
-
-        time = session.getTime();
+        Date timeTemp = session.getTime();
         int minutes = 0;
         for (int i = 0; i < consultations.length; i++) {
             if (consultations[i] != null) {
                 minutes += consultations[i].getHours() * 60;
             }
         }
-        // Add minutes to time
-        time.setMinutes(time.getMinutes() + minutes);
-
+        // covert time to minutes
+        int timeInMinutes = timeTemp.getHours() * 60 + timeTemp.getMinutes();
+        // add minutes to time
+        timeInMinutes += minutes;
+        // convert back to time
+        time.setHours(timeInMinutes / 60);
+        time.setMinutes(timeInMinutes % 60);
 
         // Calculate cost
         boolean isFirstConsultation = true;
@@ -67,11 +73,12 @@ public class Consultation implements Printable {
                 }
             }
         }
-        tokenNumber = 1;
+//        tokenNumber = 1;
         // Calculate token number
         for (int i = 0; i < consultations.length; i++) {
             if (consultations[i] != null) {
                 tokenNumber = i + 1;
+                System.out.println("token: " + tokenNumber);
             }
         }
 
@@ -146,13 +153,6 @@ public class Consultation implements Printable {
         this.notes = notes;
     }
 
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
 
     public double getHours() {
         return hours;
@@ -183,12 +183,12 @@ public class Consultation implements Printable {
         Doctor doctor = (Doctor) this.doctor;
         Patient patient = (Patient) this.patient;
 
-        return "Consultation ID: " + consultationId + " Doctor: " + doctor.getName() + " " + doctor.getSurName() + " Patient: " + patient.getName() + " " + patient.getSurName() + " Date: " + date + " Time: " + time + " Price: " + price + " Notes: " + notes + " Image Path: " + imagePath + " Hours: " + hours;
+        return "Consultation ID: " + consultationId + " Doctor: " + doctor.getName() + " " + doctor.getSurName() + " Patient: " + patient.getName() + " " + patient.getSurName() + " Date: " + date + " Time: " + time + " Price: " + price + " Notes: " + notes + " Hours: " + hours;
     }
 
     public String getStringDate() {
-        int year = Integer.parseInt(String.valueOf(date.getYear()))+1900;
-        int month = Integer.parseInt(String.valueOf(date.getMonth()))+1;
+        int year = Integer.parseInt(String.valueOf(date.getYear())) + 1900;
+        int month = Integer.parseInt(String.valueOf(date.getMonth())) + 1;
         int day = Integer.parseInt(String.valueOf(date.getDate()));
         String birthMonthString = switch (month) {
             case 1 -> "January";
@@ -208,7 +208,7 @@ public class Consultation implements Printable {
         return day + "-" + birthMonthString + "-" + year;
     }
 
-    public String getStringTime(){
+    public String getStringTime() {
         int hour = Integer.parseInt(String.valueOf(time.getHours()));
         int minute = Integer.parseInt(String.valueOf(time.getMinutes()));
         return hour + ":" + minute;
