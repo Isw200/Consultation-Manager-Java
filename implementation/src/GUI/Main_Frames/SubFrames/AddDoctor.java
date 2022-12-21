@@ -212,11 +212,10 @@ public class AddDoctor extends JDialog implements ActionListener {
                         JOptionPane.showMessageDialog(null, "Please enter a valid medical licence number: EX- DOC12345", "Error", JOptionPane.ERROR_MESSAGE);
                     } else {
                         // Add doctor to array list
-                        Date dateOfBirth = WestminsterSkinConsultationManager.strToDate(dateOfBirthField.getText());
-                        Doctor doctor = new Doctor(fNameField.getText(), lNameField.getText(), dateOfBirth, mobileNumField.getText(), medicalLicenceNumField.getText(), specialisationDropDown.getSelectedItem().toString(), "Available");
-                        WestminsterSkinConsultationManager.doctorArrayList.add(doctor);
+                        WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
+                        manager.addANewDoctor(fNameField.getText(), lNameField.getText(), dateOfBirthField.getText(), mobileNumField.getText(), medicalLicenceNumField.getText(), specialisationDropDown.getSelectedItem().toString(), "Available");
                         JOptionPane.showMessageDialog(null, "Doctor added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        DoctorsPanel.tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
+                        DoctorsPanel.tableReRender(WestminsterSkinConsultationManager.getDoctorArray());
                         mainFrame.dispose();
                     }
                 }

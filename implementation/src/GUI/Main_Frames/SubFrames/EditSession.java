@@ -125,11 +125,12 @@ public class EditSession extends JDialog implements ActionListener {
             }
         });
 
-        // Add specialisation drop down menu
-        String[] doctors = new String[WestminsterSkinConsultationManager.getDoctorArrayList().size()];
+        // Add Doctor drop down menu
+        int availableDoctors = WestminsterSkinConsultationManager.getNumberOfDoctors(WestminsterSkinConsultationManager.getDoctorArray());
+        String[] doctors = new String[availableDoctors];
 
-        for (int i = 0; i < WestminsterSkinConsultationManager.getDoctorArrayList().size(); i++) {
-            doctors[i] = WestminsterSkinConsultationManager.getDoctorArrayList().get(i).getName() + " " + WestminsterSkinConsultationManager.getDoctorArrayList().get(i).getSurName();
+        for (int i = 0; i < WestminsterSkinConsultationManager.getDoctorArray().length; i++) {
+            doctors[i] = WestminsterSkinConsultationManager.getDoctorArray()[i].getName() + " " + WestminsterSkinConsultationManager.getDoctorArray()[i].getSurName();
         }
 
         doctorDropDown = new JComboBox(doctors);
@@ -241,9 +242,9 @@ public class EditSession extends JDialog implements ActionListener {
             } else {
                 Date date = WestminsterSkinConsultationManager.strToDate(sessionDate.getText());
                 Person doctor = null;
-                for (int i = 0; i < WestminsterSkinConsultationManager.getDoctorArrayList().size(); i++) {
-                    if (Objects.requireNonNull(doctorDropDown.getSelectedItem()).toString().equals(WestminsterSkinConsultationManager.getDoctorArrayList().get(i).getName() + " " + WestminsterSkinConsultationManager.getDoctorArrayList().get(i).getSurName())) {
-                        doctor = WestminsterSkinConsultationManager.getDoctorArrayList().get(i);
+                for (int i = 0; i < WestminsterSkinConsultationManager.getDoctorArray().length; i++) {
+                    if (Objects.requireNonNull(doctorDropDown.getSelectedItem()).toString().equals(WestminsterSkinConsultationManager.getDoctorArray()[i].getName() + " " + WestminsterSkinConsultationManager.getDoctorArray()[i].getSurName())) {
+                        doctor = WestminsterSkinConsultationManager.getDoctorArray()[i];
                     }
                 }
                 Date time = WestminsterSkinConsultationManager.strToTime(Objects.requireNonNull(timeDropDown.getSelectedItem()).toString());

@@ -1,5 +1,6 @@
 package GUI.Main_Frames.SubFrames;
 
+import GUI.GUILibs.StatusColumnCellRenderer;
 import GUI.MainFrame;
 import GUI.Main_Frames.DoctorsPanel;
 import Models.Doctor;
@@ -97,10 +98,20 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
         bottomPanel.setPreferredSize(new Dimension(800, 400));
 
         String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Availability"};
-        ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
-        String[][] doctorData = new String[doctors.size()][6];
-        for (int i = 0; i < doctors.size(); i++) {
-            Doctor doctor = (Doctor) WestminsterSkinConsultationManager.getDoctorArrayList().get(i);
+        int numberOfDoctors = WestminsterSkinConsultationManager.getNumberOfDoctors(WestminsterSkinConsultationManager.getDoctorArray());
+        Doctor[] updatedArray = new Doctor[numberOfDoctors];
+        int j = 0;
+        for (Person doctor : WestminsterSkinConsultationManager.getDoctorArray()) {
+            if (doctor != null) {
+                updatedArray[j] = (Doctor) doctor;
+                j++;
+            }
+        }
+
+        String[][] doctorData = new String[numberOfDoctors][6];
+
+        for (int i = 0; i < updatedArray.length; i++) {
+            Doctor doctor = updatedArray[i];
             doctorData[i][0] = doctor.getMedicalLicenceNumber();
             doctorData[i][1] = doctor.getName();
             doctorData[i][2] = doctor.getSurName();
@@ -109,21 +120,29 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
             doctorData[i][5] = doctor.getAvailability();
         }
 
+
         doctorTable = new JTable();
         doctorTable.setPreferredScrollableViewportSize(new Dimension(750, 300));
-        doctorTable.setModel(new DefaultTableModel(doctorData, doctorsTableColumns));
         doctorTable.setRowHeight(30);
         doctorTable.setFont(new Font("Arial", Font.PLAIN, 14));
         doctorTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         doctorTable.setShowGrid(true);
         doctorTable.setGridColor(new Color(234, 214, 255));
         doctorTable.setModel(new DefaultTableModel(doctorData, doctorsTableColumns));
+        for (int i = 0; i < doctorTable.getColumnCount(); i++) {
+            doctorTable.getColumnModel().getColumn(i).setCellRenderer(new StatusColumnCellRenderer());
+        }
         JTableHeader header = doctorTable.getTableHeader();
         header.setBackground(new Color(30, 0, 70));
         header.setForeground(Color.WHITE);
         header.setFont(new Font("Arial", Font.PLAIN, 14));
         header.setPreferredSize(new Dimension(750, 30));
 
+
+        scrollPane = new JScrollPane(doctorTable);
+        bottomPanel.add(scrollPane);
+        mainFrame.add(bottomPanel);
+        mainFrame.setVisible(true);
         /**
          * This is to get values from selected row from the table
          */
@@ -195,10 +214,12 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             Person doctor = null;
-                            for (int i = 0; i < WestminsterSkinConsultationManager.doctorArrayList.size(); i++) {
-                                Doctor doc = (Doctor) WestminsterSkinConsultationManager.doctorArrayList.get(i);
-                                if (doc.getMedicalLicenceNumber().equals(doctorId)) {
-                                    doctor = WestminsterSkinConsultationManager.doctorArrayList.get(i);
+                            for (int i = 0; i < WestminsterSkinConsultationManager.doctorArray.length; i++) {
+                                if (WestminsterSkinConsultationManager.doctorArray[i] != null) {
+                                    Doctor doc = (Doctor) WestminsterSkinConsultationManager.doctorArray[i];
+                                    if (doc.getMedicalLicenceNumber().equals(doctorId)) {
+                                        doctor = WestminsterSkinConsultationManager.doctorArray[i];
+                                    }
                                 }
                             }
                             int dialogButton = JOptionPane.YES_NO_OPTION;
@@ -207,7 +228,8 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
                             if (dialogResult == JOptionPane.YES_OPTION) {
                                 WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
                                 manager.deleteADoctor(doctorId.toString());
-                                DoctorsPanel.tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
+                                DoctorsPanel.tableReRender(WestminsterSkinConsultationManager.getDoctorArray());
+                                FindDoctor.tableReRender(WestminsterSkinConsultationManager.getDoctorArray());
                                 dialog.dispose();
                                 mainFrame.dispose();
                                 new FindDoctor();
@@ -220,29 +242,24 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
                 }
             }
         });
-
-        scrollPane = new JScrollPane(doctorTable);
-
-        bottomPanel.add(scrollPane);
-        mainFrame.add(bottomPanel);
-
-        mainFrame.setVisible(true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == findDoctor) {
-            ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
+            Person[] doctors = WestminsterSkinConsultationManager.getDoctorArray();
+
             ArrayList<Person> filteredDoctors = new ArrayList<>();
 
             for (Person doctor : doctors) {
-                System.out.println(fName);
                 Doctor doc = (Doctor) doctor;
-                if (doctor.getName().equalsIgnoreCase(fName) && doctor.getSurName().equalsIgnoreCase(lName) && doc.getMedicalLicenceNumber().equalsIgnoreCase(medicalLicenceNum)) {
+                if (doctor.getName().equalsIgnoreCase(fName) || doctor.getSurName().equalsIgnoreCase(lName) || doc.getMedicalLicenceNumber().equalsIgnoreCase(medicalLicenceNum)) {
                     filteredDoctors.add(doctor);
                 }
             }
-            tableReRender(filteredDoctors);
+            Person[] filteredDoctorsArray = new Person[filteredDoctors.size()];
+            filteredDoctorsArray = filteredDoctors.toArray(filteredDoctorsArray);
+            tableReRender(filteredDoctorsArray);
         }
     }
 
@@ -303,7 +320,16 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
 
     @Override
     public void removeUpdate(DocumentEvent e) {
-
+        if (e.getDocument() == fNameField.getDocument()) {
+            fName = fNameField.getText();
+            updateTable(fName, lName, medicalLicenceNum);
+        } else if (e.getDocument() == lNameField.getDocument()) {
+            lName = lNameField.getText();
+            updateTable(fName, lName, medicalLicenceNum);
+        } else if (e.getDocument() == medicalLicenceNumField.getDocument()) {
+            medicalLicenceNum = medicalLicenceNumField.getText();
+            updateTable(fName, lName, medicalLicenceNum);
+        }
     }
 
     @Override
@@ -321,30 +347,50 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
     }
 
     public void updateTable(String fName, String lName, String doctorId) {
-        ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
+        Person[] doctors = WestminsterSkinConsultationManager.getDoctorArray();
+
         ArrayList<Person> filteredDoctors = new ArrayList<>();
 
         for (Person doctor : doctors) {
             Doctor doc = (Doctor) doctor;
-            if (doctor.getName().equalsIgnoreCase(fName) && doctor.getSurName().equalsIgnoreCase(lName) || doc.getMedicalLicenceNumber().equalsIgnoreCase(doctorId)) {
+            if (doctor.getName().equalsIgnoreCase(fName) || doctor.getSurName().equalsIgnoreCase(lName) || doc.getMedicalLicenceNumber().equalsIgnoreCase(doctorId)) {
                 filteredDoctors.add(doctor);
             }
         }
-        tableReRender(filteredDoctors);
+        Person[] filteredDoctorsArray = new Person[filteredDoctors.size()];
+        filteredDoctorsArray = filteredDoctors.toArray(filteredDoctorsArray);
+        tableReRender(filteredDoctorsArray);
     }
 
-    public static void tableReRender(ArrayList<Person> filteredDoctors){
-        String[][] filteredDoctorsTableData = new String[filteredDoctors.size()][6];
-        for (int i = 0; i < filteredDoctors.size(); i++) {
-            Doctor doc = (Doctor) filteredDoctors.get(i);
-            filteredDoctorsTableData[i][0] = doc.getMedicalLicenceNumber();
-            filteredDoctorsTableData[i][1] = doc.getName();
-            filteredDoctorsTableData[i][2] = doc.getSurName();
-            filteredDoctorsTableData[i][3] = doc.getMobileNumber();
-            filteredDoctorsTableData[i][4] = doc.getSpecialisation();
-            filteredDoctorsTableData[i][5] = doc.getAvailability();
-        }
+    public static void tableReRender(Person[] doctors){
         String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Availability"};
-        doctorTable.setModel(new DefaultTableModel(filteredDoctorsTableData, doctorsTableColumns));
+        int numberOfDoctors = WestminsterSkinConsultationManager.getNumberOfDoctors(doctors);
+        Doctor[] updatedArray = new Doctor[numberOfDoctors];
+        int j = 0;
+        for (Person doctor : doctors) {
+            if (doctor != null) {
+                updatedArray[j] = (Doctor) doctor;
+                j++;
+            }
+        }
+
+        String[][] newDoctorData = new String[numberOfDoctors][6];
+
+        for (int i = 0; i < updatedArray.length; i++) {
+            Doctor doctor = updatedArray[i];
+            newDoctorData[i][0] = doctor.getMedicalLicenceNumber();
+            newDoctorData[i][1] = doctor.getName();
+            newDoctorData[i][2] = doctor.getSurName();
+            newDoctorData[i][3] = doctor.getMobileNumber();
+            newDoctorData[i][4] = doctor.getSpecialisation();
+            newDoctorData[i][5] = doctor.getAvailability();
+        }
+
+        DefaultTableModel model = new DefaultTableModel(newDoctorData, doctorsTableColumns);
+        doctorTable.setModel(model);
+
+        for (int i = 0; i < doctorTable.getColumnCount(); i++) {
+            doctorTable.getColumnModel().getColumn(i).setCellRenderer(new StatusColumnCellRenderer());
+        }
     }
 }

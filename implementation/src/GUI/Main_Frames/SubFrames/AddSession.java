@@ -112,10 +112,11 @@ public class AddSession extends JDialog implements ActionListener {
         });
 
         // Add specialisation drop down menu
-        String[] doctors = new String[WestminsterSkinConsultationManager.getDoctorArrayList().size()];
+        int availableDoctors = WestminsterSkinConsultationManager.getNumberOfDoctors(WestminsterSkinConsultationManager.getDoctorArray());
+        String[] doctors = new String[availableDoctors];
 
-        for (int i = 0; i < WestminsterSkinConsultationManager.getDoctorArrayList().size(); i++) {
-            doctors[i] = WestminsterSkinConsultationManager.getDoctorArrayList().get(i).getName() + " " + WestminsterSkinConsultationManager.getDoctorArrayList().get(i).getSurName();
+        for (int i = 0; i < availableDoctors; i++) {
+            doctors[i] = WestminsterSkinConsultationManager.getDoctorArray()[i].getName() + " " + WestminsterSkinConsultationManager.getDoctorArray()[i].getSurName();
         }
 
         doctorDropDown = new JComboBox(doctors);
@@ -134,7 +135,7 @@ public class AddSession extends JDialog implements ActionListener {
 
         // Add buttons
         JPanel addSessionBtnContainer = new JPanel();
-        addSessionBtnContainer.setPreferredSize(new Dimension(500,50));
+        addSessionBtnContainer.setPreferredSize(new Dimension(500, 50));
         addSession = new JButton("Add Session");
         addSession.setPreferredSize(new Dimension(220, 40));
         addSession.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -196,10 +197,10 @@ public class AddSession extends JDialog implements ActionListener {
         mainPanel.add(mainBorderLayouts[1]);
         mainPanel.add(panels[4]);
 
-        mainPanel.add(addSpace(520,30));
+        mainPanel.add(addSpace(520, 30));
         mainPanel.add(addSessionBtnContainer);
         mainPanel.add(addAndCancelButtons);
-        mainPanel.add(addSpace(520,50));
+        mainPanel.add(addSpace(520, 50));
         mainFrame.add(mainPanel);
     }
 
@@ -212,9 +213,9 @@ public class AddSession extends JDialog implements ActionListener {
             } else {
                 Date date = WestminsterSkinConsultationManager.strToDate(sessionDate.getText());
                 Person doctor = null;
-                for (int i = 0; i < WestminsterSkinConsultationManager.getDoctorArrayList().size(); i++) {
-                    if (Objects.requireNonNull(doctorDropDown.getSelectedItem()).toString().equals(WestminsterSkinConsultationManager.getDoctorArrayList().get(i).getName() + " " + WestminsterSkinConsultationManager.getDoctorArrayList().get(i).getSurName())) {
-                        doctor = WestminsterSkinConsultationManager.getDoctorArrayList().get(i);
+                for (int i = 0; i < WestminsterSkinConsultationManager.getDoctorArray().length; i++) {
+                    if (Objects.requireNonNull(doctorDropDown.getSelectedItem()).toString().equals(WestminsterSkinConsultationManager.getDoctorArray()[i].getName() + " " + WestminsterSkinConsultationManager.getDoctorArray()[i].getSurName())) {
+                        doctor = WestminsterSkinConsultationManager.getDoctorArray()[i];
                     }
                 }
                 Date time = WestminsterSkinConsultationManager.strToTime(Objects.requireNonNull(timeDropDown.getSelectedItem()).toString());

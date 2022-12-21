@@ -71,7 +71,7 @@ public class Main {
             } else if (answer.equalsIgnoreCase("DL")) {
                 westminsterSkinConsultationManager.loadDoctorsFromFile();
             } else if (answer.equalsIgnoreCase("DSO")) {
-                westminsterSkinConsultationManager.sort(WestminsterSkinConsultationManager.getDoctorArrayList());
+                westminsterSkinConsultationManager.sortDoctor(WestminsterSkinConsultationManager.getDoctorArray());
             }
             // Patient
             else if (answer.equalsIgnoreCase("PA")) {

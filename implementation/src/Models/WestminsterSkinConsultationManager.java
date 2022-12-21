@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.Scanner;
 
 public class WestminsterSkinConsultationManager implements SkinConsultationManager {
-    public static ArrayList<Person> doctorArrayList = new ArrayList<>();
+    public static Person[] doctorArray = new Doctor[10];
     public static ArrayList<Person> patientArrayList = new ArrayList<>();
     public static ArrayList<Session> sessionArrayList = new ArrayList<>();
     public static ArrayList<Consultation> consultationArrayList = new ArrayList<>();
@@ -25,8 +25,8 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     public WestminsterSkinConsultationManager() {
     }
 
-    public static ArrayList<Person> getDoctorArrayList() {
-        return doctorArrayList;
+    public static Person[] getDoctorArray() {
+        return doctorArray;
     }
 
     public static ArrayList<Person> getPatientArrayList() {
@@ -35,6 +35,10 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
 
     public static ArrayList<Session> getSessionsArrayList() {
         return sessionArrayList;
+    }
+
+    public static ArrayList<Consultation> getConsultationsArrayList() {
+        return consultationArrayList;
     }
 
     /**
@@ -54,9 +58,18 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      */
     @Override
     public void addANewDoctor(String name, String surName, String stringDateOfBirth, String mobileNumber, String medicalLicenceNumber, String specialisation, String availability) {
-        Date dateOfBirth = strToDate(stringDateOfBirth);
-        Person doctor = new Doctor(name, surName, dateOfBirth, mobileNumber, medicalLicenceNumber, specialisation, availability);
-        doctorArrayList.add(doctor);
+        if (isArrayFull(doctorArray)) {
+            JOptionPane.showMessageDialog(null, "Doctor Array is Full");
+        } else {
+            Date dateOfBirth = strToDate(stringDateOfBirth);
+            Person doctor = new Doctor(name, surName, dateOfBirth, mobileNumber, medicalLicenceNumber, specialisation, availability);
+            for (int i = 0; i < doctorArray.length; i++) {
+                if (doctorArray[i] == null) {
+                    doctorArray[i] = doctor;
+                    break;
+                }
+            }
+        }
     }
 
     /**
@@ -68,12 +81,12 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     @Override
     public void deleteADoctor(String medicalLicenceNumber) {
         boolean found = false;
-        for (int i = 0; i < doctorArrayList.size(); i++) {
-            Doctor doctor = (Doctor) doctorArrayList.get(i);
+        for (int i = 0; i < doctorArray.length; i++) {
+            Doctor doctor = (Doctor) doctorArray[i];
             if (medicalLicenceNumber.equals(doctor.getMedicalLicenceNumber())) {
                 System.out.println("Doctor " + doctor.getName() + " " + doctor.getSurName() + " deleted successfully.");
                 found = true;
-                doctorArrayList.remove(i);
+                doctorArray[i] = null;
                 break;
             }
         }
@@ -88,9 +101,9 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      */
     @Override
     public void printAllDoctors() {
-        sort(doctorArrayList);
-        for (int i = 0; i < doctorArrayList.size(); i++) {
-            Doctor doctor = (Doctor) doctorArrayList.get(i);
+        sortDoctor(doctorArray);
+        for (int i = 0; i < doctorArray.length; i++) {
+            Doctor doctor = (Doctor) doctorArray[i];
             System.out.println("Doctor " + (i + 1) + ": " + doctor.print());
         }
     }
@@ -140,6 +153,16 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         } else {
             System.out.println("File not exists!");
         }
+    }
+
+    public static int getNumberOfDoctors(Person[] array) {
+        int count = 0;
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] != null) {
+                count++;
+            }
+        }
+        return count;
     }
 
     /**
@@ -233,8 +256,8 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     public void addNewSession(String sessionID, String doctorID, String date, String time, int maxPatients, String sessionStatus) {
         Date sessionDate = strToDate(date);
         Doctor doctor = null;
-        for (int i = 0; i < doctorArrayList.size(); i++) {
-            Doctor tempDoctor = (Doctor) doctorArrayList.get(i);
+        for (int i = 0; i < doctorArray.length; i++) {
+            Doctor tempDoctor = (Doctor) doctorArray[i];
             if (doctorID.equals(tempDoctor.getMedicalLicenceNumber())) {
                 doctor = tempDoctor;
                 break;
@@ -499,7 +522,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
             if (type.equals("Doctor")) {
-                for (Person doctor : doctorArrayList) {
+                for (Person doctor : doctorArray) {
                     Doctor doctorType = (Doctor) doctor;
                     bufferedWriter.write(doctorType.getName() + " " + doctorType.getSurName() + " " + doctorType.getDateOfBirth() + " " + doctorType.getMobileNumber() + " " + doctorType.getMedicalLicenceNumber() + " " + doctorType.getSpecialisation() + " " + doctorType.getAvailability() + "\n");
                 }
@@ -553,8 +576,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     }
 
     /**
-     * Sort a given ArrayList using a bubble sort algorithm
-     *
+     * Sort a given ArrayList using a bubble sort algorithm.
      * @param arrayList ArrayList to sort.
      */
     public void sort(ArrayList<Person> arrayList) {
@@ -566,6 +588,19 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
                     temp = arrayList.get(j - 1);
                     arrayList.set(j - 1, arrayList.get(j));
                     arrayList.set(j, temp);
+                }
+            }
+        }
+    }
+    public void sortDoctor(Person[] doctorArray){
+        Person temp;
+        for (int i = 0; i < doctorArray.length; i++) {
+            for (int j = 1; j < (doctorArray.length); j++) {
+                int comparisonReturn = (doctorArray[j - 1].getSurName()).compareTo(doctorArray[j].getSurName());
+                if (comparisonReturn > 0) {
+                    temp = doctorArray[j - 1];
+                    doctorArray[j - 1] = doctorArray[j];
+                    doctorArray[j] = temp;
                 }
             }
         }
@@ -591,5 +626,13 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         mainFrame.setSize(1300, 800);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setVisible(true);
+    }
+    public boolean isArrayFull(Person[] array){
+        for (int i = 0; i < array.length; i++) {
+            if (array[i] == null){
+                return false;
+            }
+        }
+        return true;
     }
 }

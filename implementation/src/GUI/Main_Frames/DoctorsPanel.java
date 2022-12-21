@@ -201,13 +201,13 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
         // Table
         String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Availability"};
 
-        ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
-        String[][] doctorData = new String[doctors.size()][6];
+        Person[] doctors = WestminsterSkinConsultationManager.getDoctorArray();
+        String[][] doctorData = new String[doctors.length][6];
 
-        numberOfDoctors = doctors.size();
+        numberOfDoctors = WestminsterSkinConsultationManager.getNumberOfDoctors(doctors);
 
-        for (int i = 0; i < doctors.size(); i++) {
-            Doctor doctor = (Doctor) WestminsterSkinConsultationManager.getDoctorArrayList().get(i);
+        for (int i = 0; i < doctors.length; i++) {
+            Doctor doctor = (Doctor) WestminsterSkinConsultationManager.getDoctorArray()[i];
             doctorData[i][0] = doctor.getMedicalLicenceNumber();
             doctorData[i][1] = doctor.getName();
             doctorData[i][2] = doctor.getSurName();
@@ -311,18 +311,29 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == addDoctor){
-            new AddDoctor();
+            boolean isArrayFull = true;
+            for (int i = 0; i < WestminsterSkinConsultationManager.getDoctorArray().length; i++) {
+                if (WestminsterSkinConsultationManager.getDoctorArray()[i] == null) {
+                    isArrayFull = false;
+                    break;
+                }
+            }
+            if (isArrayFull) {
+                JOptionPane.showMessageDialog(null, "You have reached maximum doctors !", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                new AddDoctor();
+            }
         }
         if (e.getSource() == deleteEditDoctor){
             new FindDoctor();
         }
         if (e.getSource() == refreshButton){
-            tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
+            tableReRender(WestminsterSkinConsultationManager.getDoctorArray());
         }
         if (e.getSource() == importData){
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
             manager.loadDoctorsFromFile();
-            tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
+            tableReRender(WestminsterSkinConsultationManager.getDoctorArray());
         }
         if (e.getSource() == saveDataButton){
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
@@ -331,8 +342,8 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
         }
         if (e.getSource() == sortDataButton){
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
-            manager.sort(WestminsterSkinConsultationManager.getDoctorArrayList());
-            tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
+            manager.sortDoctor(WestminsterSkinConsultationManager.getDoctorArray());
+            tableReRender(WestminsterSkinConsultationManager.getDoctorArray());
             new SortingDone();
         }
     }
@@ -453,14 +464,22 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
      * This method is called when the refresh button is clicked.
      * The re-rendering is done by changing the Default Table Model.
      */
-    public static void tableReRender(ArrayList<Person> doctors){
+    public static void tableReRender(Person[] doctors){
         String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Availability"};
+        numberOfDoctors = WestminsterSkinConsultationManager.getNumberOfDoctors(doctors);
+        Doctor[] updatedArray = new Doctor[numberOfDoctors];
+        int j = 0;
+        for (Person doctor : doctors) {
+            if (doctor != null) {
+                updatedArray[j] = (Doctor) doctor;
+                j++;
+            }
+        }
 
-        String[][] newDoctorData = new String[doctors.size()][6];
+        String[][] newDoctorData = new String[numberOfDoctors][6];
 
-        numberOfDoctors = doctors.size();
-        for (int i = 0; i < doctors.size(); i++) {
-            Doctor doctor = (Doctor) doctors.get(i);
+        for (int i = 0; i < updatedArray.length; i++) {
+            Doctor doctor = updatedArray[i];
             newDoctorData[i][0] = doctor.getMedicalLicenceNumber();
             newDoctorData[i][1] = doctor.getName();
             newDoctorData[i][2] = doctor.getSurName();
@@ -500,7 +519,7 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
     }
 
     public void filterDataBySearchField(){
-        ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
+        Person[] doctors = WestminsterSkinConsultationManager.getDoctorArray();
         if (!searchField.getText().equals("") && !searchField.getText().equals("Search Doctors...")){
             ArrayList<Person> searchedDoctors = new ArrayList<>();
             for (Person doctor : doctors) {
@@ -508,7 +527,11 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
                     searchedDoctors.add(doctor);
                 }
             }
-            tableReRender(searchedDoctors);
+            Person[] searchedDoctorsArray = new Person[searchedDoctors.size()];
+            for (int i = 0; i < searchedDoctors.size(); i++) {
+                searchedDoctorsArray[i] = searchedDoctors.get(i);
+            }
+            tableReRender(searchedDoctorsArray);
         } else {
             tableReRender(doctors);
         }

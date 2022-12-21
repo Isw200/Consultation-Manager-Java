@@ -13,7 +13,6 @@ import java.util.Calendar;
 public class DatePicker {
     int month = java.util.Calendar.getInstance().get(java.util.Calendar.MONTH);
     int year = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR);
-    ;
     JLabel monthYearText = new JLabel("", JLabel.CENTER);
     String day = "";
     JDialog calenderDialog;

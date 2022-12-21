@@ -234,17 +234,16 @@ public class FindPatient extends JFrame implements ActionListener, MouseListener
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == findPatient) {
-            ArrayList<Person> doctors = WestminsterSkinConsultationManager.getDoctorArrayList();
-            ArrayList<Person> filteredDoctors = new ArrayList<>();
+            ArrayList<Person> patients = WestminsterSkinConsultationManager.getPatientArrayList();
+            ArrayList<Person> filteredPatients = new ArrayList<>();
 
-            for (Person doctor : doctors) {
-                System.out.println(fName);
-                Doctor doc = (Doctor) doctor;
-                if (doctor.getName().equalsIgnoreCase(fName) && doctor.getSurName().equalsIgnoreCase(lName) && doc.getMedicalLicenceNumber().equalsIgnoreCase(patientId)) {
-                    filteredDoctors.add(doctor);
+            for (Person patient : patients) {
+                Patient tempPatient = (Patient) patient;
+                if (patient.getName().equalsIgnoreCase(fName) && patient.getSurName().equalsIgnoreCase(lName) || tempPatient.getPatientId().equalsIgnoreCase(patientId)) {
+                    filteredPatients.add(patient);
                 }
             }
-            tableReRender(filteredDoctors);
+            tableReRender(filteredPatients);
         }
     }
 

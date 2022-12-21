@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Date;
 
 import static GUI.MainFrame.addSpace;
 import static GUI.MainFrame.scaleImage;
@@ -33,10 +32,10 @@ public class EditDoctor extends JDialog implements ActionListener {
     JButton editDoctor, cancel;
     public EditDoctor(String doctorId) {
         this.doctorId = doctorId;
-        for (int i = 0; i < WestminsterSkinConsultationManager.doctorArrayList.size(); i++) {
-            Doctor doc = (Doctor) WestminsterSkinConsultationManager.doctorArrayList.get(i);
+        for (int i = 0; i < WestminsterSkinConsultationManager.doctorArray.length; i++) {
+            Doctor doc = (Doctor) WestminsterSkinConsultationManager.doctorArray[i];
             if (doc.getMedicalLicenceNumber().equals(doctorId)) {
-                doctor = WestminsterSkinConsultationManager.doctorArrayList.get(i);
+                doctor = WestminsterSkinConsultationManager.doctorArray[i];
             }
         }
         Doctor doc = (Doctor) doctor;
@@ -274,8 +273,8 @@ public class EditDoctor extends JDialog implements ActionListener {
                             doc.setAvailability(availability);
 
                             JOptionPane.showMessageDialog(null, "Doctor Edited Successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                            FindDoctor.tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
-                            DoctorsPanel.tableReRender(WestminsterSkinConsultationManager.getDoctorArrayList());
+                            FindDoctor.tableReRender(WestminsterSkinConsultationManager.getDoctorArray());
+                            DoctorsPanel.tableReRender(WestminsterSkinConsultationManager.getDoctorArray());
                             mainFrame.dispose();
                         }
                     }
