@@ -35,7 +35,9 @@ public class Consultation implements Printable {
         this.notes = EncryptAndDecrypt.encryptText(notes, 5);
         this.date = session.getDate();
 
-        this.imagesPaths = new ArrayList<>();
+        this.imagesPaths = imagePaths;
+
+        // Encrypt images
         for (String imagePath : imagePaths) {
             EncryptAndDecrypt.encryptImage(imagePath, 5);
         }
@@ -50,11 +52,10 @@ public class Consultation implements Printable {
                 minutes += consultations[i].getHours() * 60;
             }
         }
-        // covert time to minutes
+
+        // Calculate patients time slot
         int timeInMinutes = timeTemp.getHours() * 60 + timeTemp.getMinutes();
-        // add minutes to time
         timeInMinutes += minutes;
-        // convert back to time
         time.setHours(timeInMinutes / 60);
         time.setMinutes(timeInMinutes % 60);
 
@@ -73,15 +74,6 @@ public class Consultation implements Printable {
                 }
             }
         }
-//        tokenNumber = 1;
-        // Calculate token number
-        for (int i = 0; i < consultations.length; i++) {
-            if (consultations[i] != null) {
-                tokenNumber = i + 1;
-                System.out.println("token: " + tokenNumber);
-            }
-        }
-
         if (isFirstConsultation) {
             if (hours <= 1) {
                 this.price = 15;
@@ -95,6 +87,14 @@ public class Consultation implements Printable {
                 this.price = 25 * hours;
             }
         }
+
+        // Calculate token number
+        for (int i = 0; i < consultations.length; i++) {
+            if (consultations[i] != null) {
+                tokenNumber = i + 1;
+            }
+        }
+
     }
 
     public Person getDoctor() {
@@ -184,6 +184,10 @@ public class Consultation implements Printable {
         Patient patient = (Patient) this.patient;
 
         return "Consultation ID: " + consultationId + " Doctor: " + doctor.getName() + " " + doctor.getSurName() + " Patient: " + patient.getName() + " " + patient.getSurName() + " Date: " + date + " Time: " + time + " Price: " + price + " Notes: " + notes + " Hours: " + hours;
+    }
+
+    public ArrayList<String> getImagesPaths() {
+        return imagesPaths;
     }
 
     public String getStringDate() {

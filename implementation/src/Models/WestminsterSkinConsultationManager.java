@@ -2,6 +2,7 @@ package Models;
 
 import GUI.MainFrame;
 import Interfaces.SkinConsultationManager;
+import Models.SubModels.EncryptAndDecrypt;
 
 import javax.swing.*;
 import java.io.*;
@@ -332,6 +333,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     public void addNewConsultation(String consultationId, Session session, Person doctor, Person patient, double hours, String notes, ArrayList<String> imagePaths) throws IOException {
         Consultation consultation = new Consultation(consultationId, session, doctor, patient, hours, notes, imagePaths);
         consultationArrayList.add(consultation);
+        session.addConsultation(consultation);
     }
 
     @Override
@@ -354,7 +356,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     @Override
     public void printAllConsultations() {
         for (int i = 0; i < consultationArrayList.size(); i++) {
-            Consultation consultation = (Consultation) consultationArrayList.get(i);
+            Consultation consultation = consultationArrayList.get(i);
             System.out.println("Consultation " + (i + 1) + ": " + consultation.print());
         }
     }
@@ -381,7 +383,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
                 consultationsFile.delete();
                 reader.close();
             } catch (FileNotFoundException e) {
-                System.out.println("An error occurred.");
+                System.out.println("An error occurred while loading check #loadConsultationsFromFile()");
                 e.printStackTrace();
             }
         } else {
@@ -490,19 +492,13 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
             }
         } else if (type.equals("Consultation")) {
             while (reader.hasNextLine()) {
-                ArrayList<String> dataItems = lineReader(reader.nextLine());
-                String consultationID = dataItems.get(0);
-                String sessionID = dataItems.get(1);
-                String patientID = dataItems.get(2);
-                String date = dataItems.get(4) + "-" + dataItems.get(3) + "-" + dataItems.get(7);
-                String time = dataItems.get(11);
-                String consultationStatus = dataItems.get(15);
-
-//                addNewConsultation(consultationID, sessionID, patientID, date, time, consultationStatus);
+                try {
+                    consultationLineReader(reader.nextLine());
+                } catch (Exception e) {
+                    System.out.println(e + "check #loadFromFile()");
+                }
             }
-
         }
-
     }
 
     /**
@@ -510,8 +506,6 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      *
      * @param file A file that data should save.
      * @param type The type of ArrayList.
-     *             If Doctor ArrayList it has additional attribute MedicalLicenceNumber & Specialisation.
-     *             If Patient ArrayList it has additional attribute PatientId.
      */
     public void saveToFile(File file, String type) {
         try {
@@ -538,7 +532,12 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
                     Patient patientType = (Patient) consultation.getPatient();
                     Doctor doctorType = (Doctor) consultation.getDoctor();
 
-//                    bufferedWriter.write(consultation.getConsultationId() + " " + consultation.getSession().getSessionId() + " " + doctorType.getMedicalLicenceNumber()+ " " + patientType.getPatientId() + consultation.getHours() + " " + consultation.getNotes() + " " + consultation.getImagePath() + "\n");
+                    String imagePaths = "";
+                    for (String imagePath : consultation.getImagesPaths()) {
+                        imagePaths += imagePath + ",";
+                    }
+
+                    bufferedWriter.write(consultation.getConsultationId() + " " + consultation.getSession().getSessionId() + " " + doctorType.getMedicalLicenceNumber() + " " + patientType.getPatientId() + " " + consultation.getHours() + " *" + consultation.getNotes() + "* <" + imagePaths + "> " + "\n");
                 }
             }
             bufferedWriter.close();
@@ -573,6 +572,74 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     }
 
     /**
+     * Get a line as a String parameter and split it by space.
+     * Once it gets a line it will create a new Consultation object.
+     *
+     * @param line A line of a text file.
+     * @return An ArrayList of String.
+     */
+    public void consultationLineReader(String line) throws IOException {
+        ArrayList<String> dataItems = new ArrayList<>();
+        ArrayList<String> tempItem = new ArrayList<>();
+        for (int i = 0; i < line.length(); i++) {
+            if (!String.valueOf(line.charAt(i)).equals(" ")) {
+                tempItem.add(String.valueOf(line.charAt(i)));
+            } else {
+                dataItems.add(String.join("", tempItem));
+                tempItem.clear();
+            }
+            if (i == line.length() - 1) {
+                dataItems.add(String.join("", tempItem));
+                tempItem.clear();
+            }
+        }
+        // Data items:
+        String consultationID = dataItems.get(0);
+        String sessionID = dataItems.get(1);
+        String doctorID = dataItems.get(2);
+        String patientID = dataItems.get(3);
+        String hours = dataItems.get(4);
+        String notes = dataItems.get(5);
+        String images = dataItems.get(6);
+
+        notes = notes.substring(1, notes.length() - 1);
+        images = images.substring(1, images.length() - 1);
+        notes = EncryptAndDecrypt.decryptText(notes, 5);
+
+        ArrayList<String> imagesPaths = new ArrayList<>();
+        if (!images.equals("")) {
+            String[] imagesArr = images.split(",");
+            for (String image : imagesArr) {
+                imagesPaths.add(image);
+                // Encrypt when loading
+                EncryptAndDecrypt.decryptImage(image, 5);
+            }
+        }
+        Session session = null;
+        for (Session tempSes : sessionArrayList) {
+            if (tempSes.getSessionId().equals(sessionID)) {
+                session = tempSes;
+            }
+        }
+        Person doctor = null;
+        for (Person tempDoc : doctorArray) {
+            Doctor tempDocType = (Doctor) tempDoc;
+            if (tempDocType.getMedicalLicenceNumber().equals(doctorID)) {
+                doctor = tempDoc;
+            }
+        }
+        Person patient = null;
+        for (Person tempPat : patientArrayList) {
+            Patient tempPatType = (Patient) tempPat;
+            if (tempPatType.getPatientId().equals(patientID)) {
+                patient = tempPat;
+            }
+        }
+        double hoursDouble = Double.parseDouble(hours);
+        addNewConsultation(consultationID, session, doctor, patient, hoursDouble, notes, imagesPaths);
+    }
+
+    /**
      * Sort a given ArrayList using a bubble sort algorithm.
      *
      * @param arrayList ArrayList to sort.
@@ -591,6 +658,12 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         }
     }
 
+    /**
+     * Sort a given ArrayList using a bubble sort algorithm.
+     * sort by Doctor's surname
+     *
+     * @param doctorArray ArrayList to sort.
+     */
     public void sortDoctor(Person[] doctorArray) {
         Person temp;
         for (int i = 0; i < doctorArray.length; i++) {
@@ -605,11 +678,37 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         }
     }
 
+    /**
+     * Sort a given ArrayList using a bubble sort algorithm.
+     * sort by date
+     *
+     * @param arrayList ArrayList to sort.
+     */
     public void sortSession(ArrayList<Session> arrayList) {
         Session temp;
         for (int i = 0; i < arrayList.size(); i++) {
             for (int j = 1; j < (arrayList.size()); j++) {
                 int comparisonReturn = (arrayList.get(j - 1).getDate()).compareTo(arrayList.get(j).getDate());
+                if (comparisonReturn > 0) {
+                    temp = arrayList.get(j - 1);
+                    arrayList.set(j - 1, arrayList.get(j));
+                    arrayList.set(j, temp);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sort a given ArrayList using a bubble sort algorithm.
+     * Sort by consultation date
+     *
+     * @param arrayList ArrayList to sort.
+     */
+    public void sortConsultation(ArrayList<Consultation> arrayList) {
+        Consultation temp;
+        for (int i = 0; i < arrayList.size(); i++) {
+            for (int j = 1; j < (arrayList.size()); j++) {
+                int comparisonReturn = (arrayList.get(j - 1).getSession().getDate()).compareTo(arrayList.get(j).getSession().getDate());
                 if (comparisonReturn > 0) {
                     temp = arrayList.get(j - 1);
                     arrayList.set(j - 1, arrayList.get(j));

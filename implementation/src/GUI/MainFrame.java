@@ -42,7 +42,7 @@ public class MainFrame extends JFrame implements ActionListener {
                 }
             }
         };
-        leftPanel.setBackground(new Color(0,0,0,0));
+        leftPanel.setBackground(new Color(0, 0, 0, 0));
         leftPanel.setPreferredSize(new Dimension(270, 600));
         add(leftPanel, BorderLayout.WEST);
 
@@ -79,11 +79,10 @@ public class MainFrame extends JFrame implements ActionListener {
         logoContainer.add(logoLabel, BorderLayout.WEST);
         logoContainer.add(logoTextContainer, BorderLayout.CENTER);
 
-        leftTopPanel.add(addSpace(50,65), BorderLayout.WEST);
+        leftTopPanel.add(addSpace(50, 65), BorderLayout.WEST);
         leftTopPanel.add(logoContainer, BorderLayout.CENTER);
 
         leftPanel.add(leftTopPanel, BorderLayout.NORTH);
-
 
 
         // Container for left panel operators
@@ -156,7 +155,7 @@ public class MainFrame extends JFrame implements ActionListener {
         logoutContainer.setOpaque(false);
 
         logoutContainer.add(logoutButton);
-        logoutContainer.setBackground(new Color(0,0,0,0));
+        logoutContainer.setBackground(new Color(0, 0, 0, 0));
         logoutButton.setHorizontalAlignment(SwingConstants.CENTER);
 
         leftPanel.add(logoutContainer, BorderLayout.SOUTH);
@@ -190,35 +189,30 @@ public class MainFrame extends JFrame implements ActionListener {
         if (e.getSource() == dashboardButton) {
             changeClickedButtonStyle(dashboardButton);
             changeRightPanel(dashBoardPanel);
-        }
-        else if (e.getSource() == doctorButton) {
+        } else if (e.getSource() == doctorButton) {
             changeClickedButtonStyle(doctorButton);
             changeRightPanel(doctorsPanel);
-        }
-        else if (e.getSource() == patientButton) {
+        } else if (e.getSource() == patientButton) {
             changeClickedButtonStyle(patientButton);
             changeRightPanel(patientsPanel);
-        }
-        else if (e.getSource() == appointmentButton) {
-            System.out.println("Appointment");
+        } else if (e.getSource() == appointmentButton) {
             changeClickedButtonStyle(appointmentButton);
             changeRightPanel(consultationsPanel);
 
-        }
-        else if (e.getSource() == sessionButton) {
+        } else if (e.getSource() == sessionButton) {
             changeClickedButtonStyle(sessionButton);
             changeRightPanel(sessionsPanel);
 
-        }
-        else if (e.getSource() == logoutButton) {
+        } else if (e.getSource() == logoutButton) {
             System.out.println("Logout");
         }
     }
 
     /**
      * This method is used to scale ImageIcons
-     * @param icon ImageIcon to be scaled
-     * @param width width of the scaled ImageIcon
+     *
+     * @param icon   ImageIcon to be scaled
+     * @param width  width of the scaled ImageIcon
      * @param height height of the scaled ImageIcon
      * @return scaled ImageIcon
      */
@@ -241,7 +235,8 @@ public class MainFrame extends JFrame implements ActionListener {
 
     /**
      * This method is used to add space between components
-     * @param width width of the space
+     *
+     * @param width  width of the space
      * @param height height of the space
      * @return space
      */
@@ -253,8 +248,10 @@ public class MainFrame extends JFrame implements ActionListener {
 
         return space;
     }
+
     /**
      * This method is used to change the style of the clicked button
+     *
      * @param button button to be changed
      */
     public void changeClickedButtonStyle(JButton button) {
@@ -269,6 +266,7 @@ public class MainFrame extends JFrame implements ActionListener {
             }
         }
     }
+
     public void changeRightPanel(JPanel panel) {
         rightPanel.removeAll();
         rightPanel.add(panel, BorderLayout.CENTER);

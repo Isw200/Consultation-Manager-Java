@@ -1,0 +1,4 @@
+CONS000 00015 ID323233 P00002 0.25 *L%mds`%vjh`%hdwnv%jk%h|%cdf`* <src/GUI/SkinImages/P00002skin1.jpeg,src/GUI/SkinImages/P00002skin2.jpg,> 
+CONS001 00015 ID323233 P00004 0.5 *L%mds`%gidfn%wdvm%jk%h|%i`bv* <src/GUI/SkinImages/P00004skin3.jpg,src/GUI/SkinImages/P00004skin4.jpg,> 
+CONS002 00004 ID323240 P00007 1.0 *L%mds`%w`a%ajqv%jk%h|%dwhv* <src/GUI/SkinImages/P00007skin5.jpg,src/GUI/SkinImages/P00007skin6.jpg,> 
+CONS003 00015 ID323233 P00011 0.5 *H|%vnlk%lv%qjj%aw|* <src/GUI/SkinImages/P00011skin7.jpg,src/GUI/SkinImages/P00011skin8.jpg,> 

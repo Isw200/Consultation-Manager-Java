@@ -2,6 +2,7 @@ package GUI.Main_Frames.SubFrames;
 
 import GUI.MainFrame;
 import GUI.Main_Frames.ConsultationsPanel;
+import GUI.Main_Frames.PatientsPanel;
 import GUI.Other_components.DatePicker;
 import Models.*;
 
@@ -27,8 +28,6 @@ import static GUI.MainFrame.scaleImage;
 public class AddConsultation extends JFrame implements ActionListener {
     // Variables
     private String patientId;
-    String patientsTimeSlot;
-    String patientsTokenNumber;
     Person patient;
     Person doctor;
     Session session;
@@ -42,8 +41,7 @@ public class AddConsultation extends JFrame implements ActionListener {
     private JFrame mainFrame;
 
     // Top Panel
-    JPanel panelTop, panelBottom;
-    JPanel fromExistingPatient, fromNewPatient;
+    JPanel panelTop, patientContainer, panelBottom;
     JButton fromExistingPatientButton, fromNewPatientButton;
 
     // Bottom Panel
@@ -67,12 +65,24 @@ public class AddConsultation extends JFrame implements ActionListener {
     JPanel doctorDetailsTop, doctorDetailsBottom;
     JButton find, addConsultationButton, cancelButton;
 
+    // New Patient components
+    JPanel newPatientPanel, newPatientPanelTop, newPatientPanelBottom;
+    JLabel newPatientFNameLabel, newPatientLNameLabel, newPatientDOBLabel, newPatientMobileNumberLabel, newPatientIDLabel, newPatientGenderLabel;
+    JLabel[] newPatientLabelsArray = new JLabel[6];
+    JPanel[] newPatientContainerPanelArray = new JPanel[6];
+    JTextField newPatientFNameTextField, newPatientLNameTextField, newPatientMobileNumberTextField, newPatientIDTextField;
+    final JTextField newPatientDOBTextField = new JTextField();
+
+    JButton addNewPatientButton;
+    JComboBox newPatientGenderComboBox;
+
+
     public AddConsultation() {
         // Main Frame
         mainFrame = new JFrame("Add Consultation");
         mainFrame.setSize(700, 1000);
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setLayout(new BorderLayout());
+        mainFrame.setResizable(false);
         mainFrame.setLocationRelativeTo(MainFrame.getFrames()[0]);
 
         // Labels
@@ -120,14 +130,18 @@ public class AddConsultation extends JFrame implements ActionListener {
         fromExistingPatientButton.setBorder(null);
         fromExistingPatientButton.setOpaque(false);
         fromExistingPatientButton.setFont(new Font("Arial", Font.BOLD, 14));
+        fromExistingPatientButton.addActionListener(this);
 
         fromNewPatientButton = new JButton("New Patient");
         fromNewPatientButton.setPreferredSize(new Dimension(350, 50));
+        fromNewPatientButton.setFont(new Font("Arial", Font.PLAIN, 12));
         fromNewPatientButton.setOpaque(true);
         fromNewPatientButton.setBorderPainted(false);
+        fromNewPatientButton.setFocusable(false);
         fromNewPatientButton.setBorder(null);
         fromNewPatientButton.setBackground(new Color(194, 194, 194, 255));
         fromNewPatientButton.setForeground(new Color(138, 138, 138, 255));
+        fromNewPatientButton.addActionListener(this);
 
         panelTop.add(fromExistingPatientButton, BorderLayout.WEST);
         panelTop.add(fromNewPatientButton, BorderLayout.EAST);
@@ -180,10 +194,12 @@ public class AddConsultation extends JFrame implements ActionListener {
         patientMobileNumberTextField.setEditable(false);
 
         String[] patientNames = new String[WestminsterSkinConsultationManager.getPatientArrayList().size()];
-        patientNames[0] = "Select Patient";
-        for (int i = 1; i < WestminsterSkinConsultationManager.getPatientArrayList().size(); i++) {
-            Patient patient = (Patient) WestminsterSkinConsultationManager.getPatientArrayList().get(i);
-            patientNames[i] = patient.getPatientId() + " " + patient.getName() + " " + patient.getSurName();
+        if (WestminsterSkinConsultationManager.getPatientArrayList().size() > 0) {
+            patientNames[0] = "Select Patient";
+            for (int i = 1; i < WestminsterSkinConsultationManager.getPatientArrayList().size(); i++) {
+                Patient patient = (Patient) WestminsterSkinConsultationManager.getPatientArrayList().get(i);
+                patientNames[i] = patient.getPatientId() + " " + patient.getName() + " " + patient.getSurName();
+            }
         }
         patientNameComboBox = new JComboBox(patientNames);
         patientNameComboBox.setPreferredSize(new Dimension(140, 40));
@@ -227,7 +243,154 @@ public class AddConsultation extends JFrame implements ActionListener {
         patientDetails.add(MainFrame.addSpace(700, 20));
         patientDetails.setBorder(BorderFactory.createTitledBorder("Patient Details"));
 
-        panelBottom.add(patientDetails);
+        // New Patient Details Panel
+        newPatientPanel = new JPanel();
+        newPatientPanel.setLayout(new FlowLayout());
+        newPatientPanel.setPreferredSize(new Dimension(700, 220));
+        newPatientPanel.setOpaque(true);
+
+        newPatientPanelTop = new JPanel();
+        newPatientPanelTop.setLayout(new FlowLayout());
+        newPatientPanelTop.setPreferredSize(new Dimension(700, 65));
+        newPatientPanelTop.setOpaque(false);
+
+        newPatientPanelBottom = new JPanel();
+        newPatientPanelBottom.setLayout(new FlowLayout());
+        newPatientPanelBottom.setPreferredSize(new Dimension(700, 65));
+        newPatientPanelBottom.setOpaque(false);
+
+        newPatientFNameTextField = new JTextField();
+        newPatientFNameTextField.setPreferredSize(new Dimension(200, 40));
+        newPatientFNameTextField.setFont(new Font("Arial", Font.PLAIN, 16));
+        newPatientFNameTextField.setEditable(true);
+
+        newPatientLNameTextField = new JTextField();
+        newPatientLNameTextField.setPreferredSize(new Dimension(200, 40));
+        newPatientLNameTextField.setFont(new Font("Arial", Font.PLAIN, 16));
+        newPatientLNameTextField.setEditable(true);
+
+        newPatientMobileNumberTextField = new JTextField();
+        newPatientMobileNumberTextField.setPreferredSize(new Dimension(200, 40));
+        newPatientMobileNumberTextField.setFont(new Font("Arial", Font.PLAIN, 16));
+        newPatientMobileNumberTextField.setEditable(true);
+
+        newPatientIDTextField = new JTextField();
+        newPatientIDTextField.setPreferredSize(new Dimension(200, 40));
+        newPatientIDTextField.setFont(new Font("Arial", Font.PLAIN, 16));
+        newPatientIDTextField.setEditable(true);
+
+        // Labels
+        newPatientFNameLabel = new JLabel("First Name");
+        newPatientLNameLabel = new JLabel("Last Name");
+        newPatientDOBLabel = new JLabel("Date of Birth");
+        newPatientMobileNumberLabel = new JLabel("Mobile Number");
+        newPatientIDLabel = new JLabel("Patient ID");
+        newPatientGenderLabel = new JLabel("Gender");
+
+        // Label style
+        newPatientLabelsArray[0] = newPatientFNameLabel;
+        newPatientLabelsArray[1] = newPatientLNameLabel;
+        newPatientLabelsArray[2] = newPatientDOBLabel;
+        newPatientLabelsArray[3] = newPatientMobileNumberLabel;
+        newPatientLabelsArray[4] = newPatientIDLabel;
+        newPatientLabelsArray[5] = newPatientGenderLabel;
+
+        for (int i = 0; i < newPatientLabelsArray.length; i++) {
+            newPatientLabelsArray[i].setFont(new Font("Arial", Font.PLAIN, 16));
+            newPatientLabelsArray[i].setPreferredSize(new Dimension(200, 17));
+        }
+        for (int i = 0; i < newPatientContainerPanelArray.length; i++) {
+            newPatientContainerPanelArray[i] = new JPanel();
+            newPatientContainerPanelArray[i].setLayout(new FlowLayout());
+            newPatientContainerPanelArray[i].setPreferredSize(new Dimension(200, 60));
+        }
+
+        newPatientDOBTextField.setPreferredSize(new Dimension(170, 40));
+        newPatientDOBTextField.setFont(new Font("Arial", Font.PLAIN, 16));
+        newPatientDOBTextField.setFocusable(false);
+        ImageIcon icon = new ImageIcon("src/GUI/Assets/calendar.png");
+        icon = scaleImage(icon, 20, 20);
+
+        JButton dateSelectButton = new JButton(icon);
+        dateSelectButton.setPreferredSize(new Dimension(30, 30));
+        JPanel selectDatePanel = new JPanel(new BorderLayout());
+        selectDatePanel.setOpaque(true);
+        selectDatePanel.setSize(new Dimension(220, 30));
+        selectDatePanel.add(newPatientDOBTextField, BorderLayout.CENTER);
+        selectDatePanel.add(dateSelectButton, BorderLayout.EAST);
+
+        dateSelectButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent ae) {
+                newPatientDOBTextField.setText(new DatePicker(mainFrame).setPickedDate());
+            }
+        });
+
+        String[] genderTypes = {"Select", "Male", "Female"};
+        newPatientGenderComboBox = new JComboBox(genderTypes);
+        newPatientGenderComboBox.setPreferredSize(new Dimension(200, 40));
+
+        newPatientContainerPanelArray[0].add(newPatientFNameLabel);
+        newPatientContainerPanelArray[0].add(newPatientFNameTextField);
+
+        newPatientContainerPanelArray[1].add(newPatientLNameLabel);
+        newPatientContainerPanelArray[1].add(newPatientLNameTextField);
+
+        newPatientContainerPanelArray[2].add(newPatientDOBLabel);
+        newPatientContainerPanelArray[2].add(selectDatePanel);
+
+        newPatientContainerPanelArray[3].add(newPatientMobileNumberLabel);
+        newPatientContainerPanelArray[3].add(newPatientMobileNumberTextField);
+
+        newPatientContainerPanelArray[4].add(newPatientIDLabel);
+        newPatientContainerPanelArray[4].add(newPatientIDTextField);
+
+        newPatientContainerPanelArray[5].add(newPatientGenderLabel);
+        newPatientContainerPanelArray[5].add(newPatientGenderComboBox);
+
+        newPatientPanelTop.add(newPatientContainerPanelArray[0]);
+        newPatientPanelTop.add(newPatientContainerPanelArray[1]);
+        newPatientPanelTop.add(newPatientContainerPanelArray[2]);
+
+        newPatientPanelBottom.add(newPatientContainerPanelArray[3]);
+        newPatientPanelBottom.add(newPatientContainerPanelArray[4]);
+        newPatientPanelBottom.add(newPatientContainerPanelArray[5]);
+
+        addNewPatientButton = new JButton("Add Patient");
+        addNewPatientButton.setPreferredSize(new Dimension(200, 40));
+        addNewPatientButton.setFont(new Font("Arial", Font.PLAIN, 16));
+        addNewPatientButton.setOpaque(true);
+        addNewPatientButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        addNewPatientButton.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
+        addNewPatientButton.setBackground(new Color(0, 0, 0, 0));
+        addNewPatientButton.setForeground(new Color(164, 92, 255));
+        addNewPatientButton.addActionListener(this);
+        addNewPatientButton.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                addNewPatientButton.setOpaque(true);
+                addNewPatientButton.setBackground(new Color(164, 92, 255));
+                addNewPatientButton.setForeground(new Color(255, 255, 255));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                addNewPatientButton.setOpaque(false);
+                addNewPatientButton.setForeground(new Color(164, 92, 255));
+            }
+        });
+
+        newPatientPanel.add(newPatientPanelTop);
+        newPatientPanel.add(newPatientPanelBottom);
+        newPatientPanel.add(addNewPatientButton);
+        newPatientPanel.setBorder(BorderFactory.createTitledBorder("Add New Patient"));
+
+        patientContainer = new JPanel();
+        patientContainer.setLayout(new FlowLayout());
+        patientContainer.setPreferredSize(new Dimension(700, 230));
+        patientContainer.setOpaque(false);
+        patientContainer.add(patientDetails);
+
+        panelBottom.add(patientContainer);
 
         // Doctor Details Panel
         doctorDetails = new JPanel();
@@ -263,18 +426,18 @@ public class AddConsultation extends JFrame implements ActionListener {
         sessionDate.setPreferredSize(new Dimension(170, 35));
         sessionDate.setFont(new Font("Arial", Font.PLAIN, 16));
         sessionDate.setFocusable(false);
-        ImageIcon icon = new ImageIcon("src/GUI/Assets/calendar.png");
-        icon = scaleImage(icon, 20, 20);
+        ImageIcon icon2 = new ImageIcon("src/GUI/Assets/calendar.png");
+        icon2 = scaleImage(icon2, 20, 20);
 
-        JButton dateSelectButton = new JButton(icon);
-        dateSelectButton.setPreferredSize(new Dimension(30, 30));
-        JPanel selectDatePanel = new JPanel(new BorderLayout());
-        selectDatePanel.setOpaque(true);
-        selectDatePanel.setSize(new Dimension(200, 40));
-        selectDatePanel.add(sessionDate, BorderLayout.CENTER);
-        selectDatePanel.add(dateSelectButton, BorderLayout.EAST);
+        JButton dateSelectButton2 = new JButton(icon2);
+        dateSelectButton2.setPreferredSize(new Dimension(30, 30));
+        JPanel selectDatePanel2 = new JPanel(new BorderLayout());
+        selectDatePanel2.setOpaque(true);
+        selectDatePanel2.setSize(new Dimension(200, 40));
+        selectDatePanel2.add(sessionDate, BorderLayout.CENTER);
+        selectDatePanel2.add(dateSelectButton2, BorderLayout.EAST);
 
-        dateSelectButton.addActionListener(new ActionListener() {
+        dateSelectButton2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent ae) {
                 sessionDate.setText(new DatePicker(mainFrame).setPickedDate());
             }
@@ -323,7 +486,7 @@ public class AddConsultation extends JFrame implements ActionListener {
         containerPanelArray[6].add(doctorComboBox);
 
         containerPanelArray[7].add(dateLabel);
-        containerPanelArray[7].add(selectDatePanel);
+        containerPanelArray[7].add(selectDatePanel2);
 
         containerPanelArray[8].add(MainFrame.addSpace(200, 10));
         containerPanelArray[8].add(checkAvailabilityButton);
@@ -382,7 +545,6 @@ public class AddConsultation extends JFrame implements ActionListener {
         imagePreviewPanel.setOpaque(true);
         imagePreviewPanel.setBackground(new Color(255, 255, 255));
 
-
         attachImageButton = new JButton("Attach Image");
         attachImageButton.setPreferredSize(new Dimension(200, 40));
         attachImageButton.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -395,26 +557,30 @@ public class AddConsultation extends JFrame implements ActionListener {
                 fileChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image Files", "jpg", "png", "gif", "jpeg"));
                 fileChooser.setAcceptAllFileFilterUsed(false);
 
-                int option = fileChooser.showOpenDialog(mainFrame);
-                if (option == JFileChooser.APPROVE_OPTION) {
-                    File file = fileChooser.getSelectedFile();
-                    imageFiles.add(file);
-                    ImageIcon imageIcon = new ImageIcon(file.getAbsolutePath());
-                    Image image = imageIcon.getImage();
-                    Image newImage = image.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-                    imageIcon = new ImageIcon(newImage);
-                    imagePreviewPanel.add(new JLabel(imageIcon));
-                    label.setText("Attached " + imageFiles.size() + " image(s)");
-                    Patient p = (Patient) patient;
-                    try {
-                        copyFile(file, new File("src/GUI/SkinImages/" + p.getPatientId() + file.getName()));
-                        imagePaths.add("src/GUI/SkinImages/" + p.getPatientId() + file.getName());
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
-
+                if (patient == null) {
+                    JOptionPane.showMessageDialog(null, "Please add the Patient.", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    label.setText("Open command canceled");
+                    int option = fileChooser.showOpenDialog(mainFrame);
+                    if (option == JFileChooser.APPROVE_OPTION) {
+                        File file = fileChooser.getSelectedFile();
+                        imageFiles.add(file);
+                        ImageIcon imageIcon = new ImageIcon(file.getAbsolutePath());
+                        Image image = imageIcon.getImage();
+                        Image newImage = image.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+                        imageIcon = new ImageIcon(newImage);
+                        imagePreviewPanel.add(new JLabel(imageIcon));
+                        label.setText("Attached " + imageFiles.size() + " image(s)");
+                        Patient p = (Patient) patient;
+                        try {
+                            copyFile(file, new File("src/GUI/SkinImages/" + p.getPatientId() + file.getName()));
+                            imagePaths.add("src/GUI/SkinImages/" + p.getPatientId() + file.getName());
+                        } catch (IOException ex) {
+                            throw new RuntimeException(ex);
+                        }
+
+                    } else {
+                        label.setText("Open command canceled");
+                    }
                 }
             }
         });
@@ -526,7 +692,6 @@ public class AddConsultation extends JFrame implements ActionListener {
 
     private void imagePreviewRerender() {
         for (int i = 0; i < imageFiles.size(); i++) {
-            System.out.println(imageFiles.get(i).getName());
             ImageIcon imageIcon = new ImageIcon(imageFiles.get(i).getAbsolutePath());
             Image image = imageIcon.getImage();
             Image newImage = image.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
@@ -668,22 +833,28 @@ public class AddConsultation extends JFrame implements ActionListener {
             }
         }
         if (e.getSource() == addConsultationButton) {
-            if (Objects.equals(patientNameComboBox.getSelectedItem(), "Select Patient")) {
+            if (patient == null) {
                 JOptionPane.showMessageDialog(null, "Please select a Patient.", "Error", JOptionPane.ERROR_MESSAGE);
             } else if (Objects.equals(doctorComboBox.getSelectedItem(), "Select Doctor")) {
                 JOptionPane.showMessageDialog(null, "Please select a Doctor.", "Error", JOptionPane.ERROR_MESSAGE);
             } else if (Objects.equals(hoursComboBox.getSelectedItem(), "Select")) {
                 JOptionPane.showMessageDialog(null, "Please select a Session Duration.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                if (session == null) {
+                if (patient == null) {
+                    JOptionPane.showMessageDialog(null, "Please add the Patient.", "Error", JOptionPane.ERROR_MESSAGE);
+                } else if (session == null) {
                     JOptionPane.showMessageDialog(null, "Check availability.", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     note = notesTextArea.getText();
                     duration = Double.parseDouble(Objects.requireNonNull(hoursComboBox.getSelectedItem()).toString());
                     try {
-                        Consultation consultation = new Consultation(generateConsultationID(), session, doctor, patient, duration, note, imagePaths);
+                        String consultationID = generateConsultationID();
+                        Consultation consultation = new Consultation(consultationID, session, doctor, patient, duration, note, imagePaths);
                         WestminsterSkinConsultationManager.consultationArrayList.add(consultation);
                         session.addConsultation(consultation);
+                        String time = consultation.getStringTime();
+                        String tokenNumber = String.valueOf(consultation.getTokenNumber());
+                        new ConsultationSummary(consultation, patient, doctor, session, time, tokenNumber);
                     } catch (IOException ex) {
                         throw new RuntimeException(ex);
                     }
@@ -694,6 +865,70 @@ public class AddConsultation extends JFrame implements ActionListener {
         }
         if (e.getSource() == cancelButton) {
             mainFrame.dispose();
+        }
+        if (e.getSource() == fromExistingPatientButton) {
+            patientContainer.removeAll();
+            patientContainer.add(patientDetails);
+            patientContainer.revalidate();
+            patientContainer.repaint();
+
+            fromNewPatientButton.setOpaque(true);
+            fromNewPatientButton.setBackground(new Color(194, 194, 194, 255));
+            fromNewPatientButton.setForeground(new Color(138, 138, 138, 255));
+            fromNewPatientButton.setFont(new Font("Arial", Font.PLAIN, 12));
+
+            fromExistingPatientButton.setOpaque(false);
+            fromExistingPatientButton.setForeground(new Color(0, 0, 0));
+            fromExistingPatientButton.setFont(new Font("Arial", Font.BOLD, 14));
+        }
+        if (e.getSource() == fromNewPatientButton) {
+            patientContainer.removeAll();
+            patientContainer.add(newPatientPanel);
+            patientContainer.revalidate();
+            patientContainer.repaint();
+
+            fromExistingPatientButton.setOpaque(true);
+            fromExistingPatientButton.setBackground(new Color(194, 194, 194, 255));
+            fromExistingPatientButton.setForeground(new Color(138, 138, 138, 255));
+            fromExistingPatientButton.setFont(new Font("Arial", Font.PLAIN, 12));
+
+            fromNewPatientButton.setForeground(new Color(0, 0, 0));
+            fromNewPatientButton.setOpaque(false);
+            fromNewPatientButton.setBorderPainted(false);
+            fromNewPatientButton.setBorder(null);
+            fromNewPatientButton.setFocusable(false);
+            fromNewPatientButton.setFont(new Font("Arial", Font.BOLD, 14));
+        }
+        if (e.getSource() == addNewPatientButton) {
+            // Check if all fields are filled
+            if (newPatientFNameTextField.getText().equals("") || newPatientLNameTextField.getText().equals("") || newPatientDOBTextField.getText().equals("") || newPatientMobileNumberTextField.getText().equals("") || newPatientIDTextField.getText().equals("")) {
+                JOptionPane.showMessageDialog(null, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                // Check if mobile number is valid
+                if (newPatientMobileNumberTextField.getText().length() != 10) {
+                    JOptionPane.showMessageDialog(null, "Please enter a valid mobile number", "Error", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    // Check if medical licence number is valid
+                    if (newPatientIDTextField.getText().length() != 6) {
+                        JOptionPane.showMessageDialog(null, "Please enter a valid Patient ID: EX- P00XXX", "Error", JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        // Add doctor to array list
+                        String fName = newPatientFNameTextField.getText();
+                        String lName = newPatientLNameTextField.getText();
+                        String mobileNumber = newPatientMobileNumberTextField.getText();
+                        String patientId = newPatientIDTextField.getText();
+                        String gender = Objects.requireNonNull(newPatientGenderComboBox.getSelectedItem()).toString();
+                        Date dateOfBirth = WestminsterSkinConsultationManager.strToDate(newPatientDOBTextField.getText());
+
+                        Patient patient1 = new Patient(fName, lName, dateOfBirth, mobileNumber, patientId, gender);
+                        WestminsterSkinConsultationManager.patientArrayList.add(patient1);
+
+                        patient = patient1;
+                        JOptionPane.showMessageDialog(null, "Patient added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                        PatientsPanel.tableReRender(WestminsterSkinConsultationManager.getPatientArrayList());
+                    }
+                }
+            }
         }
     }
 

@@ -3,10 +3,7 @@ package GUI.Main_Frames;
 import GUI.GUILibs.SavingDone;
 import GUI.GUILibs.SortingDone;
 import GUI.GUILibs.StatusColumnCellRenderer;
-import GUI.Main_Frames.SubFrames.AddConsultation;
-import GUI.Main_Frames.SubFrames.AddSession;
-import GUI.Main_Frames.SubFrames.CheckConsultationAvailability;
-import GUI.Main_Frames.SubFrames.FindSession;
+import GUI.Main_Frames.SubFrames.*;
 import Models.Consultation;
 import Models.Session;
 import Models.WestminsterSkinConsultationManager;
@@ -15,6 +12,8 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -35,8 +34,8 @@ public class ConsultationsPanel extends JPanel implements ActionListener, MouseL
     static int numberOfConsultations;
     JLabel panelTitle;
     static JLabel allConsultations;
-    JButton addConsultations, deleteEditConsultations, checkAvailability, importData;
-    JButton[] purpleButtons = new JButton[4];
+    JButton addConsultations, checkAvailability;
+    JButton[] purpleButtons = new JButton[2];
     JButton refreshButton;
     static JTable consultationsTable;
     JPanel tablePanel;
@@ -131,22 +130,14 @@ public class ConsultationsPanel extends JPanel implements ActionListener, MouseL
         addConsultations = new JButton("Add Consultations");
         addConsultations.addMouseListener(this);
 
-        deleteEditConsultations = new JButton("Delete / Edit");
-        deleteEditConsultations.addMouseListener(this);
 
         checkAvailability = new JButton("Check Availability");
         checkAvailability.addMouseListener(this);
 
-        importData = new JButton("Import Data");
-        importData.addActionListener(this);
-        importData.addMouseListener(this);
-
         purpleButtons[0] = addConsultations;
-        purpleButtons[1] = deleteEditConsultations;
-        purpleButtons[2] = importData;
-        purpleButtons[3] = checkAvailability;
+        purpleButtons[1] = checkAvailability;
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < 2; i++) {
             purpleButtons[i].setPreferredSize(new Dimension(150, 50));
             purpleButtons[i].setForeground(new Color(164, 92, 255));
             purpleButtons[i].setFont(new Font("Arial", Font.PLAIN, 14));
@@ -163,7 +154,6 @@ public class ConsultationsPanel extends JPanel implements ActionListener, MouseL
         panel1BottomWest.setOpaque(false);
         panel1BottomWest.add(checkAvailability);
         panel1BottomWest.add(addConsultations);
-        panel1BottomWest.add(deleteEditConsultations);
 
         panel1Bottom.add(panel1BottomWest, BorderLayout.WEST);
 
@@ -174,7 +164,6 @@ public class ConsultationsPanel extends JPanel implements ActionListener, MouseL
         panel1BottomEast = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         panel1BottomEast.setOpaque(false);
         panel1BottomEast.setPreferredSize(new Dimension(300, 50));
-        panel1BottomEast.add(importData);
 
         ImageIcon buttonIcon = new ImageIcon("src/GUI/Assets/reload.png");
         buttonIcon = scaleImage(buttonIcon, 50, 50);
@@ -239,6 +228,31 @@ public class ConsultationsPanel extends JPanel implements ActionListener, MouseL
         header.setForeground(Color.WHITE);
         header.setPreferredSize(new Dimension(100, 40));
         ((DefaultTableCellRenderer) header.getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+
+        consultationsTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int viewRow = consultationsTable.getSelectedRow();
+
+                if (!e.getValueIsAdjusting() && viewRow != -1) {
+                    int columnIndex = 0;
+                    int modelRow = consultationsTable.convertRowIndexToModel(viewRow);
+                    Object consultationId = consultationsTable.getModel().getValueAt(modelRow, columnIndex);
+                    Consultation consultation = null;
+
+                    for (Consultation tempConsultation : WestminsterSkinConsultationManager.getConsultationsArrayList()) {
+                        if (tempConsultation.getConsultationId().equals(consultationId)) {
+                            consultation = tempConsultation;
+                            break;
+                        }
+                    }
+
+                    if (consultation != null) {
+                        new ConsultationView(consultation);
+                    }
+                }
+            }
+        });
 
         consultationsTableScroll = new JScrollPane(consultationsTable);
         consultationsTableScroll.setPreferredSize(new Dimension(1000, 480));
@@ -324,30 +338,21 @@ public class ConsultationsPanel extends JPanel implements ActionListener, MouseL
         if (e.getSource() == addConsultations) {
             new AddConsultation();
         }
-        if (e.getSource() == deleteEditConsultations) {
-            new FindSession();
-        }
         if (e.getSource() == checkAvailability) {
             new CheckConsultationAvailability();
         }
         if (e.getSource() == refreshButton) {
             tableReRender(WestminsterSkinConsultationManager.getConsultationsArrayList());
         }
-        if (e.getSource() == importData) {
-            WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
-            manager.loadSessionsFromFile();
-            tableReRender(WestminsterSkinConsultationManager.getConsultationsArrayList());
-        }
         if (e.getSource() == saveDataButton) {
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
-            manager.saveSessionsToFile();
+            manager.saveConsultationsToFile();
             new SavingDone();
         }
         if (e.getSource() == sortDataButton) {
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
-            // TODO: Sort Data
-//            manager.sortSession(WestminsterSkinConsultationManager.getSessionsArrayList());
-//            tableReRender(WestminsterSkinConsultationManager.getSessionsArrayList());
+            manager.sortConsultation(WestminsterSkinConsultationManager.getConsultationsArrayList());
+            tableReRender(WestminsterSkinConsultationManager.getConsultationsArrayList());
             new SortingDone();
         }
     }
@@ -377,20 +382,11 @@ public class ConsultationsPanel extends JPanel implements ActionListener, MouseL
             addConsultations.setOpaque(true);
             addConsultations.setForeground(Color.WHITE);
         }
-        if (e.getSource() == deleteEditConsultations) {
-            deleteEditConsultations.setBackground(new Color(164, 92, 255));
-            deleteEditConsultations.setOpaque(true);
-            deleteEditConsultations.setForeground(Color.WHITE);
-        }
+
         if (e.getSource() == checkAvailability) {
             checkAvailability.setBackground(new Color(164, 92, 255));
             checkAvailability.setOpaque(true);
             checkAvailability.setForeground(Color.WHITE);
-        }
-        if (e.getSource() == importData) {
-            importData.setBackground(new Color(164, 92, 255));
-            importData.setOpaque(true);
-            importData.setForeground(Color.WHITE);
         }
         if (e.getSource() == refreshButton) {
             refreshButton.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
@@ -428,20 +424,11 @@ public class ConsultationsPanel extends JPanel implements ActionListener, MouseL
             addConsultations.setForeground(new Color(164, 92, 255));
             addConsultations.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
         }
-        if (e.getSource() == deleteEditConsultations) {
-            deleteEditConsultations.setOpaque(false);
-            deleteEditConsultations.setForeground(new Color(164, 92, 255));
-            deleteEditConsultations.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
-        }
+
         if (e.getSource() == checkAvailability) {
             checkAvailability.setOpaque(false);
             checkAvailability.setForeground(new Color(164, 92, 255));
             checkAvailability.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
-        }
-        if (e.getSource() == importData) {
-            importData.setOpaque(false);
-            importData.setForeground(new Color(164, 92, 255));
-            importData.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
         }
         if (e.getSource() == refreshButton) {
             refreshButton.setBorder(null);

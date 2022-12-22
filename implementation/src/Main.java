@@ -1,5 +1,8 @@
 import Models.WestminsterSkinConsultationManager;
+import org.apache.commons.io.FileUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
@@ -20,27 +23,27 @@ public class Main {
                     (DR) -> Read file
                     (DL) -> Load data from Files
                     (DSO)-> Sort Doctors
-                    
+                                        
                     (PA) -> Add a new Patient
                     (PD) -> Delete a Patient
                     (PP) -> List of all Patients
                     (PS) -> Save to File
                     (PR) -> Read file
                     (PL) -> Load data from Files
-                    
+                                        
                     (SA) -> Add a new Session
                     (SD) -> Delete a Session
                     (SP) -> List of all Sessions
                     (SS) -> Save to File
                     (SR) -> Read file
                     (SL) -> Load data from Files
-                    
+                                        
                     (GL)  -> Open GUI with all the data
                     (GN)  -> Open GUI with no data
                     _____________________________
                     Answer: """);
             String answer = input.nextLine();
-            if (answer.equalsIgnoreCase("Q")){
+            if (answer.equalsIgnoreCase("Q")) {
                 break;
             } else if (answer.equalsIgnoreCase("DA")) {
                 System.out.print("Enter Name: ");
@@ -57,7 +60,7 @@ public class Main {
                 String specialisation = input.nextLine();
                 System.out.print("Enter Availability: ");
                 String availability = input.nextLine();
-                westminsterSkinConsultationManager.addANewDoctor(name, surName, dateOfBirth,mobileNumber,medicalLicenceNumber,specialisation, availability);
+                westminsterSkinConsultationManager.addANewDoctor(name, surName, dateOfBirth, mobileNumber, medicalLicenceNumber, specialisation, availability);
             } else if (answer.equalsIgnoreCase("DD")) {
                 System.out.print("Enter Medical Licence Number: ");
                 String medicalLicenceNumber = input.nextLine();
@@ -87,7 +90,7 @@ public class Main {
                 String patentId = input.nextLine();
                 System.out.print("Enter Gender: ");
                 String gender = input.nextLine();
-                westminsterSkinConsultationManager.addNewPatient(name, surName, dateOfBirth,mobileNumber,patentId,gender);
+                westminsterSkinConsultationManager.addNewPatient(name, surName, dateOfBirth, mobileNumber, patentId, gender);
             } else if (answer.equalsIgnoreCase("PD")) {
                 System.out.print("Enter Patient ID: ");
                 String patentId = input.nextLine();
@@ -114,7 +117,7 @@ public class Main {
                 String time = input.nextLine();
                 System.out.print("Enter Maximum Patients: ");
                 int maxPatients = input.nextInt();
-                westminsterSkinConsultationManager.addNewSession(sessionId, doctorId, date,time,maxPatients, "Active");
+                westminsterSkinConsultationManager.addNewSession(sessionId, doctorId, date, time, maxPatients, "Active");
             } else if (answer.equalsIgnoreCase("SD")) {
                 System.out.print("Enter Session ID: ");
                 String sessionId = input.nextLine();
@@ -131,15 +134,25 @@ public class Main {
 
             // GUI
             else if (answer.equalsIgnoreCase("GL")) {
+                // Clean image folder
+//                File folder = new File("src/GUI/SkinImages");
+//                try {
+//                    FileUtils.cleanDirectory(folder);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+
+                // Load all data from files
                 westminsterSkinConsultationManager.loadDoctorsFromFile();
                 westminsterSkinConsultationManager.saveDoctorsToFile();
                 westminsterSkinConsultationManager.loadPatientsFromFile();
                 westminsterSkinConsultationManager.savePatientsToFile();
                 westminsterSkinConsultationManager.loadSessionsFromFile();
                 westminsterSkinConsultationManager.saveSessionsToFile();
+                westminsterSkinConsultationManager.loadConsultationsFromFile();
+                westminsterSkinConsultationManager.saveConsultationsToFile();
                 westminsterSkinConsultationManager.runGUI();
-            }
-            else if (answer.equalsIgnoreCase("GN")) {
+            } else if (answer.equalsIgnoreCase("GN")) {
                 westminsterSkinConsultationManager.runGUI();
             }
         }
