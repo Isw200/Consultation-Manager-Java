@@ -549,7 +549,23 @@ public class AddConsultation extends JFrame implements ActionListener {
         attachImageButton.setPreferredSize(new Dimension(200, 40));
         attachImageButton.setFont(new Font("Arial", Font.PLAIN, 16));
         attachImageButton.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
+        attachImageButton.setBackground(new Color(0, 0, 0, 0));
+        attachImageButton.setForeground(new Color(164, 92, 255));
         attachImageButton.setOpaque(false);
+        attachImageButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                attachImageButton.setOpaque(true);
+                attachImageButton.setBackground(new Color(164, 92, 255));
+                attachImageButton.setForeground(new Color(255, 255, 255));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                attachImageButton.setOpaque(false);
+                attachImageButton.setForeground(new Color(164, 92, 255));
+            }
+        });
         attachImageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

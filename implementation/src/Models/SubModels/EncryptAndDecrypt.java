@@ -14,8 +14,8 @@ public class EncryptAndDecrypt {
      * Then it writes the new byte array value to the image.
      * Save the image with the same name and same directory.
      *
-     * @param inputFile the image to be encrypted
-     * @param key       the key to encrypt the image
+     * @param filePath the image to be encrypted
+     * @param key      the key to encrypt the image
      * @throws FileNotFoundException if the file is not found
      * @throws IOException           if there is an error in reading the file
      */

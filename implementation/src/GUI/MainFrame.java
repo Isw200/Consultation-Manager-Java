@@ -3,6 +3,7 @@ package GUI;
 import GUI.GUILibs.RoundedBorder;
 import GUI.Main_Frames.*;
 import Models.Consultation;
+import Models.WestminsterSkinConsultationManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -117,9 +118,10 @@ public class MainFrame extends JFrame implements ActionListener {
         for (int i = 0; i < leftPanelOperatorButtons.length; i++) {
             leftPanelOperatorButtons[i].setPreferredSize(new Dimension(250, 50));
             try {
-                ImageIcon buttonIcon = new ImageIcon(leftPanelIconPaths[i]);
-                buttonIcon = scaleImage(buttonIcon, 20, 20);
-                leftPanelOperatorButtons[i].setIcon(buttonIcon);
+                //Image cardIcon = new ImageIcon(iconPaths[i]).getImage().getScaledInstance(140, 100, Image.SCALE_SMOOTH);
+                Image buttonIcon = new ImageIcon(leftPanelIconPaths[i]).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+//                buttonIcon = scaleImage(buttonIcon, 20, 20);
+                leftPanelOperatorButtons[i].setIcon(new ImageIcon(buttonIcon));
             } catch (Exception e) {
                 System.out.println("Error: " + e);
             }
@@ -198,6 +200,7 @@ public class MainFrame extends JFrame implements ActionListener {
         } else if (e.getSource() == appointmentButton) {
             changeClickedButtonStyle(appointmentButton);
             changeRightPanel(consultationsPanel);
+            ConsultationsPanel.tableReRender(WestminsterSkinConsultationManager.getConsultationsArrayList());
 
         } else if (e.getSource() == sessionButton) {
             changeClickedButtonStyle(sessionButton);

@@ -491,6 +491,11 @@ public class ConsultationsPanel extends JPanel implements ActionListener, MouseL
         allConsultations.setText("All Consultations " + numberOfConsultations);
     }
 
+    /**
+     * These methods are used to get changing value from search field
+     *
+     * @param e the document event
+     */
     @Override
     public void insertUpdate(DocumentEvent e) {
         if (e.getDocument() == searchField.getDocument()) {
@@ -512,17 +517,20 @@ public class ConsultationsPanel extends JPanel implements ActionListener, MouseL
         }
     }
 
+    /**
+     * This method is used to filter the data in the table by the search field.
+     * The search field is used to search for a specific consultation.
+     */
     public void filterDataBySearchField() {
         ArrayList<Consultation> consultations = WestminsterSkinConsultationManager.getConsultationsArrayList();
-        if (!searchField.getText().equals("") && !searchField.getText().equals("Doctor Name...")) {
-            ArrayList<Consultation> searchedSessions = new ArrayList<>();
+        if (!searchField.getText().equals("") && !searchField.getText().equals("Consultation No...")) {
+            ArrayList<Consultation> searchedConsultation = new ArrayList<>();
             for (Consultation cons : consultations) {
-                // TODO: search by Token Number
-//                if (cons.getDoctor().getName().toLowerCase().contains(searchField.getText().toLowerCase()) || cons.getDoctor().getSurName().toLowerCase().contains(searchField.getText().toLowerCase())){
-//                    searchedSessions.add(cons);
-//                }
+                if (cons.getConsultationId().toLowerCase().contains(searchField.getText().toLowerCase())) {
+                    searchedConsultation.add(cons);
+                }
             }
-            tableReRender(searchedSessions);
+            tableReRender(searchedConsultation);
         } else {
             tableReRender(consultations);
         }

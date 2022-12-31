@@ -1,6 +1,10 @@
 package Models;
 
 import GUI.MainFrame;
+import GUI.Main_Frames.ConsultationsPanel;
+import GUI.Main_Frames.DashBoardPanel;
+import GUI.Main_Frames.DoctorsPanel;
+import GUI.Main_Frames.SessionsPanel;
 import Interfaces.SkinConsultationManager;
 import Models.SubModels.EncryptAndDecrypt;
 
@@ -11,6 +15,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class WestminsterSkinConsultationManager implements SkinConsultationManager {
@@ -81,18 +86,52 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      */
     @Override
     public void deleteADoctor(String medicalLicenceNumber) {
+        //TODO: delete all sessions and consultations belongs to that doctor, Save doctor file again and load from doctor file again
         boolean found = false;
+        int foundIndex = 0;
+        Session foundSession = null;
         for (int i = 0; i < doctorArray.length; i++) {
             Doctor doctor = (Doctor) doctorArray[i];
             if (medicalLicenceNumber.equals(doctor.getMedicalLicenceNumber())) {
                 System.out.println("Doctor " + doctor.getName() + " " + doctor.getSurName() + " deleted successfully.");
                 found = true;
-                doctorArray[i] = null;
+                foundIndex = i;
                 break;
             }
         }
         if (!found) {
             System.out.println("Doctor not found by Medical Licence Number: " + medicalLicenceNumber);
+        } else {
+            // Delete Consultation Belongs to deleted doctor
+            for (Consultation consultation : consultationArrayList) {
+                Doctor doc = (Doctor) consultation.getDoctor();
+                if (doc.getMedicalLicenceNumber().equals(medicalLicenceNumber)) {
+                    consultationArrayList.remove(consultation);
+                    saveConsultationsToFile();
+                    ConsultationsPanel.tableReRender(consultationArrayList);
+                }
+            }
+            // Delete Sessions Belongs to deleted doctor
+            try {
+                for (Session session : sessionArrayList) {
+                    Doctor doc = (Doctor) session.getDoctor();
+                    if (doc.getMedicalLicenceNumber().equals(medicalLicenceNumber)) {
+                        foundSession = session;
+                    }
+                }
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+            // Finally Delete the doctor from doctors array
+            if (foundSession != null) {
+                sessionArrayList.remove(foundSession);
+                saveSessionsToFile();
+                SessionsPanel.tableReRender(sessionArrayList);
+                DashBoardPanel.tableReRender(sessionArrayList);
+            }
+            doctorArray[foundIndex] = null;
+            saveDoctorsToFile();
+            DoctorsPanel.tableReRender(doctorArray);
         }
     }
 
@@ -258,10 +297,12 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         Date sessionDate = strToDate(date);
         Doctor doctor = null;
         for (int i = 0; i < doctorArray.length; i++) {
-            Doctor tempDoctor = (Doctor) doctorArray[i];
-            if (doctorID.equals(tempDoctor.getMedicalLicenceNumber())) {
-                doctor = tempDoctor;
-                break;
+            if (doctorArray[i] != null) {
+                Doctor tempDoctor = (Doctor) doctorArray[i];
+                if (doctorID.equals(tempDoctor.getMedicalLicenceNumber())) {
+                    doctor = tempDoctor;
+                    break;
+                }
             }
         }
         Date sessionTime = strToTime(time);
@@ -514,8 +555,10 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
 
             if (type.equals("Doctor")) {
                 for (Person doctor : doctorArray) {
-                    Doctor doctorType = (Doctor) doctor;
-                    bufferedWriter.write(doctorType.getName() + " " + doctorType.getSurName() + " " + doctorType.getDateOfBirth() + " " + doctorType.getMobileNumber() + " " + doctorType.getMedicalLicenceNumber() + " " + doctorType.getSpecialisation() + " " + doctorType.getAvailability() + "\n");
+                    if (doctor != null) {
+                        Doctor doctorType = (Doctor) doctor;
+                        bufferedWriter.write(doctorType.getName() + " " + doctorType.getSurName() + " " + doctorType.getDateOfBirth() + " " + doctorType.getMobileNumber() + " " + doctorType.getMedicalLicenceNumber() + " " + doctorType.getSpecialisation() + " " + doctorType.getAvailability() + "\n");
+                    }
                 }
             } else if (type.equals("Patient")) {
                 for (Person patient : patientArrayList) {
@@ -644,6 +687,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      *
      * @param arrayList ArrayList to sort.
      */
+
     public void sort(ArrayList<Person> arrayList) {
         Person temp;
         for (int i = 0; i < arrayList.size(); i++) {
@@ -725,6 +769,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         mainFrame.setSize(1300, 800);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setVisible(true);
+//        mainFrame.setLocationRelativeTo(null);
     }
 
     public boolean isArrayFull(Person[] array) {

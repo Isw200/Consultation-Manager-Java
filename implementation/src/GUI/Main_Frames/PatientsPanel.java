@@ -205,7 +205,6 @@ public class PatientsPanel extends JPanel implements ActionListener, MouseListen
 
         // Table
         String[] patientsTableColumns = {"Patient ID", "First Name", "Last Name", "Age", "Gender", "Phone Number"};
-        WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
 
         ArrayList<Person> patients = WestminsterSkinConsultationManager.getPatientArrayList();
         String[][] patientsData = new String[patients.size()][6];

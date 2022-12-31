@@ -22,9 +22,9 @@ import java.util.ArrayList;
 
 public class ConsultationView extends JFrame implements ActionListener {
     String encryptedNote;
-    Consultation consultation;
+    static Consultation consultation;
     int decryptKey = 5;
-    final JFrame mainFrame;
+    static JFrame mainFrame = null;
     String[] labelStrings = {"Patient Name", "Patient Age", "Patient Gender", "Doctor Name", "Session Date", "Session Start Time", "Patient's Time Slot", "Patient's Token Number", "Cost"};
     JLabel[] labels = new JLabel[labelStrings.length];
     JTextField[] textFields = new JTextField[labelStrings.length];
@@ -44,7 +44,7 @@ public class ConsultationView extends JFrame implements ActionListener {
     JButton unlockNotesBtn, unlockImageBtn, doneBtn, cancelBtn;
 
     public ConsultationView(Consultation consultation) {
-        this.consultation = consultation;
+        ConsultationView.consultation = consultation;
         // Main Frame
         mainFrame = new JFrame();
         mainFrame.setLayout(new FlowLayout());
@@ -448,6 +448,8 @@ public class ConsultationView extends JFrame implements ActionListener {
         }
         if (e.getSource() == doneBtn) {
             ArrayList<String> imagePaths = consultation.getImagesPaths();
+            // encrypt again
+            // TODO: Encrypt only if they are in decrypted format
             for (String imagePath : imagePaths) {
                 try {
                     EncryptAndDecrypt.encryptImage(imagePath, decryptKey);
@@ -455,40 +457,43 @@ public class ConsultationView extends JFrame implements ActionListener {
                     throw new RuntimeException(ex);
                 }
             }
-            // decrypt again
             mainFrame.dispose();
             ConsultationsPanel.tableReRender(WestminsterSkinConsultationManager.getConsultationsArrayList());
         }
         if (e.getSource() == deleteBtn) {
-            int dialogButton = JOptionPane.YES_NO_OPTION;
-            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete Consultation ?", "Warning", dialogButton);
+            deleteConsultation();
+        }
+    }
 
-            if (dialogResult == JOptionPane.YES_OPTION) {
-                WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
+    public static void deleteConsultation() {
+        int dialogButton = JOptionPane.YES_NO_OPTION;
+        int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete Consultation ?", "Warning", dialogButton);
 
-                ArrayList<String> imagePaths = consultation.getImagesPaths();
-                Boolean isDeleted = true;
-                for (String imagePath : imagePaths) {
-                    File file = new File(imagePath);
-                    if (file.delete()) {
-                    } else {
-                        isDeleted = false;
-                    }
-                }
-                if (isDeleted) {
-                    new DeletingDone();
-                    WestminsterSkinConsultationManager mgr = new WestminsterSkinConsultationManager();
-                    mgr.saveConsultationsToFile();
+        if (dialogResult == JOptionPane.YES_OPTION) {
+            WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
+
+            ArrayList<String> imagePaths = consultation.getImagesPaths();
+            Boolean isDeleted = true;
+            for (String imagePath : imagePaths) {
+                File file = new File(imagePath);
+                if (file.delete()) {
                 } else {
-                    JOptionPane.showMessageDialog(ConsultationView.getFrames()[0], "Error deleting images", "Error", JOptionPane.ERROR_MESSAGE);
+                    isDeleted = false;
                 }
-
-                manager.deleteAConsultation(consultation.getConsultationId());
-
-                SessionsPanel.tableReRender(WestminsterSkinConsultationManager.getSessionsArrayList());
-                ConsultationsPanel.tableReRender(WestminsterSkinConsultationManager.getConsultationsArrayList());
-                mainFrame.dispose();
             }
+            if (isDeleted) {
+                new DeletingDone();
+                WestminsterSkinConsultationManager mgr = new WestminsterSkinConsultationManager();
+                mgr.saveConsultationsToFile();
+            } else {
+                JOptionPane.showMessageDialog(ConsultationView.getFrames()[0], "Error deleting images", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+            manager.deleteAConsultation(consultation.getConsultationId());
+
+            SessionsPanel.tableReRender(WestminsterSkinConsultationManager.getSessionsArrayList());
+            ConsultationsPanel.tableReRender(WestminsterSkinConsultationManager.getConsultationsArrayList());
+            mainFrame.dispose();
         }
     }
 

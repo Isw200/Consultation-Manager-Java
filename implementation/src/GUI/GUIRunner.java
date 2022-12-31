@@ -1,5 +1,6 @@
 package GUI;
 
+import GUI.Main_Frames.DashBoardPanel;
 import GUI.Main_Frames.SubFrames.AddConsultation;
 import GUI.Main_Frames.SubFrames.AddPatients;
 import GUI.Main_Frames.SubFrames.ConsultationView;
@@ -10,6 +11,6 @@ import javax.swing.*;
 
 public class GUIRunner {
     public static void main(String[] args) {
-//        new ConsultationView();
+        new LoginFrame();
     }
 }

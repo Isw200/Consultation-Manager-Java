@@ -42,7 +42,7 @@ public class CheckConsultationAvailability implements ActionListener {
 
     public CheckConsultationAvailability() {
         mainFrame = new JFrame();
-        mainFrame.setTitle("Find Doctor");
+        mainFrame.setTitle("Check Consultation");
         mainFrame.setSize(800, 500);
         mainFrame.setLayout(new FlowLayout());
         mainFrame.setResizable(false);

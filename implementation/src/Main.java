@@ -1,3 +1,4 @@
+import GUI.LoginFrame;
 import Models.WestminsterSkinConsultationManager;
 import org.apache.commons.io.FileUtils;
 
@@ -40,6 +41,9 @@ public class Main {
                                         
                     (GL)  -> Open GUI with all the data
                     (GN)  -> Open GUI with no data
+                                        
+                                        
+                    (QQ)  -> Quit program
                     _____________________________
                     Answer: """);
             String answer = input.nextLine();
@@ -134,14 +138,6 @@ public class Main {
 
             // GUI
             else if (answer.equalsIgnoreCase("GL")) {
-                // Clean image folder
-//                File folder = new File("src/GUI/SkinImages");
-//                try {
-//                    FileUtils.cleanDirectory(folder);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-
                 // Load all data from files
                 westminsterSkinConsultationManager.loadDoctorsFromFile();
                 westminsterSkinConsultationManager.saveDoctorsToFile();
@@ -151,9 +147,13 @@ public class Main {
                 westminsterSkinConsultationManager.saveSessionsToFile();
                 westminsterSkinConsultationManager.loadConsultationsFromFile();
                 westminsterSkinConsultationManager.saveConsultationsToFile();
-                westminsterSkinConsultationManager.runGUI();
+                new LoginFrame();
             } else if (answer.equalsIgnoreCase("GN")) {
-                westminsterSkinConsultationManager.runGUI();
+                new LoginFrame();
+            } else if (answer.equalsIgnoreCase("QQ")) {
+                break;
+            } else {
+                System.out.println("Invalid Input");
             }
         }
     }

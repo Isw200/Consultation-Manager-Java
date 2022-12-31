@@ -28,6 +28,7 @@ public class AddDoctor extends JDialog implements ActionListener {
     final JTextField dateOfBirthField = new JTextField();
     JTextField[] textFields = new JTextField[4];
     JButton addDoctor, cancel;
+
     public AddDoctor() {
         // Main Frame
         mainFrame = new JFrame();
@@ -125,7 +126,7 @@ public class AddDoctor extends JDialog implements ActionListener {
 
         // Add buttons
         JPanel addDoctorBtnContainer = new JPanel();
-        addDoctorBtnContainer.setPreferredSize(new Dimension(500,50));
+        addDoctorBtnContainer.setPreferredSize(new Dimension(500, 50));
         addDoctor = new JButton("Add Doctor");
         addDoctor.setPreferredSize(new Dimension(220, 40));
         addDoctor.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -189,10 +190,10 @@ public class AddDoctor extends JDialog implements ActionListener {
         mainPanel.add(mainBorderLayouts[0]);
         mainPanel.add(mainBorderLayouts[1]);
         mainPanel.add(mainBorderLayouts[2]);
-        mainPanel.add(addSpace(520,30));
+        mainPanel.add(addSpace(520, 30));
         mainPanel.add(addDoctorBtnContainer);
         mainPanel.add(addAndCancelButtons);
-        mainPanel.add(addSpace(520,50));
+        mainPanel.add(addSpace(520, 50));
         mainFrame.add(mainPanel);
     }
 
@@ -201,7 +202,7 @@ public class AddDoctor extends JDialog implements ActionListener {
         if (e.getSource() == addDoctor) {
             // Check if all fields are filled
             if (fNameField.getText().equals("") || lNameField.getText().equals("") || dateOfBirthField.getText().equals("") || mobileNumField.getText().equals("") || medicalLicenceNumField.getText().equals("")) {
-                JOptionPane.showMessageDialog(null, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Please fill all the fields", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 // Check if mobile number is valid
                 if (mobileNumField.getText().length() != 10) {
