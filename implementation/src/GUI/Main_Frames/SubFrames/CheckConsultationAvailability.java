@@ -63,24 +63,17 @@ public class CheckConsultationAvailability implements ActionListener {
         lblDoctorName = new JLabel("  Doctor Name");
         lblDoctorName.setPreferredSize(new Dimension(200, 20));
         doctorNamePanel.add(lblDoctorName);
-
-        Person[] doctors = WestminsterSkinConsultationManager.getDoctorArray();
-        Person[] doctorNames = new Person[doctors.length];
-        int j = 0;
-        for (Person doctor : doctors) {
+        
+        String[] doctorNames = new String[WestminsterSkinConsultationManager.getNumberOfDoctors(WestminsterSkinConsultationManager.getDoctorArray()) + 1];
+        doctorNames[0] = "Select Doctor";
+        int j = 1;
+        for (Person doctor : WestminsterSkinConsultationManager.getDoctorArray()) {
             if (doctor != null) {
-                doctorNames[j] = doctor;
+                doctorNames[j] = doctor.getName() + " " + doctor.getSurName();
                 j++;
             }
         }
-        String[] doctorNamesString = new String[doctorNames.length + 1];
-        doctorNamesString[0] = "Select Doctor";
-        for (int i = 1; i < doctorNames.length; i++) {
-            if (doctorNames[i] != null) {
-                doctorNamesString[i] = doctorNames[i].getName() + " " + doctorNames[i].getSurName();
-            }
-        }
-        doctorName = new JComboBox(doctorNamesString);
+        doctorName = new JComboBox(doctorNames);
         doctorName.setPreferredSize(new Dimension(200, 40));
         doctorNamePanel.add(doctorName);
 
@@ -198,29 +191,6 @@ public class CheckConsultationAvailability implements ActionListener {
         header.setPreferredSize(new Dimension(750, 30));
 
         scrollPane = new JScrollPane(table);
-
-        // Table row actions
-        table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-            @Override
-            public void valueChanged(ListSelectionEvent e) {
-                int viewRow = table.getSelectedRow();
-
-                if (!e.getValueIsAdjusting() && viewRow != -1) {
-                    int columnIndex = 0;
-                    int modelRow = table.convertRowIndexToModel(viewRow);
-                    Object sessionID = table.getModel().getValueAt(modelRow, columnIndex);
-                    JDialog dialog = new JDialog(mainFrame, "Doctor Details", true);
-                    dialog.setSize(400, 100);
-                    dialog.setLayout(new FlowLayout());
-                    dialog.setResizable(false);
-                    dialog.setLocationRelativeTo(FindDoctor.getFrames()[0]);
-
-                    JButton book = new JButton(sessionID.toString());
-                    dialog.add(book);
-                    dialog.setVisible(true);
-                }
-            }
-        });
 
         topPanel.add(doctorNamePanel);
         topPanel.add(datePanel);

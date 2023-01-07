@@ -2,6 +2,7 @@ package GUI;
 
 import GUI.GUILibs.RoundedBorder;
 import GUI.Main_Frames.*;
+import GUI.Main_Frames.SubFrames.FindDoctor;
 import Models.Consultation;
 import Models.WestminsterSkinConsultationManager;
 
@@ -118,9 +119,7 @@ public class MainFrame extends JFrame implements ActionListener {
         for (int i = 0; i < leftPanelOperatorButtons.length; i++) {
             leftPanelOperatorButtons[i].setPreferredSize(new Dimension(250, 50));
             try {
-                //Image cardIcon = new ImageIcon(iconPaths[i]).getImage().getScaledInstance(140, 100, Image.SCALE_SMOOTH);
                 Image buttonIcon = new ImageIcon(leftPanelIconPaths[i]).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-//                buttonIcon = scaleImage(buttonIcon, 20, 20);
                 leftPanelOperatorButtons[i].setIcon(new ImageIcon(buttonIcon));
             } catch (Exception e) {
                 System.out.println("Error: " + e);
@@ -207,7 +206,13 @@ public class MainFrame extends JFrame implements ActionListener {
             changeRightPanel(sessionsPanel);
 
         } else if (e.getSource() == logoutButton) {
-            System.out.println("Logout");
+            int dialogButton = JOptionPane.YES_NO_OPTION;
+            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you logout?", "Warning", dialogButton);
+
+            if (dialogResult == JOptionPane.YES_OPTION) {
+                dispose();
+                new LoginFrame();
+            }
         }
     }
 

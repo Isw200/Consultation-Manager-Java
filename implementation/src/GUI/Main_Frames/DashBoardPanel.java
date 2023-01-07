@@ -102,7 +102,14 @@ public class DashBoardPanel extends JPanel {
         cardDescriptions[1] = "Total Patients";
         cardDescriptions[2] = "Total Sessions";
 
-        cardCounts[0] = String.valueOf(WestminsterSkinConsultationManager.doctorArray.length);
+        int doctorCount = 0;
+        for (int i = 0; i < WestminsterSkinConsultationManager.doctorArray.length; i++) {
+            if (WestminsterSkinConsultationManager.doctorArray[i] != null) {
+                doctorCount++;
+            }
+        }
+
+        cardCounts[0] = String.valueOf(doctorCount);
         cardCounts[1] = String.valueOf(WestminsterSkinConsultationManager.patientArrayList.size());
         cardCounts[2] = String.valueOf(WestminsterSkinConsultationManager.sessionArrayList.size());
 

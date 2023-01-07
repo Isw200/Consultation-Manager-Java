@@ -15,7 +15,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Objects;
 import java.util.Scanner;
 
 public class WestminsterSkinConsultationManager implements SkinConsultationManager {
@@ -59,48 +58,60 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      * @param mobileNumber         String Mobile Number
      * @param medicalLicenceNumber String Medical Licence Number
      * @param specialisation       String Specialisation
+     * @return
      * @Catch ParseException if the date of birth is not in correct format.
      * correct format Example 15-MAR-2000
      */
     @Override
-    public void addANewDoctor(String name, String surName, String stringDateOfBirth, String mobileNumber, String medicalLicenceNumber, String specialisation, String availability) {
+    public String addANewDoctor(String name, String surName, String stringDateOfBirth, String mobileNumber, String medicalLicenceNumber, String specialisation, String availability) {
         if (isArrayFull(doctorArray)) {
             JOptionPane.showMessageDialog(null, "Doctor Array is Full");
+            System.out.println("Doctor Array is Full");
+            return "Doctor Array is Full";
         } else {
             Date dateOfBirth = strToDate(stringDateOfBirth);
-            Person doctor = new Doctor(name, surName, dateOfBirth, mobileNumber, medicalLicenceNumber, specialisation, availability);
-            for (int i = 0; i < doctorArray.length; i++) {
-                if (doctorArray[i] == null) {
-                    doctorArray[i] = doctor;
-                    break;
+            if (dateOfBirth != null) {
+                Person doctor = new Doctor(name, surName, dateOfBirth, mobileNumber, medicalLicenceNumber, specialisation, availability);
+                System.out.println("Doctor added successfully");
+                for (int i = 0; i < doctorArray.length; i++) {
+                    if (doctorArray[i] == null) {
+                        doctorArray[i] = doctor;
+                        break;
+                    }
                 }
             }
         }
+        return "Doctor added successfully";
     }
 
     /**
      * @param medicalLicenceNumber Medical Licence Number of the doctor we want ro delete.
      *                             Traversal through doctorArrayList ArrayList and matching (i)th Doctor objects medicalLicenceNumber with parameter.
      *                             If they matched removed matched (i)th element from the ArrayList.
+     * @return
      * @Variable boolean "found" to keep track item found or not. It will update it in to true if (i)th element's medicalLicenceNumber matched with the parameter
      */
     @Override
-    public void deleteADoctor(String medicalLicenceNumber) {
-        //TODO: delete all sessions and consultations belongs to that doctor, Save doctor file again and load from doctor file again
+    public String deleteADoctor(String medicalLicenceNumber) {
         boolean found = false;
         int foundIndex = 0;
         Session foundSession = null;
+        String returnString = "";
         for (int i = 0; i < doctorArray.length; i++) {
-            Doctor doctor = (Doctor) doctorArray[i];
-            if (medicalLicenceNumber.equals(doctor.getMedicalLicenceNumber())) {
-                System.out.println("Doctor " + doctor.getName() + " " + doctor.getSurName() + " deleted successfully.");
-                found = true;
-                foundIndex = i;
-                break;
+            if (doctorArray[i] != null) {
+                Doctor doctor = (Doctor) doctorArray[i];
+                if (medicalLicenceNumber.equals(doctor.getMedicalLicenceNumber())) {
+                    System.out.println("Doctor " + doctor.getName() + " " + doctor.getSurName() + " deleted successfully.");
+                    returnString = "Doctor " + doctor.getName() + " " + doctor.getSurName() + " deleted successfully.";
+                    found = true;
+                    foundIndex = i;
+                    break;
+                }
             }
         }
         if (!found) {
             System.out.println("Doctor not found by Medical Licence Number: " + medicalLicenceNumber);
+            returnString = "Doctor not found by Medical Licence Number: " + medicalLicenceNumber;
         } else {
             // Delete Consultation Belongs to deleted doctor
             for (Consultation consultation : consultationArrayList) {
@@ -131,8 +142,26 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
             }
             doctorArray[foundIndex] = null;
             saveDoctorsToFile();
-            DoctorsPanel.tableReRender(doctorArray);
+            try {
+                DoctorsPanel.tableReRender(doctorArray);
+            } catch (Exception e) {
+                System.out.println("Doctors Panel not loaded yet");
+            }
+
+
+            int remainingDoctors = 0;
+            for (Person doctor : doctorArray) {
+                if (doctor != null) {
+                    remainingDoctors++;
+                }
+            }
+            if (remainingDoctors == 0) {
+                System.out.println("No Doctors Available");
+            } else {
+                System.out.println("Remaining number of Doctors: " + remainingDoctors);
+            }
         }
+        return returnString;
     }
 
     /**
@@ -143,8 +172,10 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     public void printAllDoctors() {
         sortDoctor(doctorArray);
         for (int i = 0; i < doctorArray.length; i++) {
-            Doctor doctor = (Doctor) doctorArray[i];
-            System.out.println("Doctor " + (i + 1) + ": " + doctor.print());
+            if (doctorArray[i] != null) {
+                Doctor doctor = (Doctor) doctorArray[i];
+                System.out.println("Doctor " + (i + 1) + ": " + doctor.print());
+            }
         }
     }
 
@@ -152,13 +183,17 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      * Save all Doctor objects in doctorArrayList to a text file.
      * Used buffer to improve performance.
      * 1st argument for fileWriter object pass the text file instance to the fileWriter. 2nd argument tells FileWriter to append any given input to the file instead of overwriting it.
+     *
+     * @return
      */
     @Override
-    public void saveDoctorsToFile() {
+    public String saveDoctorsToFile() {
         if (doctorFile.exists()) {
             doctorFile.delete();
         }
         saveToFile(doctorFile, "Doctor");
+        System.out.println("Doctors saved to file successfully");
+        return "Doctors saved to file successfully";
     }
 
 
@@ -186,6 +221,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
                 loadFromFile(myReader, "Doctor");
                 doctorFile.delete();
                 myReader.close();
+                System.out.println("Doctors loaded successfully");
             } catch (FileNotFoundException e) {
                 System.out.println("An error occurred.");
                 e.printStackTrace();
@@ -224,6 +260,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         Date dateOfBirth = strToDate(stringDateOfBirth);
         Patient patient = new Patient(name, surName, dateOfBirth, mobileNumber, patentId, gender);
         patientArrayList.add(patient);
+        System.out.println("Patient " + patient.getName() + " " + patient.getSurName() + " added successfully.");
     }
 
     @Override
@@ -239,7 +276,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
             }
         }
         if (!found) {
-            System.out.println("Patient not found by Medical Licence Number: " + patientArrayList);
+            System.out.println("Patient not found by Medical Licence Number: " + patentId);
         }
     }
 
@@ -266,6 +303,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
             patientFile.delete();
         }
         saveToFile(patientFile, "Patient");
+        System.out.println("Patients saved to file successfully");
     }
 
     @Override
@@ -281,6 +319,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
                 loadFromFile(reader, "Patient");
                 patientFile.delete();
                 reader.close();
+                System.out.println("Patients loaded successfully");
             } catch (FileNotFoundException e) {
                 System.out.println("An error occurred.");
                 e.printStackTrace();
@@ -318,7 +357,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     public void deleteASession(String sessionID) {
         boolean found = false;
         for (int i = 0; i < sessionArrayList.size(); i++) {
-            Session session = (Session) sessionArrayList.get(i);
+            Session session = sessionArrayList.get(i);
             if (sessionID.equals(session.getSessionId())) {
                 System.out.println("Session " + session.getSessionId() + " deleted successfully.");
                 found = true;
@@ -360,6 +399,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
                 loadFromFile(reader, "Session");
                 sessionsFile.delete();
                 reader.close();
+                System.out.println("Sessions loaded successfully");
             } catch (FileNotFoundException e) {
                 System.out.println("An error occurred.");
                 e.printStackTrace();
@@ -468,7 +508,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         try {
             dateDate = dateFormat.parse(strDate);
         } catch (ParseException e) {
-            e.printStackTrace();
+            System.out.println("Date of birth is not in correct format. Please enter date of birth in correct format. Example 15-MAR-2000");
         }
         return dateDate;
     }
@@ -666,9 +706,11 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         }
         Person doctor = null;
         for (Person tempDoc : doctorArray) {
-            Doctor tempDocType = (Doctor) tempDoc;
-            if (tempDocType.getMedicalLicenceNumber().equals(doctorID)) {
-                doctor = tempDoc;
+            if (tempDoc != null) {
+                Doctor tempDocType = (Doctor) tempDoc;
+                if (tempDocType.getMedicalLicenceNumber().equals(doctorID)) {
+                    doctor = tempDoc;
+                }
             }
         }
         Person patient = null;
@@ -712,14 +754,17 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         Person temp;
         for (int i = 0; i < doctorArray.length; i++) {
             for (int j = 1; j < (doctorArray.length); j++) {
-                int comparisonReturn = (doctorArray[j - 1].getSurName()).compareTo(doctorArray[j].getSurName());
-                if (comparisonReturn > 0) {
-                    temp = doctorArray[j - 1];
-                    doctorArray[j - 1] = doctorArray[j];
-                    doctorArray[j] = temp;
+                if (doctorArray[j - 1] != null && doctorArray[j] != null) {
+                    int comparisonReturn = (doctorArray[j - 1].getSurName()).compareTo(doctorArray[j].getSurName());
+                    if (comparisonReturn > 0) {
+                        temp = doctorArray[j - 1];
+                        doctorArray[j - 1] = doctorArray[j];
+                        doctorArray[j] = temp;
+                    }
                 }
             }
         }
+        System.out.println("Doctors sorted by surname.");
     }
 
     /**
@@ -769,7 +814,6 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         mainFrame.setSize(1300, 800);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setVisible(true);
-//        mainFrame.setLocationRelativeTo(null);
     }
 
     public boolean isArrayFull(Person[] array) {

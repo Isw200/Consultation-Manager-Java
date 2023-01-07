@@ -5,18 +5,17 @@ import Models.Session;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
 public interface SkinConsultationManager {
 
     // Doctor Methods
-    void addANewDoctor(String name, String surName, String dateOfBirth, String mobileNumber, String medicalLicenceNumber, String specialisation, String availability);
+    String addANewDoctor(String name, String surName, String dateOfBirth, String mobileNumber, String medicalLicenceNumber, String specialisation, String availability);
 
-    void deleteADoctor(String medicalLicenceNumber);
+    String deleteADoctor(String medicalLicenceNumber);
 
     void printAllDoctors();
 
-    void saveDoctorsToFile();
+    String saveDoctorsToFile();
 
     void readDoctorFile();
 

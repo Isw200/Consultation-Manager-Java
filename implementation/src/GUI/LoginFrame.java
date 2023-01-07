@@ -199,7 +199,6 @@ public class LoginFrame extends JFrame implements ActionListener {
                 String username = userNameField.getText();
                 String password = passwordField.getText();
                 if (username.equals("admin") && password.equals("admin")) {
-                    JOptionPane.showMessageDialog(null, "Login Successful");
                     WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
                     manager.runGUI();
                     mainFrame.dispose();

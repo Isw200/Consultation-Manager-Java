@@ -265,8 +265,8 @@ public class ConsultationsPanel extends JPanel implements ActionListener, MouseL
             consultationsTable.getColumnModel().getColumn(i).setCellRenderer(new StatusColumnCellRenderer());
         }
 
-        TitledBorder tablePanelBorder = new TitledBorder("Consultations");
-        tablePanelBorder.setTitleFont(new Font("Segoe UI", Font.PLAIN, 20));
+        TitledBorder tablePanelBorder = new TitledBorder("Click on the row to view the consultation details.");
+        tablePanelBorder.setTitleFont(new Font("Segoe UI", Font.PLAIN, 16));
         tablePanel.setBorder(tablePanelBorder);
 
         tablePanel.add(consultationsTableScroll, BorderLayout.CENTER);

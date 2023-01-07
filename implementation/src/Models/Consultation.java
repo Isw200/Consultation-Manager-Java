@@ -38,8 +38,10 @@ public class Consultation implements Printable {
         this.imagesPaths = imagePaths;
 
         // Encrypt images
-        for (String imagePath : imagePaths) {
-            EncryptAndDecrypt.encryptImage(imagePath, 5);
+        if (imagePaths != null) {
+            for (String imagePath : imagePaths) {
+                EncryptAndDecrypt.encryptImage(imagePath, 5);
+            }
         }
 
         // Set consultation time
@@ -188,6 +190,10 @@ public class Consultation implements Printable {
 
     public ArrayList<String> getImagesPaths() {
         return imagesPaths;
+    }
+
+    public void setImagesPaths(ArrayList<String> imagesPaths) {
+        this.imagesPaths = imagesPaths;
     }
 
     public String getStringDate() {

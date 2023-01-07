@@ -3,7 +3,6 @@ package GUI.Main_Frames.SubFrames;
 import GUI.GUILibs.DeletingDone;
 import GUI.MainFrame;
 import GUI.Main_Frames.ConsultationsPanel;
-import GUI.Main_Frames.DoctorsPanel;
 import GUI.Main_Frames.SessionsPanel;
 import Models.Consultation;
 import Models.Patient;
@@ -16,12 +15,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.RoundRectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class ConsultationView extends JFrame implements ActionListener {
     String encryptedNote;
+    boolean isImageDecrypted = false;
     static Consultation consultation;
     int decryptKey = 5;
     static JFrame mainFrame = null;
@@ -35,8 +36,8 @@ public class ConsultationView extends JFrame implements ActionListener {
     JPanel consultationIDPanel;
     JLabel consultationIDLabel;
     JLabel consultationID;
-    JButton deleteBtn;
-    JPanel deletePanel;
+    JButton deleteBtn, editBtn;
+    JPanel editAndDeletePanel;
 
     JPanel notesPanel, imagePanel;
     JPanel imagePane;
@@ -52,6 +53,9 @@ public class ConsultationView extends JFrame implements ActionListener {
         mainFrame.setLocationRelativeTo(MainFrame.getFrames()[0]);
         mainFrame.setResizable(false);
         mainFrame.setTitle("Consultation Details");
+        mainFrame.setUndecorated(true);
+        mainFrame.setShape(new RoundRectangle2D.Double(0, 0, 700, 900, 50, 50));
+
 
         // Labels and Text Fields into Containers
         for (int i = 0; i < labelStrings.length; i++) {
@@ -127,10 +131,10 @@ public class ConsultationView extends JFrame implements ActionListener {
         consultationIDPanel.add(consultationID);
 
         // Top Panel - Edit and Delete Buttons
-        deletePanel = new JPanel();
-        deletePanel.setLayout(new FlowLayout());
-        deletePanel.setPreferredSize(new Dimension(300, 100));
-        deletePanel.setOpaque(false);
+        editAndDeletePanel = new JPanel();
+        editAndDeletePanel.setLayout(new FlowLayout());
+        editAndDeletePanel.setPreferredSize(new Dimension(400, 100));
+        editAndDeletePanel.setOpaque(false);
 
 
         deleteBtn = new JButton("Delete");
@@ -154,11 +158,33 @@ public class ConsultationView extends JFrame implements ActionListener {
             }
         });
 
-        deletePanel.add(MainFrame.addSpace(300, 25));
-        deletePanel.add(deleteBtn);
+        editBtn = new JButton("Edit");
+        editBtn.setPreferredSize(new Dimension(100, 40));
+        editBtn.setFont(new Font("Arial", Font.BOLD, 16));
+        editBtn.addActionListener(this);
+        editBtn.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
+        editBtn.setBackground(new Color(0, 0, 0, 0));
+        editBtn.setForeground(new Color(164, 92, 255));
+        editBtn.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent evt) {
+                editBtn.setOpaque(true);
+                editBtn.setBackground(new Color(164, 92, 255));
+                editBtn.setForeground(new Color(255, 255, 255));
+            }
+
+            public void mouseExited(MouseEvent evt) {
+                editBtn.setOpaque(false);
+                editBtn.setBackground(new Color(0, 0, 0, 0));
+                editBtn.setForeground(new Color(164, 92, 255));
+            }
+        });
+
+        editAndDeletePanel.add(MainFrame.addSpace(300, 25));
+        editAndDeletePanel.add(editBtn);
+        editAndDeletePanel.add(deleteBtn);
 
         panelTop.add(consultationIDPanel, BorderLayout.WEST);
-        panelTop.add(deletePanel, BorderLayout.EAST);
+        panelTop.add(editAndDeletePanel, BorderLayout.EAST);
 
 
         // Note Panel
@@ -283,6 +309,32 @@ public class ConsultationView extends JFrame implements ActionListener {
         });
         doneContainer.add(doneBtn);
 
+        // Cancel Consultation button
+        JPanel cancelButtonContainer = new JPanel(new FlowLayout());
+        JLabel cancelDescription = new JLabel("Encrypt and close? ");
+        cancelDescription.setFont(new Font("Arial", Font.PLAIN, 16));
+        cancelDescription.setForeground(new Color(164, 92, 255));
+
+        cancelBtn = new JButton("Close");
+        cancelBtn.setFont(new Font("Arial", Font.BOLD, 16));
+        cancelBtn.setOpaque(false);
+        cancelBtn.setBorder(null);
+        cancelBtn.setForeground(new Color(164, 92, 255));
+        cancelBtn.addActionListener(this);
+        cancelBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                cancelBtn.setForeground(new Color(51, 0, 115));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                cancelBtn.setForeground(new Color(164, 92, 255));
+            }
+        });
+        cancelButtonContainer.add(cancelDescription);
+        cancelButtonContainer.add(cancelBtn);
+
         mainFrame.add(panelTop);
         mainFrame.add(rows[0]);
         mainFrame.add(rows[1]);
@@ -291,7 +343,7 @@ public class ConsultationView extends JFrame implements ActionListener {
         mainFrame.add(imagePanel);
         mainFrame.add(MainFrame.addSpace(700, 10));
         mainFrame.add(doneContainer);
-//        mainFrame.add(cancelBtnContainer);
+        mainFrame.add(cancelButtonContainer);
         mainFrame.setVisible(true);
         ConsultationsPanel.tableReRender(WestminsterSkinConsultationManager.getConsultationsArrayList());
     }
@@ -403,7 +455,6 @@ public class ConsultationView extends JFrame implements ActionListener {
                     if (password.equals("5")) {
                         ArrayList<String> imagePaths = consultation.getImagesPaths();
                         for (String imagePath : imagePaths) {
-                            String decryptedImagePath = null;
                             try {
                                 EncryptAndDecrypt.decryptImage(imagePath, decryptKey);
                             } catch (IOException ex) {
@@ -417,6 +468,7 @@ public class ConsultationView extends JFrame implements ActionListener {
                             imageLabel.setPreferredSize(new Dimension(150, 150));
                             imageLabel.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
                             imagePane.add(imageLabel);
+                            isImageDecrypted = true;
                         }
                         openImage(imagePane, consultation);
                         unlockImageBtn.setVisible(false);
@@ -447,21 +499,97 @@ public class ConsultationView extends JFrame implements ActionListener {
             passwordDialog.setVisible(true);
         }
         if (e.getSource() == doneBtn) {
-            ArrayList<String> imagePaths = consultation.getImagesPaths();
             // encrypt again
-            // TODO: Encrypt only if they are in decrypted format
-            for (String imagePath : imagePaths) {
-                try {
-                    EncryptAndDecrypt.encryptImage(imagePath, decryptKey);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+            if (isImageDecrypted) {
+                ArrayList<String> imagePaths = consultation.getImagesPaths();
+                for (String imagePath : imagePaths) {
+                    try {
+                        EncryptAndDecrypt.encryptImage(imagePath, decryptKey);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             }
+
             mainFrame.dispose();
             ConsultationsPanel.tableReRender(WestminsterSkinConsultationManager.getConsultationsArrayList());
         }
         if (e.getSource() == deleteBtn) {
             deleteConsultation();
+        }
+        if (e.getSource() == editBtn) {
+            JDialog editPwDialog = new JDialog();
+            editPwDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+            editPwDialog.setSize(400, 200);
+            editPwDialog.setLocationRelativeTo(ConsultationView.getFrames()[0]);
+            editPwDialog.setResizable(false);
+            editPwDialog.setLayout(new FlowLayout());
+
+            JLabel editPwLabel = new JLabel("Enter password to edit consultation");
+            editPwLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+            editPwLabel.setForeground(new Color(91, 91, 91));
+            editPwLabel.setPreferredSize(new Dimension(400, 26));
+            editPwLabel.setHorizontalAlignment(JLabel.CENTER);
+
+            JPasswordField editPwField = new JPasswordField();
+            editPwField.setPreferredSize(new Dimension(300, 40));
+            editPwField.setFont(new Font("Arial", Font.PLAIN, 30));
+            editPwField.setBorder(BorderFactory.createLineBorder(new Color(131, 131, 131), 2));
+            editPwField.setBackground(new Color(0, 0, 0, 0));
+            editPwField.setForeground(new Color(164, 92, 255));
+            editPwField.setCaretColor(Color.DARK_GRAY);
+            editPwField.setEchoChar('*');
+
+            JButton editPwBtn = new JButton("Unlock");
+            editPwBtn.setPreferredSize(new Dimension(300, 40));
+            editPwBtn.setFont(new Font("Arial", Font.PLAIN, 16));
+            editPwBtn.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
+            editPwBtn.setBackground(new Color(0, 0, 0, 0));
+            editPwBtn.setForeground(new Color(164, 92, 255));
+            editPwBtn.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String password = new String(editPwField.getPassword());
+                    if (password.equals("5")) {
+                        new EditConsultation(consultation);
+                        mainFrame.dispose();
+                        editPwDialog.dispose();
+                    } else {
+                        JOptionPane.showMessageDialog(ConsultationView.getFrames()[0], "Wrong password", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+            editPwBtn.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    editPwBtn.setOpaque(true);
+                    editPwBtn.setBackground(new Color(164, 92, 255));
+                    editPwBtn.setForeground(new Color(255, 255, 255));
+                }
+
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    editPwBtn.setOpaque(false);
+                    editPwBtn.setForeground(new Color(164, 92, 255));
+                }
+            });
+            editPwDialog.add(editPwLabel);
+            editPwDialog.add(editPwField);
+            editPwDialog.add(editPwBtn);
+            editPwDialog.setVisible(true);
+        }
+        if (e.getSource() == cancelBtn) {
+            if (isImageDecrypted) {
+                ArrayList<String> imagePaths = consultation.getImagesPaths();
+                for (String imagePath : imagePaths) {
+                    try {
+                        EncryptAndDecrypt.encryptImage(imagePath, decryptKey);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+            mainFrame.dispose();
         }
     }
 
