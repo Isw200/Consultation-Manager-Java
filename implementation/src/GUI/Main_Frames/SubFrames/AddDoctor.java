@@ -2,8 +2,9 @@ package GUI.Main_Frames.SubFrames;
 
 import GUI.MainFrame;
 import GUI.Main_Frames.DoctorsPanel;
-import GUI.Other_components.DatePicker;
+import GUI.GUIModels.DatePicker;
 import Models.Doctor;
+import Models.Person;
 import Models.WestminsterSkinConsultationManager;
 
 import javax.swing.*;
@@ -12,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Date;
 
 import static GUI.MainFrame.addSpace;
 import static GUI.MainFrame.scaleImage;
@@ -212,12 +212,27 @@ public class AddDoctor extends JDialog implements ActionListener {
                     if (medicalLicenceNumField.getText().length() != 8) {
                         JOptionPane.showMessageDialog(null, "Please enter a valid medical licence number: EX- DOC12345", "Error", JOptionPane.ERROR_MESSAGE);
                     } else {
-                        // Add doctor to array list
-                        WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
-                        manager.addANewDoctor(fNameField.getText(), lNameField.getText(), dateOfBirthField.getText(), mobileNumField.getText(), medicalLicenceNumField.getText(), specialisationDropDown.getSelectedItem().toString(), "Available");
-                        JOptionPane.showMessageDialog(null, "Doctor added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        DoctorsPanel.tableReRender(WestminsterSkinConsultationManager.getDoctorArray());
-                        mainFrame.dispose();
+                        // Check if doctorID already exists
+                        boolean isUnique = true;
+                        for (Person doctor : WestminsterSkinConsultationManager.doctorArray) {
+                            if (doctor != null) {
+                                Doctor doc = (Doctor) doctor;
+                                if (doc.getMedicalLicenceNumber().equals(medicalLicenceNumField.getText())) {
+                                    isUnique = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (isUnique) {
+                            // Add doctor to the array
+                            WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
+                            manager.addANewDoctor(fNameField.getText(), lNameField.getText(), dateOfBirthField.getText(), mobileNumField.getText(), medicalLicenceNumField.getText(), specialisationDropDown.getSelectedItem().toString(), "Available");
+                            JOptionPane.showMessageDialog(null, "Doctor added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            DoctorsPanel.tableReRender(WestminsterSkinConsultationManager.getDoctorArray());
+                            mainFrame.dispose();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Doctor ID already exists", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 }
             }

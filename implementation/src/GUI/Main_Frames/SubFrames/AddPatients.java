@@ -1,9 +1,8 @@
 package GUI.Main_Frames.SubFrames;
 
 import GUI.MainFrame;
-import GUI.Main_Frames.DoctorsPanel;
 import GUI.Main_Frames.PatientsPanel;
-import GUI.Other_components.DatePicker;
+import GUI.GUIModels.DatePicker;
 import Models.Patient;
 import Models.Person;
 import Models.WestminsterSkinConsultationManager;
@@ -26,11 +25,12 @@ public class AddPatients extends JDialog implements ActionListener {
     JPanel[] panels = new JPanel[6];
     JPanel[] mainBorderLayouts = new JPanel[3];
     JLabel[] labels = new JLabel[6];
-    JTextField fNameField, lNameField, mobileNumField, patintIdField;
+    JTextField fNameField, lNameField, mobileNumField, patientIdField;
     JComboBox genderDropDown;
     final JTextField dateOfBirthField = new JTextField();
     JTextField[] textFields = new JTextField[4];
-    JButton addDoctor, cancel;
+    JButton addPatient, cancel;
+
     public AddPatients() {
         // Main Frame
         mainFrame = new JFrame();
@@ -70,12 +70,12 @@ public class AddPatients extends JDialog implements ActionListener {
         fNameField = new JTextField();
         lNameField = new JTextField();
         mobileNumField = new JTextField();
-        patintIdField = new JTextField();
+        patientIdField = new JTextField();
 
         textFields[0] = fNameField;
         textFields[1] = lNameField;
         textFields[2] = mobileNumField;
-        textFields[3] = patintIdField;
+        textFields[3] = patientIdField;
 
         // Text field settings
         for (int i = 0; i < 4; i++) {
@@ -127,29 +127,29 @@ public class AddPatients extends JDialog implements ActionListener {
 
         // Add buttons
         JPanel addDoctorBtnContainer = new JPanel();
-        addDoctorBtnContainer.setPreferredSize(new Dimension(500,50));
-        addDoctor = new JButton("Add Patient");
-        addDoctor.setPreferredSize(new Dimension(220, 40));
-        addDoctor.setFont(new Font("Arial", Font.PLAIN, 16));
-        addDoctor.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
-        addDoctor.setBackground(new Color(0, 0, 0, 0));
-        addDoctor.setForeground(new Color(164, 92, 255));
-        addDoctor.addActionListener(this);
-        addDoctor.addMouseListener(new MouseAdapter() {
+        addDoctorBtnContainer.setPreferredSize(new Dimension(500, 50));
+        addPatient = new JButton("Add Patient");
+        addPatient.setPreferredSize(new Dimension(220, 40));
+        addPatient.setFont(new Font("Arial", Font.PLAIN, 16));
+        addPatient.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
+        addPatient.setBackground(new Color(0, 0, 0, 0));
+        addPatient.setForeground(new Color(164, 92, 255));
+        addPatient.addActionListener(this);
+        addPatient.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                addDoctor.setOpaque(true);
-                addDoctor.setBackground(new Color(164, 92, 255));
-                addDoctor.setForeground(new Color(255, 255, 255));
+                addPatient.setOpaque(true);
+                addPatient.setBackground(new Color(164, 92, 255));
+                addPatient.setForeground(new Color(255, 255, 255));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                addDoctor.setOpaque(false);
-                addDoctor.setForeground(new Color(164, 92, 255));
+                addPatient.setOpaque(false);
+                addPatient.setForeground(new Color(164, 92, 255));
             }
         });
-        addDoctorBtnContainer.add(addDoctor);
+        addDoctorBtnContainer.add(addPatient);
 
         // Cancel button
         JPanel addAndCancelButtons = new JPanel(new FlowLayout());
@@ -191,19 +191,19 @@ public class AddPatients extends JDialog implements ActionListener {
         mainPanel.add(mainBorderLayouts[0]);
         mainPanel.add(mainBorderLayouts[1]);
         mainPanel.add(mainBorderLayouts[2]);
-        mainPanel.add(addSpace(520,30));
+        mainPanel.add(addSpace(520, 30));
         mainPanel.add(addDoctorBtnContainer);
         mainPanel.add(addAndCancelButtons);
-        mainPanel.add(addSpace(520,50));
+        mainPanel.add(addSpace(520, 50));
         mainFrame.add(mainPanel);
         mainFrame.setVisible(true);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == addDoctor) {
+        if (e.getSource() == addPatient) {
             // Check if all fields are filled
-            if (fNameField.getText().equals("") || lNameField.getText().equals("") || dateOfBirthField.getText().equals("") || mobileNumField.getText().equals("") || patintIdField.getText().equals("")) {
+            if (fNameField.getText().equals("") || lNameField.getText().equals("") || dateOfBirthField.getText().equals("") || mobileNumField.getText().equals("") || patientIdField.getText().equals("")) {
                 JOptionPane.showMessageDialog(null, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 // Check if mobile number is valid
@@ -211,19 +211,32 @@ public class AddPatients extends JDialog implements ActionListener {
                     JOptionPane.showMessageDialog(null, "Please enter a valid mobile number", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     // Check if medical licence number is valid
-                    if (patintIdField.getText().length() != 6) {
+                    if (patientIdField.getText().length() != 6) {
                         JOptionPane.showMessageDialog(null, "Please enter a valid Patient ID: EX- P00XXX", "Error", JOptionPane.ERROR_MESSAGE);
                     } else {
-                        // Add doctor to array list
-                        Date dateOfBirth = WestminsterSkinConsultationManager.strToDate(dateOfBirthField.getText());
+                        // Check if patient ID is already taken
+                        boolean isPatientIdUnique = true;
+                        for (Person patient : WestminsterSkinConsultationManager.getPatientArrayList()) {
+                            Patient pat = (Patient) patient;
+                            if (pat.getPatientId().equals(patientIdField.getText())) {
+                                isPatientIdUnique = false;
+                                break;
+                            }
+                        }
+                        if (isPatientIdUnique) {
+                            // Add doctor to array list
+                            Date dateOfBirth = WestminsterSkinConsultationManager.strToDate(dateOfBirthField.getText());
 
-                        Patient patient = new Patient(fNameField.getText(), lNameField.getText(), dateOfBirth, mobileNumField.getText(), patintIdField.getText(), Objects.requireNonNull(genderDropDown.getSelectedItem()).toString());
+                            Patient patient = new Patient(fNameField.getText(), lNameField.getText(), dateOfBirth, mobileNumField.getText(), patientIdField.getText(), Objects.requireNonNull(genderDropDown.getSelectedItem()).toString());
 
-                        WestminsterSkinConsultationManager.patientArrayList.add(patient);
+                            WestminsterSkinConsultationManager.patientArrayList.add(patient);
 
-                        JOptionPane.showMessageDialog(null, "Patient added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                        PatientsPanel.tableReRender(WestminsterSkinConsultationManager.getPatientArrayList());
-                        mainFrame.dispose();
+                            JOptionPane.showMessageDialog(null, "Patient added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                            PatientsPanel.tableReRender(WestminsterSkinConsultationManager.getPatientArrayList());
+                            mainFrame.dispose();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Patient ID already taken", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
                     }
                 }
             }

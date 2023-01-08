@@ -65,13 +65,11 @@ public class Consultation implements Printable {
         boolean isFirstConsultation = true;
         Patient patient1 = (Patient) patient;
         for (Session session1 : WestminsterSkinConsultationManager.getSessionsArrayList()) {
-            if (session1.getSessionId().equals(session.getSessionId())) {
-                for (Consultation consultation : session1.getConsultations()) {
-                    if (consultation != null) {
-                        Patient patient2 = (Patient) consultation.getPatient();
-                        if (patient2.getPatientId().equals(patient1.getPatientId())) {
-                            isFirstConsultation = false;
-                        }
+            for (Consultation consultation : session1.getConsultations()) {
+                if (consultation != null) {
+                    Patient patient2 = (Patient) consultation.getPatient();
+                    if (patient2.getPatientId().equals(patient1.getPatientId())) {
+                        isFirstConsultation = false;
                     }
                 }
             }

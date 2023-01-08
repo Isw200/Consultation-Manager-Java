@@ -1,8 +1,8 @@
 package GUI.Main_Frames;
 
-import GUI.GUILibs.SavingDone;
-import GUI.GUILibs.SortingDone;
-import GUI.GUILibs.StatusColumnCellRenderer;
+import GUI.GUIModels.SavingDone;
+import GUI.GUIModels.SortingDone;
+import GUI.GUIModels.StatusColumnCellRenderer;
 import GUI.Main_Frames.SubFrames.AddDoctor;
 import GUI.Main_Frames.SubFrames.FindDoctor;
 import Models.Doctor;
@@ -336,6 +336,7 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
         if (e.getSource() == importData) {
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
             manager.loadDoctorsFromFile();
+            manager.saveDoctorsToFile();
             tableReRender(WestminsterSkinConsultationManager.getDoctorArray());
         }
         if (e.getSource() == saveDataButton) {

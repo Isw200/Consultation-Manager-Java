@@ -3,10 +3,9 @@ package GUI.Main_Frames.SubFrames;
 import GUI.MainFrame;
 import GUI.Main_Frames.ConsultationsPanel;
 import GUI.Main_Frames.PatientsPanel;
-import GUI.Other_components.DatePicker;
+import GUI.GUIModels.DatePicker;
 import Models.*;
 
-import javax.print.Doc;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -51,7 +50,7 @@ public class AddConsultation extends JFrame implements ActionListener {
     JPanel[] containerPanelArray = new JPanel[10];
 
     // TextFields
-    JTextField patientNameTextField, patientGenderTextField, patientAgeTextField, patientDOBTextField, patientMobileNumberTextField, doctorTextField, dateTextField, availableBtnTextField, timeTextField, numberTextField;
+    JTextField patientNameTextField, patientGenderTextField, patientAgeTextField, patientDOBTextField, patientMobileNumberTextField, timeTextField, numberTextField;
     JButton checkAvailabilityButton;
     JComboBox patientNameComboBox, doctorComboBox, hoursComboBox;
     final JTextField sessionDate = new JTextField();

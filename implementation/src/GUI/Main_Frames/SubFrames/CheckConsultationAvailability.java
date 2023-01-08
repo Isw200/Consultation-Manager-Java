@@ -1,10 +1,8 @@
 package GUI.Main_Frames.SubFrames;
 
-import GUI.GUILibs.StatusColumnCellRenderer;
+import GUI.GUIModels.StatusColumnCellRenderer;
 import GUI.MainFrame;
-import GUI.Main_Frames.DoctorsPanel;
-import GUI.Other_components.DatePicker;
-import Models.Doctor;
+import GUI.GUIModels.DatePicker;
 import Models.Person;
 import Models.Session;
 import Models.WestminsterSkinConsultationManager;
@@ -12,14 +10,11 @@ import Models.WestminsterSkinConsultationManager;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Date;
@@ -63,7 +58,7 @@ public class CheckConsultationAvailability implements ActionListener {
         lblDoctorName = new JLabel("  Doctor Name");
         lblDoctorName.setPreferredSize(new Dimension(200, 20));
         doctorNamePanel.add(lblDoctorName);
-        
+
         String[] doctorNames = new String[WestminsterSkinConsultationManager.getNumberOfDoctors(WestminsterSkinConsultationManager.getDoctorArray()) + 1];
         doctorNames[0] = "Select Doctor";
         int j = 1;

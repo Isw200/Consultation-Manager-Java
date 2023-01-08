@@ -2,7 +2,7 @@ package GUI.Main_Frames.SubFrames;
 
 import GUI.MainFrame;
 import GUI.Main_Frames.ConsultationsPanel;
-import GUI.Other_components.DatePicker;
+import GUI.GUIModels.DatePicker;
 import Models.*;
 import Models.SubModels.EncryptAndDecrypt;
 
@@ -26,22 +26,14 @@ import java.util.Objects;
 import static GUI.MainFrame.scaleImage;
 
 public class EditConsultation extends JFrame implements ActionListener {
-    // Variables
-    private String patientId;
-    Consultation consultation;
-    Person patient;
-    Person doctor;
-    Session session;
-    Date date;
-    String note;
-    double duration;
-
-
+    private final Consultation consultation;
+    private Person patient;
+    private Person doctor;
+    private Session session;
+    private Date date;
+    
     // Main Frame
-    private JFrame mainFrame;
-
-    // Top Panel
-    JPanel patientContainer, panelBottom;
+    private final JFrame mainFrame;
 
     // Bottom Panel
     JLabel patientNameLabel, selectPatientLabel, patientGenderLabel, patientAgeLabel, patientDOBLabel, patientMobileNumberLabel, doctorLabel, dateLabel, hoursLabel, availableBtnLabel;
@@ -118,7 +110,7 @@ public class EditConsultation extends JFrame implements ActionListener {
         }
         // Panels
         // Bottom Panel
-        panelBottom = new JPanel();
+        JPanel panelBottom = new JPanel();
         panelBottom.setLayout(new FlowLayout());
         panelBottom.setPreferredSize(new Dimension(700, 550));
         panelBottom.setOpaque(false);
@@ -220,7 +212,8 @@ public class EditConsultation extends JFrame implements ActionListener {
         patientDetails.setBorder(BorderFactory.createTitledBorder("Patient Details"));
 
 
-        patientContainer = new JPanel();
+        // Top Panel
+        JPanel patientContainer = new JPanel();
         patientContainer.setLayout(new FlowLayout());
         patientContainer.setPreferredSize(new Dimension(700, 230));
         patientContainer.setOpaque(false);
@@ -573,7 +566,8 @@ public class EditConsultation extends JFrame implements ActionListener {
             if (patientNameComboBox.getSelectedItem().equals("Select Patient")) {
                 JOptionPane.showMessageDialog(null, "Please select a Patient.", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                patientId = patientNameComboBox.getSelectedItem().toString().split(" ")[0];
+                // Variables
+                String patientId = patientNameComboBox.getSelectedItem().toString().split(" ")[0];
                 for (Person tempPatient : WestminsterSkinConsultationManager.getPatientArrayList()) {
                     Patient p = (Patient) tempPatient;
                     if (patientId.equals(p.getPatientId())) {
@@ -707,8 +701,8 @@ public class EditConsultation extends JFrame implements ActionListener {
                 } else if (session == null) {
                     JOptionPane.showMessageDialog(null, "Check availability.", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
-                    note = notesTextArea.getText();
-                    duration = Double.parseDouble(Objects.requireNonNull(hoursComboBox.getSelectedItem()).toString());
+                    String note = notesTextArea.getText();
+                    double duration = Double.parseDouble(Objects.requireNonNull(hoursComboBox.getSelectedItem()).toString());
                     consultation.setSession(session);
                     consultation.setDoctor(doctor);
                     consultation.setPatient(patient);

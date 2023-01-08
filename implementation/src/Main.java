@@ -1,8 +1,6 @@
 import GUI.LoginFrame;
 import Models.*;
-import org.apache.commons.io.FileUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -19,7 +17,7 @@ public class Main {
                     _____________________________                
                     (DA) -> Add a new Doctor
                     (DD) -> Delete a Doctor
-                    (DP) -> List of all Doctors
+                    (DP) -> Print of all Doctors
                     (DS) -> Save to File
                     (DR) -> Read file
                     (DL) -> Load doctors from Files
@@ -27,21 +25,21 @@ public class Main {
                                         
                     (PA) -> Add a new Patient
                     (PD) -> Delete a Patient
-                    (PP) -> List of all Patients
+                    (PP) -> Print of all Patients
                     (PS) -> Save to File
                     (PR) -> Read file
                     (PL) -> Load patients from Files
                                         
                     (SA) -> Add a new Session
                     (SD) -> Delete a Session
-                    (SP) -> List of all Sessions
+                    (SP) -> Print of all Sessions
                     (SS) -> Save to File
                     (SR) -> Read file
                     (SL) -> Load sessions from Files
                                         
                     (AC) -> Add a new Consultation
                     (DC) -> Delete a Consultation
-                    (PC) -> List of all Consultations
+                    (PC) -> Print of all Consultations
                                         
                     (GL)  -> Open GUI with all the data
                     (GN)  -> Open GUI with no data
@@ -95,8 +93,22 @@ public class Main {
 
                     System.out.print("Enter Medical Licence Number: ");
                     String medicalLicenceNumber = input.nextLine();
+                    boolean isUnique = true;
                     if (medicalLicenceNumber.isBlank()) {
                         System.out.println("Medical Licence Number cannot be empty");
+                        continue;
+                    }
+                    for (Person doctor : WestminsterSkinConsultationManager.doctorArray) {
+                        if (doctor != null) {
+                            Doctor doc = (Doctor) doctor;
+                            if (doc.getMedicalLicenceNumber().equals(medicalLicenceNumber)) {
+                                isUnique = false;
+                                break;
+                            }
+                        }
+                    }
+                    if (!isUnique) {
+                        System.out.println("Medical Licence Number must be unique");
                         continue;
                     }
                     System.out.print("Enter Specialisation: ");

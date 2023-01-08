@@ -1,8 +1,8 @@
 package GUI.Main_Frames;
 
-import GUI.GUILibs.SavingDone;
-import GUI.GUILibs.SortingDone;
-import GUI.GUILibs.StatusColumnCellRenderer;
+import GUI.GUIModels.SavingDone;
+import GUI.GUIModels.SortingDone;
+import GUI.GUIModels.StatusColumnCellRenderer;
 import GUI.Main_Frames.SubFrames.AddSession;
 import GUI.Main_Frames.SubFrames.FindSession;
 import Models.Session;
@@ -33,7 +33,7 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
     static int numberOfSessions;
     JLabel panelTitle;
     static JLabel allSessions;
-    JButton addSession, deleteEditSession,importData;
+    JButton addSession, deleteEditSession, importData;
     JButton[] purpleButtons = new JButton[3];
     JButton refreshButton;
     static JTable sessionsTable;
@@ -43,6 +43,7 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
     JButton saveDataButton, sortDataButton;
     JButton[] panel3Buttons = new JButton[2];
     String[] panel3ButtonIconPaths = new String[2];
+
     public SessionsPanel() {
         numberOfSessions = 0;
         setSize(1300, 800);
@@ -106,7 +107,7 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
         searchField.setPreferredSize(new Dimension(320, 30));
         searchField.getDocument().addDocumentListener(this);
         searchPanel.add(addSpace(30, 10), BorderLayout.WEST);
-        searchPanel.add(searchField,BorderLayout.CENTER);
+        searchPanel.add(searchField, BorderLayout.CENTER);
 
         searchIcon = new ImageIcon("src/GUI/Assets/search.png");
         try {
@@ -171,7 +172,7 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
 
         ImageIcon finalButtonIcon = buttonIcon;
 
-        refreshButton = new JButton(){
+        refreshButton = new JButton() {
             protected void paintComponent(Graphics g) {
                 if (g instanceof Graphics2D g2d) {
                     Paint p =
@@ -229,7 +230,7 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
         header.setBackground(new Color(51, 0, 101, 255));
         header.setForeground(Color.WHITE);
         header.setPreferredSize(new Dimension(100, 40));
-        ((DefaultTableCellRenderer)header.getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
+        ((DefaultTableCellRenderer) header.getDefaultRenderer()).setHorizontalAlignment(SwingConstants.CENTER);
 
         sessionsTableScroll = new JScrollPane(sessionsTable);
         sessionsTableScroll.setPreferredSize(new Dimension(1000, 480));
@@ -273,7 +274,7 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
         panel3ButtonIconPaths[0] = "src/GUI/Assets/save.png";
         panel3ButtonIconPaths[1] = "src/GUI/Assets/sort.png";
 
-        for (int i = 0; i<2; i++){
+        for (int i = 0; i < 2; i++) {
             try {
                 ImageIcon panel3buttonIcon = new ImageIcon(panel3ButtonIconPaths[i]);
                 panel3buttonIcon = scaleImage(panel3buttonIcon, 20, 20);
@@ -294,7 +295,7 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
         panel3East.add(panel3Buttons[1]);
 
         // Panel 3 West Components
-        allSessions = new JLabel("All Sessions "+ numberOfSessions);
+        allSessions = new JLabel("All Sessions " + numberOfSessions);
         allSessions.setFont(new Font("Segoe UI", Font.PLAIN, 24));
         allSessions.setForeground(Color.GRAY);
         allSessions.setOpaque(false);
@@ -311,26 +312,27 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == addSession){
+        if (e.getSource() == addSession) {
             new AddSession();
         }
-        if (e.getSource() == deleteEditSession){
+        if (e.getSource() == deleteEditSession) {
             new FindSession();
         }
-        if (e.getSource() == refreshButton){
+        if (e.getSource() == refreshButton) {
             tableReRender(WestminsterSkinConsultationManager.getSessionsArrayList());
         }
-        if (e.getSource() == importData){
+        if (e.getSource() == importData) {
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
             manager.loadSessionsFromFile();
+            manager.saveSessionsToFile();
             tableReRender(WestminsterSkinConsultationManager.getSessionsArrayList());
         }
-        if (e.getSource() == saveDataButton){
+        if (e.getSource() == saveDataButton) {
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
             manager.saveSessionsToFile();
             new SavingDone();
         }
-        if (e.getSource() == sortDataButton){
+        if (e.getSource() == sortDataButton) {
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
             manager.sortSession(WestminsterSkinConsultationManager.getSessionsArrayList());
             tableReRender(WestminsterSkinConsultationManager.getSessionsArrayList());
@@ -358,25 +360,25 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
 
     @Override
     public void mouseEntered(MouseEvent e) {
-        if (e.getSource() == addSession){
+        if (e.getSource() == addSession) {
             addSession.setBackground(new Color(164, 92, 255));
             addSession.setOpaque(true);
             addSession.setForeground(Color.WHITE);
         }
-        if (e.getSource() == deleteEditSession){
+        if (e.getSource() == deleteEditSession) {
             deleteEditSession.setBackground(new Color(164, 92, 255));
             deleteEditSession.setOpaque(true);
             deleteEditSession.setForeground(Color.WHITE);
         }
-        if (e.getSource() == importData){
+        if (e.getSource() == importData) {
             importData.setBackground(new Color(164, 92, 255));
             importData.setOpaque(true);
             importData.setForeground(Color.WHITE);
         }
-        if (e.getSource() == refreshButton){
+        if (e.getSource() == refreshButton) {
             refreshButton.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 4));
         }
-        if (e.getSource() == saveDataButton){
+        if (e.getSource() == saveDataButton) {
             saveDataButton.setBackground(new Color(164, 92, 255));
             saveDataButton.setOpaque(true);
             saveDataButton.setForeground(Color.WHITE);
@@ -388,7 +390,7 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
                 System.out.println("Error: " + ee);
             }
         }
-        if (e.getSource() == sortDataButton){
+        if (e.getSource() == sortDataButton) {
             sortDataButton.setBackground(new Color(164, 92, 255));
             sortDataButton.setOpaque(true);
             sortDataButton.setForeground(Color.WHITE);
@@ -404,25 +406,25 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
 
     @Override
     public void mouseExited(MouseEvent e) {
-        if (e.getSource() == addSession){
+        if (e.getSource() == addSession) {
             addSession.setOpaque(false);
             addSession.setForeground(new Color(164, 92, 255));
             addSession.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
         }
-        if (e.getSource() == deleteEditSession){
+        if (e.getSource() == deleteEditSession) {
             deleteEditSession.setOpaque(false);
             deleteEditSession.setForeground(new Color(164, 92, 255));
             deleteEditSession.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
         }
-        if (e.getSource() == importData){
+        if (e.getSource() == importData) {
             importData.setOpaque(false);
             importData.setForeground(new Color(164, 92, 255));
             importData.setBorder(BorderFactory.createLineBorder(new Color(164, 92, 255), 2));
         }
-        if (e.getSource() == refreshButton){
+        if (e.getSource() == refreshButton) {
             refreshButton.setBorder(null);
         }
-        if (e.getSource() == saveDataButton){
+        if (e.getSource() == saveDataButton) {
             saveDataButton.setOpaque(true);
             saveDataButton.setBackground(new Color(215, 215, 215));
             saveDataButton.setForeground(new Color(107, 107, 107));
@@ -434,7 +436,7 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
                 System.out.println("Error: " + ee);
             }
         }
-        if (e.getSource() == sortDataButton){
+        if (e.getSource() == sortDataButton) {
             sortDataButton.setOpaque(true);
             sortDataButton.setBackground(new Color(215, 215, 215));
             sortDataButton.setForeground(new Color(107, 107, 107));
@@ -454,7 +456,7 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
      * This method is called when the refresh button is clicked.
      * The re-rendering is done by changing the Default Table Model.
      */
-    public static void tableReRender(ArrayList<Session> sessions){
+    public static void tableReRender(ArrayList<Session> sessions) {
         String[] sessionsTableColumns = {"Session ID", "Doctor Name", "Date", "Time", "Maximal Patients", "Availability", "Status"};
 
         String[][] sessionData = new String[sessions.size()][7];
@@ -464,7 +466,7 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
         for (int i = 0; i < sessions.size(); i++) {
             Session session = WestminsterSkinConsultationManager.getSessionsArrayList().get(i);
             sessionData[i][0] = session.getSessionId();
-            sessionData[i][1] = session.getDoctor().getName() +" "+ session.getDoctor().getSurName();
+            sessionData[i][1] = session.getDoctor().getName() + " " + session.getDoctor().getSurName();
             sessionData[i][2] = session.getStringDate();
             sessionData[i][3] = session.getStringTime();
             sessionData[i][4] = String.valueOf(session.getMaxPatients());
@@ -478,36 +480,36 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
         for (int i = 0; i < sessionsTable.getColumnCount(); i++) {
             sessionsTable.getColumnModel().getColumn(i).setCellRenderer(new StatusColumnCellRenderer());
         }
-        allSessions.setText("All Sessions "+ numberOfSessions);
+        allSessions.setText("All Sessions " + numberOfSessions);
     }
 
     @Override
     public void insertUpdate(DocumentEvent e) {
-        if (e.getDocument() == searchField.getDocument()){
+        if (e.getDocument() == searchField.getDocument()) {
             filterDataBySearchField();
         }
     }
 
     @Override
     public void removeUpdate(DocumentEvent e) {
-        if (e.getDocument() == searchField.getDocument()){
+        if (e.getDocument() == searchField.getDocument()) {
             filterDataBySearchField();
         }
     }
 
     @Override
     public void changedUpdate(DocumentEvent e) {
-        if (e.getDocument() == searchField.getDocument()){
+        if (e.getDocument() == searchField.getDocument()) {
             filterDataBySearchField();
         }
     }
 
-    public void filterDataBySearchField(){
+    public void filterDataBySearchField() {
         ArrayList<Session> sessions = WestminsterSkinConsultationManager.getSessionsArrayList();
-        if (!searchField.getText().equals("") && !searchField.getText().equals("Doctor Name...")){
+        if (!searchField.getText().equals("") && !searchField.getText().equals("Doctor Name...")) {
             ArrayList<Session> searchedSessions = new ArrayList<>();
             for (Session ses : sessions) {
-                if (ses.getDoctor().getName().toLowerCase().contains(searchField.getText().toLowerCase()) || ses.getDoctor().getSurName().toLowerCase().contains(searchField.getText().toLowerCase())){
+                if (ses.getDoctor().getName().toLowerCase().contains(searchField.getText().toLowerCase()) || ses.getDoctor().getSurName().toLowerCase().contains(searchField.getText().toLowerCase())) {
                     searchedSessions.add(ses);
                 }
             }

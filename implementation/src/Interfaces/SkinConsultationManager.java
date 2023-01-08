@@ -19,13 +19,13 @@ public interface SkinConsultationManager {
 
     void readDoctorFile();
 
-    void loadDoctorsFromFile();
+    String loadDoctorsFromFile();
 
 
     //methods for patients
-    void addNewPatient(String name, String surName, String stringDateOfBirth, String mobileNumber, String patentId, String gender);
+    String addNewPatient(String name, String surName, String stringDateOfBirth, String mobileNumber, String patentId, String gender);
 
-    void deleteAPatient(String patentId);
+    String deleteAPatient(String patentId);
 
     void printAllPatients();
 
@@ -51,9 +51,9 @@ public interface SkinConsultationManager {
 
 
     // Consultation Methods
-    void addNewConsultation(String consultationId, Session session, Person doctor, Person patient, double hours, String notes, ArrayList<String> imagePath) throws IOException;
+    String addNewConsultation(String consultationId, Session session, Person doctor, Person patient, double hours, String notes, ArrayList<String> imagePath) throws IOException;
 
-    void deleteAConsultation(String consultationID);
+    String deleteAConsultation(String consultationID);
 
     void printAllConsultations();
 

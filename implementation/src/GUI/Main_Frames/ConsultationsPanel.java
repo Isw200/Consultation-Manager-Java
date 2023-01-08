@@ -1,11 +1,10 @@
 package GUI.Main_Frames;
 
-import GUI.GUILibs.SavingDone;
-import GUI.GUILibs.SortingDone;
-import GUI.GUILibs.StatusColumnCellRenderer;
+import GUI.GUIModels.SavingDone;
+import GUI.GUIModels.SortingDone;
+import GUI.GUIModels.StatusColumnCellRenderer;
 import GUI.Main_Frames.SubFrames.*;
 import Models.Consultation;
-import Models.Session;
 import Models.WestminsterSkinConsultationManager;
 
 import javax.swing.*;

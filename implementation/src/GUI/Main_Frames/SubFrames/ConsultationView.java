@@ -1,6 +1,6 @@
 package GUI.Main_Frames.SubFrames;
 
-import GUI.GUILibs.DeletingDone;
+import GUI.GUIModels.DeletingDone;
 import GUI.MainFrame;
 import GUI.Main_Frames.ConsultationsPanel;
 import GUI.Main_Frames.SessionsPanel;
@@ -518,6 +518,17 @@ public class ConsultationView extends JFrame implements ActionListener {
             deleteConsultation();
         }
         if (e.getSource() == editBtn) {
+            if (isImageDecrypted) {
+                ArrayList<String> imagePaths = consultation.getImagesPaths();
+                for (String imagePath : imagePaths) {
+                    try {
+                        EncryptAndDecrypt.encryptImage(imagePath, decryptKey);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
+
             JDialog editPwDialog = new JDialog();
             editPwDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
             editPwDialog.setSize(400, 200);

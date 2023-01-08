@@ -2,7 +2,7 @@ package GUI.Main_Frames.SubFrames;
 
 import GUI.MainFrame;
 import GUI.Main_Frames.SessionsPanel;
-import GUI.Other_components.DatePicker;
+import GUI.GUIModels.DatePicker;
 import Models.Person;
 import Models.Session;
 import Models.WestminsterSkinConsultationManager;
@@ -211,23 +211,35 @@ public class AddSession extends JDialog implements ActionListener {
             if (sessionIDField.getText().equals("") || Objects.requireNonNull(doctorDropDown.getSelectedItem()).toString().equals("") || sessionDate.getText().equals("") || Objects.requireNonNull(timeDropDown.getSelectedItem()).toString().equals("Select") || Objects.requireNonNull(maximumPatientsDropDown.getSelectedItem()).toString().equals("Select")) {
                 JOptionPane.showMessageDialog(null, "Please fill in all fields", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
-                Date date = WestminsterSkinConsultationManager.strToDate(sessionDate.getText());
-                Person doctor = null;
-                for (int i = 0; i < WestminsterSkinConsultationManager.getDoctorArray().length; i++) {
-                    if (Objects.requireNonNull(doctorDropDown.getSelectedItem()).toString().equals(WestminsterSkinConsultationManager.getDoctorArray()[i].getName() + " " + WestminsterSkinConsultationManager.getDoctorArray()[i].getSurName())) {
-                        doctor = WestminsterSkinConsultationManager.getDoctorArray()[i];
+                boolean isSessionIDUnique = true;
+                for (Session session : WestminsterSkinConsultationManager.sessionArrayList) {
+                    if (session.getSessionId().equals(sessionIDField.getText())) {
+                        isSessionIDUnique = false;
                     }
                 }
-                Date time = WestminsterSkinConsultationManager.strToTime(Objects.requireNonNull(timeDropDown.getSelectedItem()).toString());
-                int maximumPatients = Integer.parseInt(Objects.requireNonNull(maximumPatientsDropDown.getSelectedItem()).toString());
+                if (isSessionIDUnique) {
+                    Date date = WestminsterSkinConsultationManager.strToDate(sessionDate.getText());
+                    Person doctor = null;
+                    for (int i = 0; i < WestminsterSkinConsultationManager.getDoctorArray().length; i++) {
+                        if (WestminsterSkinConsultationManager.doctorArray[i] != null) {
+                            if (Objects.requireNonNull(doctorDropDown.getSelectedItem()).toString().equals(WestminsterSkinConsultationManager.getDoctorArray()[i].getName() + " " + WestminsterSkinConsultationManager.getDoctorArray()[i].getSurName())) {
+                                doctor = WestminsterSkinConsultationManager.getDoctorArray()[i];
+                            }
+                        }
+                    }
+                    Date time = WestminsterSkinConsultationManager.strToTime(Objects.requireNonNull(timeDropDown.getSelectedItem()).toString());
+                    int maximumPatients = Integer.parseInt(Objects.requireNonNull(maximumPatientsDropDown.getSelectedItem()).toString());
 
-                Session session = new Session(sessionIDField.getText(), doctor, date, time, maximumPatients, "Active");
+                    Session session = new Session(sessionIDField.getText(), doctor, date, time, maximumPatients, "Active");
 
-                WestminsterSkinConsultationManager.sessionArrayList.add(session);
+                    WestminsterSkinConsultationManager.sessionArrayList.add(session);
 
-                JOptionPane.showMessageDialog(null, "Session added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
-                SessionsPanel.tableReRender(WestminsterSkinConsultationManager.getSessionsArrayList());
-                mainFrame.dispose();
+                    JOptionPane.showMessageDialog(null, "Session added successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    SessionsPanel.tableReRender(WestminsterSkinConsultationManager.getSessionsArrayList());
+                    mainFrame.dispose();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Session ID already exists", "Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
         if (e.getSource() == cancel) {

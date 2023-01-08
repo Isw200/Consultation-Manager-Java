@@ -2,7 +2,7 @@ package GUI.Main_Frames.SubFrames;
 
 import GUI.MainFrame;
 import GUI.Main_Frames.SessionsPanel;
-import GUI.Other_components.DatePicker;
+import GUI.GUIModels.DatePicker;
 import Models.Person;
 import Models.Session;
 import Models.WestminsterSkinConsultationManager;
@@ -160,7 +160,7 @@ public class EditSession extends JDialog implements ActionListener {
 
         // Add buttons
         JPanel addSessionBtnContainer = new JPanel();
-        addSessionBtnContainer.setPreferredSize(new Dimension(500,50));
+        addSessionBtnContainer.setPreferredSize(new Dimension(500, 50));
         addSession = new JButton("Update");
         addSession.setPreferredSize(new Dimension(220, 40));
         addSession.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -226,10 +226,10 @@ public class EditSession extends JDialog implements ActionListener {
         mainPanel.add(mainBorderLayouts[1]);
         mainPanel.add(mainBorderLayouts[2]);
 
-        mainPanel.add(addSpace(520,30));
+        mainPanel.add(addSpace(520, 30));
         mainPanel.add(addSessionBtnContainer);
         mainPanel.add(addAndCancelButtons);
-        mainPanel.add(addSpace(520,50));
+        mainPanel.add(addSpace(520, 50));
         mainFrame.add(mainPanel);
     }
 

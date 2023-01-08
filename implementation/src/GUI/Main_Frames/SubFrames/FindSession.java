@@ -2,7 +2,7 @@ package GUI.Main_Frames.SubFrames;
 
 import GUI.MainFrame;
 import GUI.Main_Frames.SessionsPanel;
-import GUI.Other_components.DatePicker;
+import GUI.GUIModels.DatePicker;
 import Models.Session;
 import Models.WestminsterSkinConsultationManager;
 
@@ -184,6 +184,7 @@ public class FindSession extends JFrame implements ActionListener, MouseListener
                             edit.setBackground(new Color(0, 122, 31));
                             edit.setOpaque(true);
                         }
+
                         @Override
                         public void mouseExited(MouseEvent e) {
                             edit.setForeground(new Color(0, 122, 31));
@@ -212,6 +213,7 @@ public class FindSession extends JFrame implements ActionListener, MouseListener
                             delete.setBackground(Color.RED);
                             delete.setOpaque(true);
                         }
+
                         @Override
                         public void mouseExited(MouseEvent e) {
                             delete.setForeground(Color.RED);
@@ -230,7 +232,7 @@ public class FindSession extends JFrame implements ActionListener, MouseListener
                                 }
                             }
                             int dialogButton = JOptionPane.YES_NO_OPTION;
-                            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete Session "+ session.getSessionId()+ " ?", "Warning", dialogButton);
+                            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete Session " + session.getSessionId() + " ?", "Warning", dialogButton);
 
                             if (dialogResult == JOptionPane.YES_OPTION) {
                                 WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
@@ -329,12 +331,10 @@ public class FindSession extends JFrame implements ActionListener, MouseListener
         if (e.getDocument() == doctorNameField.getDocument()) {
             doctorName = doctorNameField.getText();
             updateTable(doctorName, sessionDate, sessionID);
-        }
-        else if (e.getDocument() == sessionIdField.getDocument()) {
+        } else if (e.getDocument() == sessionIdField.getDocument()) {
             sessionID = sessionIdField.getText();
             updateTable(doctorName, sessionDate, sessionID);
-        }
-        else if (e.getDocument() == sessionDateField.getDocument()) {
+        } else if (e.getDocument() == sessionDateField.getDocument()) {
             String date = sessionDateField.getText();
             sessionDate = WestminsterSkinConsultationManager.strToDate(date);
             updateTable(doctorName, sessionDate, sessionID);
@@ -380,14 +380,14 @@ public class FindSession extends JFrame implements ActionListener, MouseListener
                 filteredSessions.add(session);
             }
         }
-        if(doctorName.isEmpty() && sessionDate == null && sessionId.isEmpty()) {
+        if (doctorName.isEmpty() && sessionDate == null && sessionId.isEmpty()) {
             tableReRender(sessions);
         } else {
             tableReRender(filteredSessions);
         }
     }
 
-    public static void tableReRender(ArrayList<Session> filteredSessionList){
+    public static void tableReRender(ArrayList<Session> filteredSessionList) {
         String[][] filteredSessionData = new String[filteredSessionList.size()][7];
 
         for (int i = 0; i < filteredSessionList.size(); i++) {

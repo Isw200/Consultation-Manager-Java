@@ -1,6 +1,6 @@
 package GUI.Main_Frames.SubFrames;
 
-import GUI.GUILibs.StatusColumnCellRenderer;
+import GUI.GUIModels.StatusColumnCellRenderer;
 import GUI.MainFrame;
 import GUI.Main_Frames.DoctorsPanel;
 import Models.Doctor;
@@ -28,6 +28,7 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
     static JTable doctorTable;
     JScrollPane scrollPane;
     JButton edit, delete;
+
     public FindDoctor() {
         fName = "";
         lName = "";
@@ -175,6 +176,7 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
                             edit.setBackground(new Color(0, 122, 31));
                             edit.setOpaque(true);
                         }
+
                         @Override
                         public void mouseExited(MouseEvent e) {
                             edit.setForeground(new Color(0, 122, 31));
@@ -203,6 +205,7 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
                             delete.setBackground(Color.RED);
                             delete.setOpaque(true);
                         }
+
                         @Override
                         public void mouseExited(MouseEvent e) {
                             delete.setForeground(Color.RED);
@@ -223,7 +226,7 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
                                 }
                             }
                             int dialogButton = JOptionPane.YES_NO_OPTION;
-                            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete Doctor "+ doctor.getName()+" "+doctor.getSurName()+ " ?", "Warning", dialogButton);
+                            int dialogResult = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete Doctor " + doctor.getName() + " " + doctor.getSurName() + " ?", "Warning", dialogButton);
 
                             if (dialogResult == JOptionPane.YES_OPTION) {
                                 WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
@@ -362,7 +365,7 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
         tableReRender(filteredDoctorsArray);
     }
 
-    public static void tableReRender(Person[] doctors){
+    public static void tableReRender(Person[] doctors) {
         String[] doctorsTableColumns = {"Doctor ID", "First Name", "Last Name", "Phone Number", "Speciality", "Availability"};
         int numberOfDoctors = WestminsterSkinConsultationManager.getNumberOfDoctors(doctors);
         Doctor[] updatedArray = new Doctor[numberOfDoctors];

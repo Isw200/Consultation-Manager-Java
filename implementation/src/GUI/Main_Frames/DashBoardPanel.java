@@ -1,6 +1,6 @@
 package GUI.Main_Frames;
 
-import GUI.GUILibs.StatusColumnCellRenderer;
+import GUI.GUIModels.StatusColumnCellRenderer;
 import GUI.MainFrame;
 import Models.Session;
 import Models.WestminsterSkinConsultationManager;

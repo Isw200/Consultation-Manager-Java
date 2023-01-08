@@ -58,14 +58,13 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      * @param mobileNumber         String Mobile Number
      * @param medicalLicenceNumber String Medical Licence Number
      * @param specialisation       String Specialisation
-     * @return
+     * @return is doctor added
      * @Catch ParseException if the date of birth is not in correct format.
      * correct format Example 15-MAR-2000
      */
     @Override
     public String addANewDoctor(String name, String surName, String stringDateOfBirth, String mobileNumber, String medicalLicenceNumber, String specialisation, String availability) {
         if (isArrayFull(doctorArray)) {
-            JOptionPane.showMessageDialog(null, "Doctor Array is Full");
             System.out.println("Doctor Array is Full");
             return "Doctor Array is Full";
         } else {
@@ -170,13 +169,28 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      */
     @Override
     public void printAllDoctors() {
-        sortDoctor(doctorArray);
-        for (int i = 0; i < doctorArray.length; i++) {
-            if (doctorArray[i] != null) {
-                Doctor doctor = (Doctor) doctorArray[i];
-                System.out.println("Doctor " + (i + 1) + ": " + doctor.print());
+        if (!isDoctorArrayEmpty()) {
+            sortDoctor(doctorArray);
+            for (int i = 0; i < doctorArray.length; i++) {
+                if (doctorArray[i] != null) {
+                    Doctor doctor = (Doctor) doctorArray[i];
+                    System.out.println("Doctor " + (i + 1) + ": " + doctor.print());
+                }
+            }
+        } else {
+            System.out.println("No Doctors Available");
+        }
+    }
+
+    public boolean isDoctorArrayEmpty() {
+        boolean isEmpty = true;
+        for (Person doctor : doctorArray) {
+            if (doctor != null) {
+                isEmpty = false;
+                break;
             }
         }
+        return isEmpty;
     }
 
     /**
@@ -184,7 +198,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      * Used buffer to improve performance.
      * 1st argument for fileWriter object pass the text file instance to the fileWriter. 2nd argument tells FileWriter to append any given input to the file instead of overwriting it.
      *
-     * @return
+     * @return is saved
      */
     @Override
     public String saveDoctorsToFile() {
@@ -206,15 +220,11 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      * Traversal through the doctorList text file and create Doctor object from each line.
      * To avoid exception if condition has been used. if only corresponding file exists read the file.
      *
-     * @Variable line - A line from text file
-     * @ArrayList dataItems - An ArrayList for hold each field regarding a doctor from a line temporally.
-     * @ArrayList tempItem - An ArrayList for hold each letter for each field regarding a doctor from a line temporally.
-     * Traveled through a line and add each character to tempItem, if found a " " blank String, tempItem will add to dataItems and clear tempItem ArrayList.
-     * @Variable name, surName, dateOfBirth, mobileNumber, medicalLicenceNumber,specialisation - For hold values to pass addANewDoctor as arguments.
-     * After finishing a line create a new doctor by calling addANewDoctor method.
+     * @return status of the operation
      */
     @Override
-    public void loadDoctorsFromFile() {
+    public String loadDoctorsFromFile() {
+        String returnString = "";
         if (doctorFile.exists()) {
             try {
                 Scanner myReader = new Scanner(doctorFile);
@@ -222,13 +232,17 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
                 doctorFile.delete();
                 myReader.close();
                 System.out.println("Doctors loaded successfully");
+                returnString = "Doctors loaded successfully";
             } catch (FileNotFoundException e) {
                 System.out.println("An error occurred.");
+                returnString = "An error occurred.";
                 e.printStackTrace();
             }
         } else {
             System.out.println("File not exists!");
+            returnString = "File not exists!";
         }
+        return returnString;
     }
 
     public static int getNumberOfDoctors(Person[] array) {
@@ -252,24 +266,34 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      * @param stringDateOfBirth String birthday of the patient.
      * @param mobileNumber      Mobile number of the patient.
      * @param patentId          Unique ID for the patient.
+     * @return status of the operation
      * @Catch ParseException if the date of birth is not in correct format.
      * correct format Example 15-MAR-2000
      */
     @Override
-    public void addNewPatient(String name, String surName, String stringDateOfBirth, String mobileNumber, String patentId, String gender) {
+    public String addNewPatient(String name, String surName, String stringDateOfBirth, String mobileNumber, String patentId, String gender) {
         Date dateOfBirth = strToDate(stringDateOfBirth);
         Patient patient = new Patient(name, surName, dateOfBirth, mobileNumber, patentId, gender);
         patientArrayList.add(patient);
         System.out.println("Patient " + patient.getName() + " " + patient.getSurName() + " added successfully.");
+        return "Patient " + patient.getName() + " " + patient.getSurName() + " added successfully.";
     }
 
+    /**
+     * Delete a Patient from patientArrayList.
+     *
+     * @param patentId Unique ID for the patient need to delete.
+     * @return status of the operation
+     */
     @Override
-    public void deleteAPatient(String patentId) {
+    public String deleteAPatient(String patentId) {
+        String returnString = "";
         boolean found = false;
         for (int i = 0; i < patientArrayList.size(); i++) {
             Patient patient = (Patient) patientArrayList.get(i);
             if (patentId.equals(patient.getPatientId())) {
-                System.out.println("Doctor " + patient.getName() + " " + patient.getSurName() + " deleted successfully.");
+                System.out.println("Patient " + patient.getName() + " " + patient.getSurName() + " deleted successfully.");
+                returnString = "Patient " + patient.getName() + " " + patient.getSurName() + " deleted successfully.";
                 found = true;
                 patientArrayList.remove(i);
                 break;
@@ -277,7 +301,9 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         }
         if (!found) {
             System.out.println("Patient not found by Medical Licence Number: " + patentId);
+            returnString = "Patient not found by Medical Licence Number: " + patentId;
         }
+        return returnString;
     }
 
     /**
@@ -311,6 +337,10 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         readFile(doctorFile);
     }
 
+    /**
+     * Traversal through the patientList text file and create Patient object from each line.
+     * To avoid exception if condition has been used. if only corresponding file exists read the file.
+     */
     @Override
     public void loadPatientsFromFile() {
         if (patientFile.exists()) {
@@ -331,6 +361,17 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
 
 
     // Sessions methods
+
+    /**
+     * Add a new session to sessionArrayList.
+     *
+     * @param sessionID     Unique ID for the session.
+     * @param doctorID      Unique ID for the doctor.
+     * @param date          Date of the session.
+     * @param time          Time of the session.
+     * @param maxPatients   Maximum number of patients for the session.
+     * @param sessionStatus Status of the session.
+     */
     @Override
     public void addNewSession(String sessionID, String doctorID, String date, String time, int maxPatients, String sessionStatus) {
         Date sessionDate = strToDate(date);
@@ -353,6 +394,11 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         }
     }
 
+    /**
+     * Delete a session from sessionArrayList.
+     *
+     * @param sessionID Unique ID for the session need to delete.
+     */
     @Override
     public void deleteASession(String sessionID) {
         boolean found = false;
@@ -378,6 +424,9 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         }
     }
 
+    /**
+     * Save all Session objects in sessionArrayList to a text file.
+     */
     @Override
     public void saveSessionsToFile() {
         if (sessionsFile.exists()) {
@@ -391,6 +440,10 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         readFile(sessionsFile);
     }
 
+    /**
+     * Traversal through the sessionList text file and create Session object from each line.
+     * To avoid exception if condition has been used. if only corresponding file exists read the file.
+     */
     @Override
     public void loadSessionsFromFile() {
         if (sessionsFile.exists()) {
@@ -410,20 +463,45 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
     }
 
     // Consultation methods
+
+    /**
+     * Add a new consultation to consultationArrayList.
+     *
+     * @param consultationId Unique ID for the consultation.
+     * @param session        Session of the consultation.
+     * @param doctor         Doctor of the consultation.
+     * @param patient        Patient of the consultation.
+     * @param hours          Duration of the consultation.
+     * @param notes          Notes of the consultation.
+     * @param imagePaths     Image paths of the consultation.
+     * @return string true if consultation added successfully.
+     * @throws IOException if file not found.
+     */
     @Override
-    public void addNewConsultation(String consultationId, Session session, Person doctor, Person patient, double hours, String notes, ArrayList<String> imagePaths) throws IOException {
+    public String addNewConsultation(String consultationId, Session session, Person doctor, Person patient, double hours, String notes, ArrayList<String> imagePaths) throws IOException {
+        String returnString = "";
         Consultation consultation = new Consultation(consultationId, session, doctor, patient, hours, notes, imagePaths);
         consultationArrayList.add(consultation);
         session.addConsultation(consultation);
+        returnString = "Consultation " + consultationId + " added successfully.";
+        return returnString;
     }
 
+    /**
+     * Delete a consultation from consultationArrayList.
+     *
+     * @param consultationID Unique ID for the consultation need to delete.
+     * @return string true if consultation deleted successfully.
+     */
     @Override
-    public void deleteAConsultation(String consultationID) {
+    public String deleteAConsultation(String consultationID) {
+        String returnString = "";
         boolean found = false;
         for (int i = 0; i < consultationArrayList.size(); i++) {
             Consultation consultation = consultationArrayList.get(i);
             if (consultationID.equals(consultation.getConsultationId())) {
                 System.out.println("Consultation " + consultation.getConsultationId() + " deleted successfully.");
+                returnString = "Consultation " + consultation.getConsultationId() + " deleted successfully.";
                 found = true;
                 consultationArrayList.remove(i);
                 break;
@@ -431,7 +509,9 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         }
         if (!found) {
             System.out.println("Consultation not found by Consultation ID: " + consultationID);
+            returnString = "Consultation not found by Consultation ID: " + consultationID;
         }
+        return returnString;
     }
 
     @Override
@@ -442,6 +522,9 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         }
     }
 
+    /**
+     * Save all Consultation objects in consultationArrayList to a text file.
+     */
     @Override
     public void saveConsultationsToFile() {
         if (consultationsFile.exists()) {
@@ -455,6 +538,10 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         readFile(consultationsFile);
     }
 
+    /**
+     * Traversal through the consultationList text file and create Consultation object from each line.
+     * To avoid exception if condition has been used. if only corresponding file exists read the file.
+     */
     @Override
     public void loadConsultationsFromFile() {
         if (consultationsFile.exists()) {
@@ -499,7 +586,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      *
      * @param strDate String date.
      * @return A date typed Date.
-     * @Catch: ParseException if the date of birth is not in correct format.
+     * @Catch ParseException if the date of birth is not in correct format.
      * correct format Example 15-MAR-2000
      */
     public static Date strToDate(String strDate) {
@@ -513,6 +600,12 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         return dateDate;
     }
 
+    /**
+     * Get String time as a String parameter and cast it in to Date object using @Class SimpleDateFormat
+     *
+     * @param strTime String time.
+     * @return A Date typed time.
+     */
     public static Date strToTime(String strTime) {
         DateFormat dateFormat = new SimpleDateFormat("hh:mm");
         Date date = null;
@@ -659,7 +752,6 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      * Once it gets a line it will create a new Consultation object.
      *
      * @param line A line of a text file.
-     * @return An ArrayList of String.
      */
     public void consultationLineReader(String line) throws IOException {
         ArrayList<String> dataItems = new ArrayList<>();
@@ -807,7 +899,10 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         }
     }
 
-    // Run GUI
+
+    /**
+     * Run the GUI.
+     */
     public void runGUI() {
         MainFrame mainFrame = new MainFrame();
         mainFrame.setTitle("Hospital Management System");
@@ -815,6 +910,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setVisible(true);
     }
+
 
     public boolean isArrayFull(Person[] array) {
         for (int i = 0; i < array.length; i++) {

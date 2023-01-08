@@ -1,9 +1,7 @@
 package GUI;
 
-import GUI.GUILibs.RoundedBorder;
+import GUI.GUIModels.RoundedBorder;
 import GUI.Main_Frames.*;
-import GUI.Main_Frames.SubFrames.FindDoctor;
-import Models.Consultation;
 import Models.WestminsterSkinConsultationManager;
 
 import javax.swing.*;
@@ -25,7 +23,7 @@ public class MainFrame extends JFrame implements ActionListener {
     JButton[] leftPanelOperatorButtons = new JButton[6];
     String[] leftPanelIconPaths = new String[6];
 
-    ImageIcon logo, logout, dashboardLogo, patientLogo, doctorLogo, bookingLogo, appointmentLogo;
+    ImageIcon logo;
 
     public MainFrame() {
         setLayout(new BorderLayout());

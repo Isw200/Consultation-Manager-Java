@@ -2,7 +2,7 @@ package GUI.Main_Frames.SubFrames;
 
 import GUI.MainFrame;
 import GUI.Main_Frames.DoctorsPanel;
-import GUI.Other_components.DatePicker;
+import GUI.GUIModels.DatePicker;
 import Models.Doctor;
 import Models.Person;
 import Models.WestminsterSkinConsultationManager;
@@ -30,6 +30,7 @@ public class EditDoctor extends JDialog implements ActionListener {
     final JTextField dateOfBirthField = new JTextField();
     JTextField[] textFields = new JTextField[4];
     JButton editDoctor, cancel;
+
     public EditDoctor(String doctorId) {
         this.doctorId = doctorId;
         for (int i = 0; i < WestminsterSkinConsultationManager.doctorArray.length; i++) {
@@ -164,7 +165,7 @@ public class EditDoctor extends JDialog implements ActionListener {
 
         // Update buttons
         JPanel updateDoctorBtnContainer = new JPanel();
-        updateDoctorBtnContainer.setPreferredSize(new Dimension(500,50));
+        updateDoctorBtnContainer.setPreferredSize(new Dimension(500, 50));
         editDoctor = new JButton("Update");
         editDoctor.setPreferredSize(new Dimension(220, 40));
         editDoctor.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -229,17 +230,17 @@ public class EditDoctor extends JDialog implements ActionListener {
         mainPanel.add(mainBorderLayouts[1]);
         mainPanel.add(mainBorderLayouts[2]);
         mainPanel.add(availabilityPanel);
-        mainPanel.add(addSpace(520,30));
+        mainPanel.add(addSpace(520, 30));
         mainPanel.add(updateDoctorBtnContainer);
         mainPanel.add(addAndCancelButtons);
-        mainPanel.add(addSpace(520,50));
+        mainPanel.add(addSpace(520, 50));
         mainFrame.add(mainPanel);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == editDoctor){
-            if (textFields[0].getText().equals("") || textFields[1].getText().equals("") || textFields[2].getText().equals("") || textFields[3].getText().equals("") || dateOfBirthField.getText().equals("")){
+        if (e.getSource() == editDoctor) {
+            if (textFields[0].getText().equals("") || textFields[1].getText().equals("") || textFields[2].getText().equals("") || textFields[3].getText().equals("") || dateOfBirthField.getText().equals("")) {
                 JOptionPane.showMessageDialog(null, "Please fill in all the fields", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 // Check if all fields are filled
