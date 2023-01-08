@@ -18,24 +18,24 @@ public class Main {
                     (DA) -> Add a new Doctor
                     (DD) -> Delete a Doctor
                     (DP) -> Print of all Doctors
-                    (DS) -> Save to File
-                    (DR) -> Read file
-                    (DL) -> Load doctors from Files
+                    (DS) -> Save doctors to the File
+                    (DR) -> Read doctors file
+                    (DL) -> Load doctors from the Files
                     (DSO)-> Sort Doctors
                                         
                     (PA) -> Add a new Patient
                     (PD) -> Delete a Patient
                     (PP) -> Print of all Patients
-                    (PS) -> Save to File
-                    (PR) -> Read file
-                    (PL) -> Load patients from Files
+                    (PS) -> Save patients to the File
+                    (PR) -> Read patients file
+                    (PL) -> Load patients from the Files
                                         
                     (SA) -> Add a new Session
                     (SD) -> Delete a Session
                     (SP) -> Print of all Sessions
-                    (SS) -> Save to File
-                    (SR) -> Read file
-                    (SL) -> Load sessions from Files
+                    (SS) -> Save sessions to the File
+                    (SR) -> Read sessions file
+                    (SL) -> Load sessions from the Files
                                         
                     (AC) -> Add a new Consultation
                     (DC) -> Delete a Consultation

@@ -336,7 +336,6 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
         if (e.getSource() == importData) {
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
             manager.loadDoctorsFromFile();
-            manager.saveDoctorsToFile();
             tableReRender(WestminsterSkinConsultationManager.getDoctorArray());
         }
         if (e.getSource() == saveDataButton) {
@@ -527,8 +526,10 @@ public class DoctorsPanel extends JPanel implements ActionListener, MouseListene
         if (!searchField.getText().equals("") && !searchField.getText().equals("Search Doctors...")) {
             ArrayList<Person> searchedDoctors = new ArrayList<>();
             for (Person doctor : doctors) {
-                if (doctor.getName().toLowerCase().contains(searchField.getText().toLowerCase()) || doctor.getSurName().toLowerCase().contains(searchField.getText().toLowerCase())) {
-                    searchedDoctors.add(doctor);
+                if (doctor != null) {
+                    if (doctor.getName().toLowerCase().contains(searchField.getText().toLowerCase()) || doctor.getSurName().toLowerCase().contains(searchField.getText().toLowerCase())) {
+                        searchedDoctors.add(doctor);
+                    }
                 }
             }
             Person[] searchedDoctorsArray = new Person[searchedDoctors.size()];

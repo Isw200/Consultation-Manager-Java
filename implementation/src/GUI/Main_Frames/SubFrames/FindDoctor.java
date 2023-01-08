@@ -355,9 +355,11 @@ public class FindDoctor extends JFrame implements ActionListener, MouseListener,
         ArrayList<Person> filteredDoctors = new ArrayList<>();
 
         for (Person doctor : doctors) {
-            Doctor doc = (Doctor) doctor;
-            if (doctor.getName().equalsIgnoreCase(fName) || doctor.getSurName().equalsIgnoreCase(lName) || doc.getMedicalLicenceNumber().equalsIgnoreCase(doctorId)) {
-                filteredDoctors.add(doctor);
+            if (doctor != null) {
+                Doctor doc = (Doctor) doctor;
+                if (doctor.getName().equalsIgnoreCase(fName) || doctor.getSurName().equalsIgnoreCase(lName) || doc.getMedicalLicenceNumber().equalsIgnoreCase(doctorId)) {
+                    filteredDoctors.add(doctor);
+                }
             }
         }
         Person[] filteredDoctorsArray = new Person[filteredDoctors.size()];

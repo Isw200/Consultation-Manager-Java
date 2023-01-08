@@ -46,6 +46,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
         return consultationArrayList;
     }
 
+
     /**
      * Get All details of a Doctor
      * Get date of birth as a String parameter and cast it in to Date object using strToDate method.
@@ -87,7 +88,7 @@ public class WestminsterSkinConsultationManager implements SkinConsultationManag
      * @param medicalLicenceNumber Medical Licence Number of the doctor we want ro delete.
      *                             Traversal through doctorArrayList ArrayList and matching (i)th Doctor objects medicalLicenceNumber with parameter.
      *                             If they matched removed matched (i)th element from the ArrayList.
-     * @return
+     * @return is doctor deleted
      * @Variable boolean "found" to keep track item found or not. It will update it in to true if (i)th element's medicalLicenceNumber matched with the parameter
      */
     @Override

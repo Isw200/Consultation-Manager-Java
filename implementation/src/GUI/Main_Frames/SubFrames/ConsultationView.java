@@ -637,55 +637,57 @@ public class ConsultationView extends JFrame implements ActionListener {
     }
 
     private void openImage(JPanel panel, Consultation consultation) {
-        Component[] component = panel.getComponents();
+        if (!consultation.getImagesPaths().isEmpty()) {
+            Component[] component = panel.getComponents();
 
-        String imagePath1 = consultation.getImagesPaths().get(0);
-        String imagePath2 = consultation.getImagesPaths().get(1);
+            String imagePath1 = consultation.getImagesPaths().get(0);
+            String imagePath2 = consultation.getImagesPaths().get(1);
 
-        ImageIcon imageIcon1 = new ImageIcon(imagePath1);
-        Image image1 = imageIcon1.getImage();
-        Image newImage1 = image1.getScaledInstance(1000, 1000, Image.SCALE_SMOOTH);
-        ImageIcon newImageIcon1 = new ImageIcon(newImage1);
-        JLabel imageLabel1 = new JLabel(newImageIcon1);
-        imageLabel1.setPreferredSize(new Dimension(1000, 1000));
+            ImageIcon imageIcon1 = new ImageIcon(imagePath1);
+            Image image1 = imageIcon1.getImage();
+            Image newImage1 = image1.getScaledInstance(1000, 1000, Image.SCALE_SMOOTH);
+            ImageIcon newImageIcon1 = new ImageIcon(newImage1);
+            JLabel imageLabel1 = new JLabel(newImageIcon1);
+            imageLabel1.setPreferredSize(new Dimension(1000, 1000));
 
 
-        component[0].addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                JDialog imageDialog = new JDialog();
-                imageDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                imageDialog.setSize(1000, 1000);
-                imageDialog.setLocationRelativeTo(ConsultationView.getFrames()[0]);
-                imageDialog.setResizable(false);
-                imageDialog.setLayout(new FlowLayout());
-                imageDialog.setModal(true);
-                imageDialog.add(imageLabel1);
-                imageDialog.setVisible(true);
-            }
-        });
+            component[0].addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    JDialog imageDialog = new JDialog();
+                    imageDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                    imageDialog.setSize(1000, 1000);
+                    imageDialog.setLocationRelativeTo(ConsultationView.getFrames()[0]);
+                    imageDialog.setResizable(false);
+                    imageDialog.setLayout(new FlowLayout());
+                    imageDialog.setModal(true);
+                    imageDialog.add(imageLabel1);
+                    imageDialog.setVisible(true);
+                }
+            });
 
-        ImageIcon imageIcon2 = new ImageIcon(imagePath2);
-        Image image2 = imageIcon2.getImage();
-        Image newImage2 = image2.getScaledInstance(1000, 1000, Image.SCALE_SMOOTH);
-        ImageIcon newImageIcon2 = new ImageIcon(newImage2);
-        JLabel imageLabel2 = new JLabel(newImageIcon2);
-        imageLabel2.setPreferredSize(new Dimension(1000, 1000));
+            ImageIcon imageIcon2 = new ImageIcon(imagePath2);
+            Image image2 = imageIcon2.getImage();
+            Image newImage2 = image2.getScaledInstance(1000, 1000, Image.SCALE_SMOOTH);
+            ImageIcon newImageIcon2 = new ImageIcon(newImage2);
+            JLabel imageLabel2 = new JLabel(newImageIcon2);
+            imageLabel2.setPreferredSize(new Dimension(1000, 1000));
 
-        component[1].addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                JDialog imageDialog = new JDialog();
-                imageDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-                imageDialog.setSize(1000, 1000);
-                imageDialog.setLocationRelativeTo(ConsultationView.getFrames()[0]);
-                imageDialog.setResizable(false);
-                imageDialog.setLayout(new FlowLayout());
-                imageDialog.setModal(true);
-                imageDialog.add(imageLabel2);
-                imageDialog.setVisible(true);
-            }
-        });
+            component[1].addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    JDialog imageDialog = new JDialog();
+                    imageDialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+                    imageDialog.setSize(1000, 1000);
+                    imageDialog.setLocationRelativeTo(ConsultationView.getFrames()[0]);
+                    imageDialog.setResizable(false);
+                    imageDialog.setLayout(new FlowLayout());
+                    imageDialog.setModal(true);
+                    imageDialog.add(imageLabel2);
+                    imageDialog.setVisible(true);
+                }
+            });
+        }
     }
 
 }

@@ -115,8 +115,14 @@ public class AddSession extends JDialog implements ActionListener {
         int availableDoctors = WestminsterSkinConsultationManager.getNumberOfDoctors(WestminsterSkinConsultationManager.getDoctorArray());
         String[] doctors = new String[availableDoctors];
 
+        int j = 0;
+        while (j < availableDoctors) {
+            if (WestminsterSkinConsultationManager.getDoctorArray()[j] != null) {
+                doctors[j] = WestminsterSkinConsultationManager.getDoctorArray()[j].getName() + " " + WestminsterSkinConsultationManager.getDoctorArray()[j].getSurName();
+                j++;
+            }
+        }
         for (int i = 0; i < availableDoctors; i++) {
-            doctors[i] = WestminsterSkinConsultationManager.getDoctorArray()[i].getName() + " " + WestminsterSkinConsultationManager.getDoctorArray()[i].getSurName();
         }
 
         doctorDropDown = new JComboBox(doctors);

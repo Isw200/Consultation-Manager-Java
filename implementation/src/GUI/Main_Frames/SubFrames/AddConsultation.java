@@ -798,32 +798,36 @@ public class AddConsultation extends JFrame implements ActionListener {
                     }
                     JButton okButton = new JButton("OK");
                     okButton.addActionListener(e1 -> {
-                        String doctorStr1 = Objects.requireNonNull(doctorComboBox2.getSelectedItem()).toString();
-                        String fName1 = doctorStr1.split(" ")[0];
-                        String lName1 = doctorStr1.split(" ")[1];
-                        for (Person tempDoctor : WestminsterSkinConsultationManager.getDoctorArray()) {
-                            if (tempDoctor != null) {
-                                Doctor d = (Doctor) tempDoctor;
-                                if (fName1.equals(d.getName()) && lName1.equals(d.getSurName())) {
-                                    doctor = tempDoctor;
-                                }
-                            }
-                        }
-                        Doctor doc1 = (Doctor) doctor;
-                        for (Session tempSession : WestminsterSkinConsultationManager.getSessionsArrayList()) {
-                            Doctor d = (Doctor) tempSession.getDoctor();
-                            if (d.getMedicalLicenceNumber().equals(doc1.getMedicalLicenceNumber()) && tempSession.getDate().equals(dateType)) {
-                                if (tempSession.getSessionStatus().equals("Active") || tempSession.getSessionStatus().equals("OnGoing")) {
-                                    if (tempSession.getAvailableConsultations() != 0) {
-                                        session = tempSession;
-                                        date = dateType;
-                                        break;
+                        if (!Objects.equals(doctorComboBox2.getSelectedItem(), null)) {
+                            String doctorStr1 = doctorComboBox2.getSelectedItem().toString();
+                            String fName1 = doctorStr1.split(" ")[0];
+                            String lName1 = doctorStr1.split(" ")[1];
+                            for (Person tempDoctor : WestminsterSkinConsultationManager.getDoctorArray()) {
+                                if (tempDoctor != null) {
+                                    Doctor d = (Doctor) tempDoctor;
+                                    if (fName1.equals(d.getName()) && lName1.equals(d.getSurName())) {
+                                        doctor = tempDoctor;
                                     }
                                 }
                             }
+                            Doctor doc1 = (Doctor) doctor;
+                            for (Session tempSession : WestminsterSkinConsultationManager.getSessionsArrayList()) {
+                                Doctor d = (Doctor) tempSession.getDoctor();
+                                if (d.getMedicalLicenceNumber().equals(doc1.getMedicalLicenceNumber()) && tempSession.getDate().equals(dateType)) {
+                                    if (tempSession.getSessionStatus().equals("Active") || tempSession.getSessionStatus().equals("OnGoing")) {
+                                        if (tempSession.getAvailableConsultations() != 0) {
+                                            session = tempSession;
+                                            date = dateType;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                            doctorComboBox.setSelectedItem(session.getDoctor().getName() + " " + session.getDoctor().getSurName());
+                            dialog.dispose();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "No doctors available on this date.", "Error", JOptionPane.ERROR_MESSAGE);
                         }
-                        doctorComboBox.setSelectedItem(session.getDoctor().getName() + " " + session.getDoctor().getSurName());
-                        dialog.dispose();
                     });
                     dialog.add(label1);
                     dialog.add(doctorComboBox2);

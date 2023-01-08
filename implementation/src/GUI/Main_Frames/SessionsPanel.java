@@ -324,7 +324,6 @@ public class SessionsPanel extends JPanel implements ActionListener, MouseListen
         if (e.getSource() == importData) {
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
             manager.loadSessionsFromFile();
-            manager.saveSessionsToFile();
             tableReRender(WestminsterSkinConsultationManager.getSessionsArrayList());
         }
         if (e.getSource() == saveDataButton) {

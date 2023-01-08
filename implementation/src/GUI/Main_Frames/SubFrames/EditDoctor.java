@@ -34,9 +34,11 @@ public class EditDoctor extends JDialog implements ActionListener {
     public EditDoctor(String doctorId) {
         this.doctorId = doctorId;
         for (int i = 0; i < WestminsterSkinConsultationManager.doctorArray.length; i++) {
-            Doctor doc = (Doctor) WestminsterSkinConsultationManager.doctorArray[i];
-            if (doc.getMedicalLicenceNumber().equals(doctorId)) {
-                doctor = WestminsterSkinConsultationManager.doctorArray[i];
+            if (WestminsterSkinConsultationManager.doctorArray[i] != null) {
+                Doctor doc = (Doctor) WestminsterSkinConsultationManager.doctorArray[i];
+                if (doc.getMedicalLicenceNumber().equals(doctorId)) {
+                    doctor = WestminsterSkinConsultationManager.doctorArray[i];
+                }
             }
         }
         Doctor doc = (Doctor) doctor;

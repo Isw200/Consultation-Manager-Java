@@ -324,7 +324,6 @@ public class PatientsPanel extends JPanel implements ActionListener, MouseListen
         if (e.getSource() == importData) {
             WestminsterSkinConsultationManager manager = new WestminsterSkinConsultationManager();
             manager.loadPatientsFromFile();
-            manager.savePatientsToFile();
             tableReRender(WestminsterSkinConsultationManager.getPatientArrayList());
         }
         if (e.getSource() == saveDataButton) {
